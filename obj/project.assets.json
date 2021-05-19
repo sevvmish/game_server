@@ -1,0 +1,223 @@
+{
+  "version": 3,
+  "targets": {
+    "net5.0": {
+      "MySqlClient/5.4.2": {
+        "type": "package",
+        "dependencies": {
+          "MySqlConnector": "0.30.0",
+          "Savage.Data": "5.4.2"
+        },
+        "compile": {
+          "lib/netstandard2.0/Savage.Data.MySqlClient.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Savage.Data.MySqlClient.dll": {}
+        }
+      },
+      "MySqlConnector/1.3.3": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/MySqlConnector.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/MySqlConnector.dll": {}
+        }
+      },
+      "NetCoreServer/5.0.15": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/NetCoreServer.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/NetCoreServer.dll": {}
+        }
+      },
+      "OptimizedDataReader/1.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/OptimizedDataReader.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/OptimizedDataReader.dll": {}
+        }
+      },
+      "Savage.Data/5.4.2": {
+        "type": "package",
+        "dependencies": {
+          "OptimizedDataReader": "1.1.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Savage.Data.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Savage.Data.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "MySqlClient/5.4.2": {
+      "sha512": "P0Z6GVJFZaHMZSDzct6KpA2ANVkvMGR+B/B8KnSE8sN27hzBqmks4K9AYgLxooC9YlLMjhCWu1/vO11zRQPrRA==",
+      "type": "package",
+      "path": "mysqlclient/5.4.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/Savage.Data.MySqlClient.dll",
+        "lib/net46/Savage.Data.MySqlClient.dll",
+        "lib/netstandard2.0/Savage.Data.MySqlClient.dll",
+        "mysqlclient.5.4.2.nupkg.sha512",
+        "mysqlclient.nuspec"
+      ]
+    },
+    "MySqlConnector/1.3.3": {
+      "sha512": "G6Ro+inHcUyD6e4M1CCF6ha6tqUQsbKGMnF47YsShNnNqERab5MR877zLV25ywRst/pbENgzCMV7tnaYr+jptQ==",
+      "type": "package",
+      "path": "mysqlconnector/1.3.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/MySqlConnector.dll",
+        "lib/net45/MySqlConnector.xml",
+        "lib/net461/MySqlConnector.dll",
+        "lib/net461/MySqlConnector.xml",
+        "lib/net471/MySqlConnector.dll",
+        "lib/net471/MySqlConnector.xml",
+        "lib/net5.0/MySqlConnector.dll",
+        "lib/net5.0/MySqlConnector.xml",
+        "lib/netcoreapp2.1/MySqlConnector.dll",
+        "lib/netcoreapp2.1/MySqlConnector.xml",
+        "lib/netcoreapp3.1/MySqlConnector.dll",
+        "lib/netcoreapp3.1/MySqlConnector.xml",
+        "lib/netstandard1.3/MySqlConnector.dll",
+        "lib/netstandard1.3/MySqlConnector.xml",
+        "lib/netstandard2.0/MySqlConnector.dll",
+        "lib/netstandard2.0/MySqlConnector.xml",
+        "lib/netstandard2.1/MySqlConnector.dll",
+        "lib/netstandard2.1/MySqlConnector.xml",
+        "logo.png",
+        "mysqlconnector.1.3.3.nupkg.sha512",
+        "mysqlconnector.nuspec"
+      ]
+    },
+    "NetCoreServer/5.0.15": {
+      "sha512": "K4YNxNHfL/xn4dg+9R4HECyvYG+9oIBhOAtQaXkqANhkbsDqSnTYv5rZ/XN1nk53N23Gry5MdFkbZLDozE+8kw==",
+      "type": "package",
+      "path": "netcoreserver/5.0.15",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net5.0/NetCoreServer.dll",
+        "netcoreserver.5.0.15.nupkg.sha512",
+        "netcoreserver.nuspec"
+      ]
+    },
+    "OptimizedDataReader/1.1.0": {
+      "sha512": "04dri3ecUsXntxcFZ9JvSTLa4MGLXAGjed6JLNbzg2twg46K47Lc5ukoxjfrkSQnZMQn3HrzRO77jID1Gz4yJA==",
+      "type": "package",
+      "path": "optimizeddatareader/1.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/OptimizedDataReader.dll",
+        "lib/net46/OptimizedDataReader.dll",
+        "lib/netstandard2.0/OptimizedDataReader.dll",
+        "optimizeddatareader.1.1.0.nupkg.sha512",
+        "optimizeddatareader.nuspec"
+      ]
+    },
+    "Savage.Data/5.4.2": {
+      "sha512": "4DZKPUrIjnOLrzdx4LNa338lrxWxHQLtzXjefSzrMahs9HtM+Wr+By1ASdm267dMn0i8ORFjHZ1sKDJljS8Zmg==",
+      "type": "package",
+      "path": "savage.data/5.4.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/Savage.Data.dll",
+        "lib/net46/Savage.Data.dll",
+        "lib/netstandard2.0/Savage.Data.dll",
+        "savage.data.5.4.2.nupkg.sha512",
+        "savage.data.nuspec"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net5.0": [
+      "MySqlClient >= 5.4.2",
+      "MySqlConnector >= 1.3.3",
+      "NetCoreServer >= 5.0.15"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\darkysha\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "D:\\NONandroid\\game_server\\game_server.csproj",
+      "projectName": "game_server",
+      "projectPath": "D:\\NONandroid\\game_server\\game_server.csproj",
+      "packagesPath": "C:\\Users\\darkysha\\.nuget\\packages\\",
+      "outputPath": "D:\\NONandroid\\game_server\\obj\\",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "C:\\Users\\darkysha\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net5.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net5.0": {
+        "targetAlias": "net5.0",
+        "dependencies": {
+          "MySqlClient": {
+            "target": "Package",
+            "version": "[5.4.2, )"
+          },
+          "MySqlConnector": {
+            "target": "Package",
+            "version": "[1.3.3, )"
+          },
+          "NetCoreServer": {
+            "target": "Package",
+            "version": "[5.0.15, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.203\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

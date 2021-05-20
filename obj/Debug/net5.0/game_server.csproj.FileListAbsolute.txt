@@ -20,3 +20,25 @@ D:\NONandroid\game_server\obj\Debug\net5.0\game_server.dll
 D:\NONandroid\game_server\obj\Debug\net5.0\ref\game_server.dll
 D:\NONandroid\game_server\obj\Debug\net5.0\game_server.pdb
 D:\NONandroid\game_server\obj\Debug\net5.0\game_server.genruntimeconfig.cache
+C:\android\non-android projects\game_server\bin\Debug\net5.0\game_server.exe
+C:\android\non-android projects\game_server\bin\Debug\net5.0\game_server.deps.json
+C:\android\non-android projects\game_server\bin\Debug\net5.0\game_server.runtimeconfig.json
+C:\android\non-android projects\game_server\bin\Debug\net5.0\game_server.runtimeconfig.dev.json
+C:\android\non-android projects\game_server\bin\Debug\net5.0\game_server.dll
+C:\android\non-android projects\game_server\bin\Debug\net5.0\ref\game_server.dll
+C:\android\non-android projects\game_server\bin\Debug\net5.0\game_server.pdb
+C:\android\non-android projects\game_server\bin\Debug\net5.0\Savage.Data.MySqlClient.dll
+C:\android\non-android projects\game_server\bin\Debug\net5.0\MySqlConnector.dll
+C:\android\non-android projects\game_server\bin\Debug\net5.0\NetCoreServer.dll
+C:\android\non-android projects\game_server\bin\Debug\net5.0\OptimizedDataReader.dll
+C:\android\non-android projects\game_server\bin\Debug\net5.0\Savage.Data.dll
+C:\android\non-android projects\game_server\obj\Debug\net5.0\game_server.csprojAssemblyReference.cache
+C:\android\non-android projects\game_server\obj\Debug\net5.0\game_server.GeneratedMSBuildEditorConfig.editorconfig
+C:\android\non-android projects\game_server\obj\Debug\net5.0\game_server.AssemblyInfoInputs.cache
+C:\android\non-android projects\game_server\obj\Debug\net5.0\game_server.AssemblyInfo.cs
+C:\android\non-android projects\game_server\obj\Debug\net5.0\game_server.csproj.CoreCompileInputs.cache
+C:\android\non-android projects\game_server\obj\Debug\net5.0\game_server.csproj.CopyComplete
+C:\android\non-android projects\game_server\obj\Debug\net5.0\game_server.dll
+C:\android\non-android projects\game_server\obj\Debug\net5.0\ref\game_server.dll
+C:\android\non-android projects\game_server\obj\Debug\net5.0\game_server.pdb
+C:\android\non-android projects\game_server\obj\Debug\net5.0\game_server.genruntimeconfig.cache

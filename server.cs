@@ -160,7 +160,7 @@ namespace game_server
 
                     if (!Sessions.ContainsKey(Encoding.UTF8.GetString(state.buffer, 0, 5)))
                     {
-                        if (Encoding.UTF8.GetString(state.buffer, 0, 4)=="0~5~")
+                        if (Encoding.UTF8.GetString(state.buffer, 0, 4)=="0~5~" || Encoding.UTF8.GetString(state.buffer, 0, 4) == "0~7~")
                         {
                             byte[] d = new byte[bytesRead];
                             for (int i = 0; i < bytesRead; i++)

@@ -18,7 +18,7 @@ namespace game_server
         public static byte[] secret_key_for_game_servers;
         public static string InnerServerConnectionPassword;
         public static string MysqlConnectionData_login;
-        public static string address_for_data_config = "data";
+        public static string address_for_data_config = @"C:\android\data";
 
         public const float GlobalButtonCooldown = 0.7f;
         public const float GlobalTickFloat = 0.05f;
@@ -43,9 +43,9 @@ namespace game_server
 
 
             Console.WriteLine(packet_analyzer.ProcessTCPPacket("0~2~passpass~session", "testing"));
-            TimeSpan ts = stopWatch.Elapsed;
+            //TimeSpan ts = stopWatch.Elapsed;
             
-            Console.WriteLine(InnerServerConnectionPassword);
+            
 
             server.Server_init();
             

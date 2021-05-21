@@ -86,6 +86,14 @@ namespace game_server
 
 
                 }
+
+                //ping command 0~7~pass
+                if ((packet_data[0] + packet_data[1]) == "07")
+                {
+                    Console.WriteLine(DateTime.Now + ": received ping from " + player_socket.RemoteEndPoint.ToString());
+                    server.SendDataTCP(player_socket, $"0~7~ok~{starter.SessionsPool.Count}");
+                    return;
+                }
                 //return "";
             }
             catch (Exception ex)

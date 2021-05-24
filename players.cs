@@ -55,6 +55,7 @@ namespace game_server
 
         public EndPoint endPointUDP;
         public int OrderNumber;
+        public float MaxHealth;
         //public Queue<string> CurrentPacket = new Queue<string>();
         public string CurrentPacket;
         public string AdditionalPacketData;
@@ -104,6 +105,12 @@ namespace game_server
         //free regeneration control
         public bool isFreeRegeneration = false;
         public DateTime TimeOfLastAction;
+        public float FreeRegenerationDelta;
+        public readonly float BaseHealthRegen;
+
+        //special
+        public delegate void Specials();
+        public Specials CurrentSpecial;
 
         public Players(int player_order, string player_id, string player_name, int player_class, string connection_number, int team_id,
         int zone_type, float position_x, float position_y, float position_z, float rotation_x, float rotation_y, float rotation_z,
@@ -156,55 +163,65 @@ namespace game_server
 
         public Players(params string [] data)
         {
-            this.player_order = int.Parse(data[0]);
-            this.player_id = data[1];
-            this.player_name = data[2];
-            this.player_class = int.Parse(data[3]);
-            this.connection_number = data[4];
-            this.team_id = int.Parse(data[5]);
-            this.zone_type = int.Parse(data[6]);
-            this.position_x = float.Parse(data[7]);
-            this.position_y = float.Parse(data[8]);
-            this.position_z = float.Parse(data[9]);
-            this.rotation_x = float.Parse(data[10]);
-            this.rotation_y = float.Parse(data[11]);
-            this.rotation_z = float.Parse(data[12]);
-            this.speed = float.Parse(data[13]);
-            this.animation_id = int.Parse(data[14]);
-            //this.conditions = data[15];
-            this.health_pool = data[16];
-            this.energy = float.Parse(data[17]);
-            this.health_regen = float.Parse(data[18]);
-            this.energy_regen = float.Parse(data[19]);
-            this.weapon_attack = data[20];
-            this.hit_power = float.Parse(data[21]);
-            this.armor = float.Parse(data[22]);
-            this.shield_block = float.Parse(data[23]);
-            this.magic_resistance = float.Parse(data[24]);
-            this.dodge = float.Parse(data[25]);
-            this.cast_speed = float.Parse(data[26]);
-            this.melee_crit = float.Parse(data[27]);
-            this.magic_crit = float.Parse(data[28]);
-            this.spell_power = float.Parse(data[29]);
-            this.spell1 = int.Parse(data[30]);
-            this.spell2 = int.Parse(data[31]);
-            this.spell3 = int.Parse(data[32]);
-            this.spell4 = int.Parse(data[33]);
-            this.spell5 = int.Parse(data[34]);
-            this.spell6 = 997;
-            this.hidden_conds = data[35];
-            this.global_button_cooldown = int.Parse(data[36]);
+            player_order = int.Parse(data[0]);
+            player_id = data[1];
+            player_name = data[2];
+            player_class = int.Parse(data[3]);
+            connection_number = data[4];
+            team_id = int.Parse(data[5]);
+            zone_type = int.Parse(data[6]);
+            position_x = float.Parse(data[7]);
+            position_y = float.Parse(data[8]);
+            position_z = float.Parse(data[9]);
+            rotation_x = float.Parse(data[10]);
+            rotation_y = float.Parse(data[11]);
+            rotation_z = float.Parse(data[12]);
+            speed = float.Parse(data[13]);
+            animation_id = int.Parse(data[14]);
+            //conditions = data[15];
+            health_pool = data[16];
+            energy = float.Parse(data[17]);
+            health_regen = float.Parse(data[18]);
+            energy_regen = float.Parse(data[19]);
+            weapon_attack = data[20];
+            hit_power = float.Parse(data[21]);
+            armor = float.Parse(data[22]);
+            shield_block = float.Parse(data[23]);
+            magic_resistance = float.Parse(data[24]);
+            dodge = float.Parse(data[25]);
+            cast_speed = float.Parse(data[26]);
+            melee_crit = float.Parse(data[27]);
+            magic_crit = float.Parse(data[28]);
+            spell_power = float.Parse(data[29]);
+            spell1 = int.Parse(data[30]);
+            spell2 = int.Parse(data[31]);
+            spell3 = int.Parse(data[32]);
+            spell4 = int.Parse(data[33]);
+            spell5 = int.Parse(data[34]);
+            spell6 = 997;
+            hidden_conds = data[35];
+            global_button_cooldown = int.Parse(data[36]);
 
-            this.OrderNumber = 0;
-            //starter.PlayersPool.Add(this.player_id, this);
-            this.TimeOfLastAction = DateTime.Now;
+            OrderNumber = 0;
+            
+            //free regeneration
+            TimeOfLastAction = DateTime.Now;
+            MaxHealth = float.Parse(health_pool.Split('=')[1]);
+            BaseHealthRegen = health_regen;
+
+            //specials
+            if (player_class==1)
+            {
+                WarriorSpecial currwar = new WarriorSpecial(this);
+                CurrentSpecial += currwar.UpdateSpecial;
+            }
         }
 
 
         public string GetPacketForSending(string current_player_id)
         {
-            string[] health_parts = this.health_pool.Split('=');
-            this.health_pool = $"{Math.Round(float.Parse(health_parts[0]), 1).ToString("f0")}={Math.Round(float.Parse(health_parts[1]), 1).ToString("f0")}";
+            string[] health_parts = health_pool.Split('=');
+            health_pool = $"{Math.Round(float.Parse(health_parts[0]), 1).ToString("f0")}={Math.Round(float.Parse(health_parts[1]), 1).ToString("f0")}";
 
             StringBuilder sb = new StringBuilder(110);
 
@@ -212,9 +229,9 @@ namespace game_server
             string conditions_refactor = null;
             try
             {
-                foreach (string key in this.conditions.Keys.ToList())
+                foreach (string key in conditions.Keys.ToList())
                 {
-                    conditions_refactor = conditions_refactor + key + this.conditions[key];  //Console.WriteLine(key + " - " + t[key]);
+                    conditions_refactor = conditions_refactor + key + conditions[key];  //Console.WriteLine(key + " - " + t[key]);
                 }
             }
             catch (Exception ex)
@@ -226,14 +243,15 @@ namespace game_server
 
             if (player_id != current_player_id && is_invisible)
             {
+                                
                 sb.Append("100~100~" +
-                    this.rotation_y.ToString("f1") + "~" + 
-                    this.animation_id + "~" + conditions_refactor + "~" + this.health_pool + "~" + this.energy.ToString("f0") + "^");
+                    rotation_y.ToString("f1") + "~" + 
+                    animation_id + "~" + conditions_refactor + "~" + health_pool + "~" + energy.ToString("f0") + "^");
             } else
             {
-                sb.Append(this.position_x.ToString("f1") + "~" + this.position_z.ToString("f1") + "~" +
-                this.rotation_y.ToString("f1") + "~" + 
-                this.animation_id + "~" + conditions_refactor + "~" + this.health_pool + "~" + this.energy.ToString("f0") + "^");
+                sb.Append(position_x.ToString("f1") + "~" + position_z.ToString("f1") + "~" +
+                rotation_y.ToString("f1") + "~" + 
+                animation_id + "~" + conditions_refactor + "~" + health_pool + "~" + energy.ToString("f0") + "^");
             }
 
             return sb.ToString();
@@ -242,8 +260,8 @@ namespace game_server
 
         public string GetPacketForSending_nonPlayer()
         {
-            string[] health_parts = this.health_pool.Split('=');
-            this.health_pool = $"{Math.Round(float.Parse(health_parts[0]), 1).ToString("f0")}={Math.Round(float.Parse(health_parts[1]), 1).ToString("f0")}";
+            string[] health_parts = health_pool.Split('=');
+            health_pool = $"{Math.Round(float.Parse(health_parts[0]), 1).ToString("f0")}={Math.Round(float.Parse(health_parts[1]), 1).ToString("f0")}";
 
             StringBuilder sb = new StringBuilder(110);
 
@@ -251,9 +269,9 @@ namespace game_server
             string conditions_refactor = null;
             try
             {
-                foreach (string key in this.conditions.Keys.ToList())
+                foreach (string key in conditions.Keys.ToList())
                 {
-                    conditions_refactor = conditions_refactor + key + this.conditions[key];  //Console.WriteLine(key + " - " + t[key]);
+                    conditions_refactor = conditions_refactor + key + conditions[key];  //Console.WriteLine(key + " - " + t[key]);
                 }
             }
             catch (Exception ex)
@@ -263,9 +281,9 @@ namespace game_server
 
             
 
-            sb.Append(player_id + "~" + player_class + "~" + player_name + "~" + this.position_x.ToString("f1") + "~" + this.position_z.ToString("f1") + "~" +
-            this.rotation_y.ToString("f1") + "~" +
-            this.animation_id + "~" + conditions_refactor + "~" + this.health_pool + "~" + this.energy.ToString("f0") + "^");
+            sb.Append(player_id + "~" + player_class + "~" + player_name + "~" + position_x.ToString("f1") + "~" + position_z.ToString("f1") + "~" +
+            rotation_y.ToString("f1") + "~" +
+            animation_id + "~" + conditions_refactor + "~" + health_pool + "~" + energy.ToString("f0") + "^");
             
             return sb.ToString();
 
@@ -273,8 +291,8 @@ namespace game_server
 
         public string GetPacketForSending()
         {
-            string[] health_parts = this.health_pool.Split('=');
-            this.health_pool = $"{Math.Round(float.Parse(health_parts[0]), 1).ToString("f0")}={Math.Round(float.Parse(health_parts[1]), 1).ToString("f0")}";
+            string[] health_parts = health_pool.Split('=');
+            health_pool = $"{Math.Round(float.Parse(health_parts[0]), 1).ToString("f0")}={Math.Round(float.Parse(health_parts[1]), 1).ToString("f0")}";
 
             StringBuilder sb = new StringBuilder(110);
 
@@ -282,9 +300,9 @@ namespace game_server
             string conditions_refactor = null;
             try
             {
-                foreach (string key in this.conditions.Keys.ToList())
+                foreach (string key in conditions.Keys.ToList())
                 {
-                    conditions_refactor = conditions_refactor + key + this.conditions[key];  //Console.WriteLine(key + " - " + t[key]);
+                    conditions_refactor = conditions_refactor + key + conditions[key];  //Console.WriteLine(key + " - " + t[key]);
                 }
             }
             catch (Exception ex)
@@ -294,9 +312,9 @@ namespace game_server
 
             
 
-            sb.Append(this.position_x.ToString("f1") +"~" + this.position_z.ToString("f1") + "~" +
-               this.rotation_y.ToString("f1") + "~" +
-                this.animation_id + "~" + conditions_refactor + "~" + this.health_pool + "~" + this.energy.ToString("f0") + "^");
+            sb.Append(position_x.ToString("f1") +"~" + position_z.ToString("f1") + "~" +
+               rotation_y.ToString("f1") + "~" +
+                animation_id + "~" + conditions_refactor + "~" + health_pool + "~" + energy.ToString("f0") + "^");
 
             return sb.ToString();
 
@@ -310,31 +328,35 @@ namespace game_server
             
             if (_data == null) return;
             
-            if (isFreeRegeneration && (_data.Contains("dg") || _data.Contains("hg")))
+            if (isFreeRegeneration && (_data.Contains("dg") || _data.Contains("hg") || _data.Contains("dt") ))
             {
                 TimeOfLastAction = DateTime.Now;
                 isFreeRegeneration = false;
-                health_regen = health_regen - 5f;
-                //Console.WriteLine("fighting!!!!!!!!!!! " + TimeOfLastAction);
+                health_regen = BaseHealthRegen;
+                FreeRegenerationDelta = 0;
+            } 
+            
+            if (isFreeRegeneration)
+            {
+                if (FreeRegenerationDelta<starter.max_free_regeneration)
+                {
+                    FreeRegenerationDelta += 0.07f;
+                }
+                health_regen += FreeRegenerationDelta;
+
             }
 
-            DateTime _time_plus_5 = TimeOfLastAction;
-
+            
             if (!isFreeRegeneration && DateTime.Now.Subtract(TimeOfLastAction).TotalSeconds>5)
             {
-                //Console.WriteLine(TimeOfLastAction + " - " + _time_plus_5 + " - " + DateTime.Now);
-                //Console.WriteLine(DateTime.Now.Subtract(TimeOfLastAction).TotalSeconds );
-                //Console.WriteLine($"timeoflast- {TimeOfLastAction} + timeoflast+5- {TimeOfLastAction.AddSeconds(5)} + nowis- {DateTime.Now} + equality- {TimeOfLastAction.AddSeconds(5) < DateTime.Now}");
-                isFreeRegeneration = true;
-                health_regen = health_regen + 5f;
-                //Console.WriteLine("free regerere!!!!!!!!!============");
+                isFreeRegeneration = true;                
             }
 
         }
 
         public void Dispose()
         {
-            this.Dispose();
+            Dispose();
         }
                 
         public void ZeroInputs()
@@ -354,47 +376,23 @@ namespace game_server
         public void set_condition(string cond_type, int condition_number, string cond_id, float timer)
         {
             string x;
-            this.conditions.Remove(cond_id, out x);
-            this.conditions.TryAdd(cond_id, $":{cond_type}-{condition_number}-{timer.ToString("f1")},");
+            conditions.Remove(cond_id, out x);
+            conditions.TryAdd(cond_id, $":{cond_type}-{condition_number}-{timer.ToString("f1")},");
         }
 
-        /*
-        //set hidden condition
-        public void set_hiddenconds(string cond_type, string cond_id)
-        {            
-            this.hidden_conds.Remove(cond_id);
-            this.hidden_conds.Add(cond_id, $":{cond_type},");
-        }
-        */
-
-        /*
-        //find any HIDDEN COND like type by naming condition only
-        public bool is_hiddencond_here_by_type(string searched_cond)
-        {            
-            foreach (string vall in this.conditions.Values.ToList())
-            {
-                if (vall.Contains(searched_cond))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-        */
-
+        
         //find in certain cond type any of spells in array
         public bool is_any_cond_inarray_of_spellnumber(string type_of_cond, string[] array_to_check)
         {
             
-            if (this.conditions.Count == 0)
+            if (conditions.Count == 0)
             {
                 return false;
             }
 
             try
             {
-                foreach (string vall in this.conditions.Values.ToList())
+                foreach (string vall in conditions.Values.ToList())
                 {
                     for (int i = 0; i < array_to_check.Length; i++)
                     {
@@ -425,9 +423,9 @@ namespace game_server
         {
             try
             {
-                foreach (string vall in this.conditions.Keys.ToList())
+                foreach (string vall in conditions.Keys.ToList())
                 {
-                    if (this.conditions[vall].Contains(searched_cond))
+                    if (conditions[vall].Contains(searched_cond))
                     {
                         return vall;
                     }
@@ -447,11 +445,11 @@ namespace game_server
         {
             try
             {
-                foreach (string vall in this.conditions.Keys.ToList())
+                foreach (string vall in conditions.Keys.ToList())
                 {
-                    if (this.conditions[vall].Contains(searched_cond))
+                    if (conditions[vall].Contains(searched_cond))
                     {
-                        return this.conditions[vall];
+                        return conditions[vall];
                     }
                 }
             }
@@ -469,9 +467,9 @@ namespace game_server
         {
             try
             {
-                foreach (string vall in this.conditions.Keys.ToList())
+                foreach (string vall in conditions.Keys.ToList())
                 {
-                    if (this.conditions[vall].Contains(searched_cond))
+                    if (conditions[vall].Contains(searched_cond))
                     {
                         return vall;
                     }
@@ -527,10 +525,10 @@ namespace game_server
         //STUN
         public void make_stun(string conds_id, float tick_time_left)
         {            
-            this.animation_id = 8;
+            animation_id = 8;
             string x;
-            this.conditions.TryRemove(conds_id, out x);
-            this.conditions.TryAdd(conds_id, $":co-1002-{tick_time_left.ToString("f1")},");
+            conditions.TryRemove(conds_id, out x);
+            conditions.TryAdd(conds_id, $":co-1002-{tick_time_left.ToString("f1")},");
         }
 
         //cheking for 1002 and 1003 and 1005 stopping casting
@@ -545,7 +543,7 @@ namespace game_server
         {
             try
             {
-                foreach (string items in this.conditions.Values.ToList())
+                foreach (string items in conditions.Values.ToList())
                 {
                     
                         if (items.Contains(searched_cond))
@@ -570,7 +568,7 @@ namespace game_server
         public bool is_hiddencond_here_by_type_and_spell(string searched_cond)
         {
             
-            foreach (string items in this.hidden_conds.Values.ToList())
+            foreach (string items in hidden_conds.Values.ToList())
             {
                 if (items.Contains(searched_cond))
                 {
@@ -586,7 +584,7 @@ namespace game_server
         {
 
             
-            if (Math.Abs(this.vertical_touch) > 1.5f)
+            if (Math.Abs(vertical_touch) > 1.5f)
             {
                 return true;
             }
@@ -598,7 +596,7 @@ namespace game_server
 
 
             /*
-            if (this.is_spell_button_touched)
+            if (is_spell_button_touched)
             {
                 
                 return true;
@@ -621,7 +619,7 @@ namespace game_server
         public bool is_hiddencond_here_by_type_only(string searched_cond)
         {
             
-            foreach (string vall in this.conditions.Values.ToList())
+            foreach (string vall in conditions.Values.ToList())
             {
                 if (vall.Contains(searched_cond))
                 {
@@ -636,7 +634,7 @@ namespace game_server
 
         public void minus_energy(float amount)
         {            
-            this.energy = this.energy - amount;
+            energy = energy - amount;
         }
 
         public void start_spell_in_process()
@@ -653,5 +651,56 @@ namespace game_server
         }
 
 
+    }
+
+    public class WarriorSpecial
+    {
+        private float CurrentArmorStack;
+        private int CurrentIterationStack;
+        private readonly float DefaultArmorSingleStack = 50f;
+        private bool isReadyToUse;
+        private string x;
+        private string id_condition = "";
+        private Players CurrentPlayer;
+
+        public WarriorSpecial(Players _current_player)
+        {
+            CurrentPlayer = _current_player;
+            isReadyToUse = true;
+        }
+
+        public void UpdateSpecial()
+        {
+            if (!isReadyToUse || CurrentPlayer.conditions.Count==0) return;
+
+            var _temp_dat = from r in CurrentPlayer.conditions.Values select r;
+
+            string _data = string.Join("", _temp_dat);
+
+            if (_data == null) return;
+
+            if (_data.Contains("dt") && CurrentIterationStack < 5)
+            {
+                CurrentIterationStack++;
+                CurrentArmorStack += DefaultArmorSingleStack;
+            } else if (_data.Contains("dt") && CurrentIterationStack >= 5)
+            {
+                CurrentIterationStack = 0;
+                CurrentArmorStack = 0;
+            } else if (!_data.Contains("dt"))
+            {
+                Console.WriteLine(CurrentPlayer.armor + " - armoraaaaaaaaaaa");
+                return;
+            }
+
+            
+            CurrentPlayer.armor += CurrentArmorStack;
+
+            CurrentPlayer.conditions.TryRemove(id_condition, out x);
+            id_condition = functions.get_random_set_of_symb(4);
+            CurrentPlayer.conditions.TryAdd(id_condition, $":co-1515-5,");
+
+            Console.WriteLine(CurrentPlayer.armor + " - armoraaaaaaaaaaa");
+        }
     }
 }

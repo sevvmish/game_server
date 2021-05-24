@@ -82,6 +82,9 @@ namespace game_server
                     
                     foreach (Players CurrentPlayer in LocalPlayersPool.Values)
                     {
+                        //specials
+                        CurrentPlayer.CurrentSpecial?.Invoke();
+
                         //free regen
                         CurrentPlayer.CheckForFreeRegeneration();
 

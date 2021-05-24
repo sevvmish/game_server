@@ -32,6 +32,7 @@ namespace game_server
         public const float def_hit_melee_small_angle = 50;
         public const float def_hit_melee_min_radius = 1;
         public const float armor_max = 1000;
+        public const float max_free_regeneration = 50;
         public static Stopwatch stopWatch = new Stopwatch();
 
         

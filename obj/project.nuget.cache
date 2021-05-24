@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "FiURcAZNw0zb2M+9NZVbMHjYMTHL7LOTxievoFu+XvTUz55jFP7O9Lg3yK5bDcaFcXQM7avWJuei+r+5SnYRXg==",
+  "dgSpecHash": "FP6xLgRrTB2rkgS+TdWfeMfH1aMvfamArftHkztYK6rxshDDU9YNJtnm8LyIhVeM1oOB0kq2zm0JCtmYyrQrhA==",
   "success": true,
-  "projectFilePath": "C:\\android\\non-android projects\\game_server\\game_server.csproj",
+  "projectFilePath": "D:\\NONandroid\\game_server\\game_server.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\krivtsovk\\.nuget\\packages\\mysqlclient\\5.4.2\\mysqlclient.5.4.2.nupkg.sha512",
-    "C:\\Users\\krivtsovk\\.nuget\\packages\\mysqlconnector\\1.3.3\\mysqlconnector.1.3.3.nupkg.sha512",
-    "C:\\Users\\krivtsovk\\.nuget\\packages\\netcoreserver\\5.0.15\\netcoreserver.5.0.15.nupkg.sha512",
-    "C:\\Users\\krivtsovk\\.nuget\\packages\\optimizeddatareader\\1.1.0\\optimizeddatareader.1.1.0.nupkg.sha512",
-    "C:\\Users\\krivtsovk\\.nuget\\packages\\savage.data\\5.4.2\\savage.data.5.4.2.nupkg.sha512"
+    "C:\\Users\\darkysha\\.nuget\\packages\\mysqlclient\\5.4.2\\mysqlclient.5.4.2.nupkg.sha512",
+    "C:\\Users\\darkysha\\.nuget\\packages\\mysqlconnector\\1.3.3\\mysqlconnector.1.3.3.nupkg.sha512",
+    "C:\\Users\\darkysha\\.nuget\\packages\\netcoreserver\\5.0.15\\netcoreserver.5.0.15.nupkg.sha512",
+    "C:\\Users\\darkysha\\.nuget\\packages\\optimizeddatareader\\1.1.0\\optimizeddatareader.1.1.0.nupkg.sha512",
+    "C:\\Users\\darkysha\\.nuget\\packages\\savage.data\\5.4.2\\savage.data.5.4.2.nupkg.sha512"
   ],
   "logs": []
 }

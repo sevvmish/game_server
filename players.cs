@@ -101,6 +101,10 @@ namespace game_server
         public byte[] secret_key;
         public string PacketID;
 
+        //free regeneration control
+        public bool isFreeRegeneration = false;
+        public DateTime TimeOfLastAction;
+
         public Players(int player_order, string player_id, string player_name, int player_class, string connection_number, int team_id,
         int zone_type, float position_x, float position_y, float position_z, float rotation_x, float rotation_y, float rotation_z,
         float speed, int animation_id, string health_pool, float energy, float health_regen, float energy_regen,
@@ -193,6 +197,7 @@ namespace game_server
 
             this.OrderNumber = 0;
             //starter.PlayersPool.Add(this.player_id, this);
+            this.TimeOfLastAction = DateTime.Now;
         }
 
 
@@ -216,6 +221,8 @@ namespace game_server
             {
                 Console.WriteLine(ex);
             }
+
+            
 
             if (player_id != current_player_id && is_invisible)
             {
@@ -253,8 +260,9 @@ namespace game_server
             {
                 Console.WriteLine(ex);
             }
-                       
+
             
+
             sb.Append(player_id + "~" + player_class + "~" + player_name + "~" + this.position_x.ToString("f1") + "~" + this.position_z.ToString("f1") + "~" +
             this.rotation_y.ToString("f1") + "~" +
             this.animation_id + "~" + conditions_refactor + "~" + this.health_pool + "~" + this.energy.ToString("f0") + "^");
@@ -284,11 +292,43 @@ namespace game_server
                 Console.WriteLine(ex);
             }
 
+            
+
             sb.Append(this.position_x.ToString("f1") +"~" + this.position_z.ToString("f1") + "~" +
                this.rotation_y.ToString("f1") + "~" +
                 this.animation_id + "~" + conditions_refactor + "~" + this.health_pool + "~" + this.energy.ToString("f0") + "^");
 
             return sb.ToString();
+
+        }
+
+        public void CheckForFreeRegeneration()
+        {
+            var dat = from r in conditions.Values select r;
+
+            string _data = string.Join("", dat);
+            
+            if (_data == null) return;
+            
+            if (isFreeRegeneration && (_data.Contains("dg") || _data.Contains("hg")))
+            {
+                TimeOfLastAction = DateTime.Now;
+                isFreeRegeneration = false;
+                health_regen = health_regen - 5f;
+                //Console.WriteLine("fighting!!!!!!!!!!! " + TimeOfLastAction);
+            }
+
+            DateTime _time_plus_5 = TimeOfLastAction;
+
+            if (!isFreeRegeneration && DateTime.Now.Subtract(TimeOfLastAction).TotalSeconds>5)
+            {
+                //Console.WriteLine(TimeOfLastAction + " - " + _time_plus_5 + " - " + DateTime.Now);
+                //Console.WriteLine(DateTime.Now.Subtract(TimeOfLastAction).TotalSeconds );
+                //Console.WriteLine($"timeoflast- {TimeOfLastAction} + timeoflast+5- {TimeOfLastAction.AddSeconds(5)} + nowis- {DateTime.Now} + equality- {TimeOfLastAction.AddSeconds(5) < DateTime.Now}");
+                isFreeRegeneration = true;
+                health_regen = health_regen + 5f;
+                //Console.WriteLine("free regerere!!!!!!!!!============");
+            }
 
         }
 
@@ -299,15 +339,15 @@ namespace game_server
                 
         public void ZeroInputs()
         {
-            this.horizontal_touch = 0;
-            this.vertical_touch = 0;
-            this.button1 = false;
-            this.button2 = false;
-            this.button3 = false;
-            this.button4 = false;
-            this.button5 = false;
-            this.button6 = false;
-            this.is_strafe_on = false;
+            horizontal_touch = 0;
+            vertical_touch = 0;
+            button1 = false;
+            button2 = false;
+            button3 = false;
+            button4 = false;
+            button5 = false;
+            button6 = false;
+            is_strafe_on = false;
     }
 
         //set condition

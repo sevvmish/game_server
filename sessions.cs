@@ -82,6 +82,9 @@ namespace game_server
                     
                     foreach (Players CurrentPlayer in LocalPlayersPool.Values)
                     {
+                        //free regen
+                        CurrentPlayer.CheckForFreeRegeneration();
+
                         if (CurrentPlayer.energy < 100)
                         {
                             CurrentPlayer.energy = CurrentPlayer.energy + CurrentPlayer.energy_regen * 0.05f;

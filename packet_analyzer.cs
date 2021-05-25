@@ -241,7 +241,7 @@ namespace game_server
                         string who_is_in_session = "";
                         for (int i = 0; i < datausers.Count; i++)
                         {
-                            Players new_player = new Players(datausers[i]);                            
+                            Players new_player = new Players(sessionname, datausers[i]);                            
                             NewSession.LocalPlayersPool.Add(new_player.player_id, new_player);
                             who_is_in_session = who_is_in_session + new_player.player_id + ", ";
                         }                        

@@ -62,7 +62,7 @@ namespace game_server
                     functions.turn_to_enemy(mee, table_id, 0.1f, 0, 0, 2.3f);
                     string x;
                     player.conditions.TryRemove(check_cond_id, out x);
-                    check_cond_id = functions.get_random_set_of_symb(4);
+                    //check_cond_id = functions.get_random_set_of_symb(4);
                     player.conditions.TryAdd(check_cond_id, $":co-154-{i.ToString("f1").Replace(',', '.')},");
                     player.animation_id = 15;
                     spells.make_splash_melee_damage(table_id, mee, 154, 0, 0.2f, 2, 0, 0, 0);

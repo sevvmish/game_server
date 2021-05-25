@@ -82,25 +82,27 @@ namespace game_server
                     
                     foreach (Players CurrentPlayer in LocalPlayersPool.Values)
                     {
-                        //specials
-                        CurrentPlayer.CurrentSpecial?.Invoke();
-
-                        //free regen
-                        CurrentPlayer.CheckForFreeRegeneration();
-
-                        if (CurrentPlayer.energy < 100)
+                        if (1==1) //CurrentPlayer.endPointUDP != null   ПОТОМ ИСПРАВЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         {
-                            CurrentPlayer.energy = CurrentPlayer.energy + CurrentPlayer.energy_regen * 0.05f;
-                        }
+                            //specials
+                            CurrentPlayer.CurrentSpecial?.Invoke();
 
-                        string[] curr_health = CurrentPlayer.health_pool.Split('=');
-                        float health_curr = float.Parse(curr_health[0]);
-                        if (health_curr < float.Parse(curr_health[1]))
-                        {
-                            health_curr = health_curr + CurrentPlayer.health_regen * 0.05f;
-                        }
-                        CurrentPlayer.health_pool = health_curr + "=" + curr_health[1];
+                            //free regen
+                            CurrentPlayer.CheckForFreeRegeneration();
 
+                            if (CurrentPlayer.energy < 100)
+                            {
+                                CurrentPlayer.energy = CurrentPlayer.energy + CurrentPlayer.energy_regen * 0.05f;
+                            }
+
+                            string[] curr_health = CurrentPlayer.health_pool.Split('=');
+                            float health_curr = float.Parse(curr_health[0]);
+                            if (health_curr < float.Parse(curr_health[1]))
+                            {
+                                health_curr = health_curr + CurrentPlayer.health_regen * 0.05f;
+                            }
+                            CurrentPlayer.health_pool = health_curr + "=" + curr_health[1];
+                        }
                     }
 
                     if (CurrentEnvironment != null)

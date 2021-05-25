@@ -10,7 +10,7 @@ namespace game_server
 {
     public class Players: IDisposable
     {
-        
+        public string Session_ID;
         public int player_order;
         public string player_id;
         public string player_name;
@@ -161,8 +161,9 @@ namespace game_server
         }
         
 
-        public Players(params string [] data)
+        public Players(string _session, params string [] data)
         {
+            Session_ID = _session;
             player_order = int.Parse(data[0]);
             player_id = data[1];
             player_name = data[2];
@@ -210,10 +211,23 @@ namespace game_server
             BaseHealthRegen = health_regen;
 
             //specials
-            if (player_class==1)
+            switch(player_class)
             {
-                WarriorSpecial currwar = new WarriorSpecial(this);
-                CurrentSpecial += currwar.UpdateSpecial;
+                case 1:
+                    WarriorSpecial currwar = new WarriorSpecial(this);
+                    CurrentSpecial += currwar.UpdateSpecial;
+                    break;
+                case 2:
+                    ElementalistSpecial currelem = new ElementalistSpecial(this);
+                    CurrentSpecial += currelem.UpdateSpecial;
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+
             }
         }
 
@@ -377,7 +391,7 @@ namespace game_server
         {
             string x;
             conditions.Remove(cond_id, out x);
-            conditions.TryAdd(cond_id, $":{cond_type}-{condition_number}-{timer.ToString("f1")},");
+            conditions.TryAdd(cond_id, $":{cond_type}-{condition_number}-{timer.ToString("f1")},"); //.Replace(',', '.')
         }
 
         
@@ -657,50 +671,231 @@ namespace game_server
     {
         private float CurrentArmorStack;
         private int CurrentIterationStack;
+        
         private readonly float DefaultArmorSingleStack = 50f;
+        private readonly float DefaultTimeforStack = 5f;
+        private readonly float DefaultTimeforNextSpecial = 5f;
+
+        private DateTime TimeOfStackInitiated;
+        private DateTime TimeOfEndForSpecial;
         private bool isReadyToUse;
-        private string x;
+        
         private string id_condition = "";
         private Players CurrentPlayer;
-
+        
         public WarriorSpecial(Players _current_player)
         {
             CurrentPlayer = _current_player;
             isReadyToUse = true;
+            id_condition = functions.get_random_set_of_symb(4);
+            TimeOfEndForSpecial = DateTime.Now;
         }
 
         public void UpdateSpecial()
         {
+            if (CurrentIterationStack!=0)
+            {
+                float _tick = (float)DateTime.Now.Subtract(TimeOfStackInitiated).TotalSeconds;
+                if (_tick<DefaultTimeforStack)
+                {
+                    UpdateTimer(DefaultTimeforStack-_tick);
+                }
+                else
+                {
+                    EndTickAndRemove();
+                }
+                
+            }
+
+            if (DateTime.Now.Subtract(TimeOfEndForSpecial).TotalSeconds > DefaultTimeforNextSpecial)
+            {                
+                isReadyToUse = true;
+            }
+            else
+            {
+                isReadyToUse = false;
+            }
+
             if (!isReadyToUse || CurrentPlayer.conditions.Count==0) return;
 
+            bool isDamageTaken = false;
+            bool isDamageTakenCrit = false;
+
             var _temp_dat = from r in CurrentPlayer.conditions.Values select r;
-
             string _data = string.Join("", _temp_dat);
-
+            
             if (_data == null) return;
-
-            if (_data.Contains("dt") && CurrentIterationStack < 5)
+            
+            if (_data.Contains("dt"))
             {
-                CurrentIterationStack++;
-                CurrentArmorStack += DefaultArmorSingleStack;
-            } else if (_data.Contains("dt") && CurrentIterationStack >= 5)
-            {
-                CurrentIterationStack = 0;
-                CurrentArmorStack = 0;
-            } else if (!_data.Contains("dt"))
-            {
-                Console.WriteLine(CurrentPlayer.armor + " - armoraaaaaaaaaaa");
-                return;
+                isDamageTaken = true;
+                string[] to_search = _data.Split(',');
+                for (int i = 0; i < to_search.Length; i++)
+                {
+                    if (to_search[i].Contains("dt") && to_search[i].Contains("-c-"))
+                    {
+                        isDamageTakenCrit = true;                        
+                        break;
+                    }
+                }
             }
 
             
-            CurrentPlayer.armor += CurrentArmorStack;
 
-            CurrentPlayer.conditions.TryRemove(id_condition, out x);
+            if (isDamageTaken && CurrentIterationStack < 5)
+            {
+                //break before next stack is available
+                if ((float)DateTime.Now.Subtract(TimeOfStackInitiated).TotalSeconds<1f)
+                {
+                    return;
+                }
+
+                if (isDamageTakenCrit)
+                {
+                    CurrentPlayer.armor += DefaultArmorSingleStack*2;
+                    CurrentArmorStack += DefaultArmorSingleStack*2;
+                } else
+                {
+                    CurrentPlayer.armor += DefaultArmorSingleStack;
+                    CurrentArmorStack += DefaultArmorSingleStack;
+                }
+
+                
+                CurrentIterationStack++;
+                
+                
+                UpdateConditions();
+            } 
+            else if (isDamageTaken && CurrentIterationStack >= 5)
+            {
+                //EndTickAndRemove();
+            } 
+            else if (!isDamageTaken)
+            {                
+                return;
+            }          
+            
+        }
+
+        
+        private void UpdateConditions()
+        {
+            TimeOfStackInitiated = DateTime.Now;            
+            CurrentPlayer.set_condition("co", 1010, id_condition, DefaultTimeforStack);            
+        }
+
+        private void EndTickAndRemove()
+        {
+            CurrentPlayer.armor -= CurrentArmorStack;
+            CurrentIterationStack = 0;
+            CurrentArmorStack = 0;
+            TimeOfEndForSpecial = DateTime.Now;
+            spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
             id_condition = functions.get_random_set_of_symb(4);
-            CurrentPlayer.conditions.TryAdd(id_condition, $":co-1515-5,");
+        }
 
-            Console.WriteLine(CurrentPlayer.armor + " - armoraaaaaaaaaaa");
+        private void UpdateTimer(float _time)
+        {
+            CurrentPlayer.set_condition("co", 1010, id_condition, _time);
+        }
+    }
+
+    public class ElementalistSpecial
+    {
+        
+        private DateTime TimeOfStartForSpecial;
+        private DateTime TimeOfEndForSpecial;
+        
+        private bool isReadyToUse;
+        private bool isSpecialActive = false;
+        
+        private float TimeTillNextSpecial;
+        private float DefaultContinuityOfSpecial = 2f;
+        
+        private readonly int TimeForSpecialFrom = 5;
+        private readonly int TimeForSpecialTo = 10;
+                
+        private string id_condition = "";
+        
+        private Players CurrentPlayer;
+
+        private enum Powers
+        {
+            PowerOfFire = 1011,
+            powerOfIce = 1012,
+            PowerOfAir = 1013,
+            PowerOfEarth = 1014
+        }
+
+        private Powers CurrentActivePower;
+
+        public ElementalistSpecial(Players _current_player)
+        {
+            CurrentPlayer = _current_player;
+            isReadyToUse = true;
+            id_condition = functions.get_random_set_of_symb(4);
+            TimeOfEndForSpecial = DateTime.Now;
+            TimeTillNextSpecial = 10f;
+        }
+
+        public void UpdateSpecial()
+        {
+            if (!isReadyToUse) return;
+            float _tick = (float)DateTime.Now.Subtract(TimeOfStartForSpecial).TotalSeconds;
+
+            if (isSpecialActive && _tick > DefaultContinuityOfSpecial)
+            {                
+                EndTickAndRemove();
+            } 
+            else if (isSpecialActive && !(_tick > DefaultContinuityOfSpecial))
+            {
+                UpdateTimer(DefaultContinuityOfSpecial - _tick);
+            }
+
+            if (!isSpecialActive && (float)DateTime.Now.Subtract(TimeOfEndForSpecial).TotalSeconds>TimeTillNextSpecial)
+            {
+                TimeOfStartForSpecial = DateTime.Now;
+                isSpecialActive = true;
+                CurrentActivePower = GetSpecial();
+                Console.WriteLine((int)CurrentActivePower);
+                UpdateConditions();
+            }
+
+
+        }
+
+        private Powers GetSpecial()
+        {
+            Random rnd = new Random();
+            return (Powers)rnd.Next(1011, 1015);            
+        }
+
+        private float GetRandom()
+        {
+            Random rnd = new Random();
+            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo);
+        }
+
+        private void UpdateConditions()
+        {
+            
+            CurrentPlayer.set_condition("co", (int)CurrentActivePower, id_condition, DefaultContinuityOfSpecial);
+            //Console.WriteLine(CurrentPlayer.armor + " - armoraaaaaaaaaaa");
+        }
+
+        private void EndTickAndRemove()
+        {
+            isSpecialActive = false;
+            TimeOfEndForSpecial = DateTime.Now;
+            TimeTillNextSpecial = GetRandom();
+
+            spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
+            id_condition = functions.get_random_set_of_symb(4);
+        }
+
+        private void UpdateTimer(float _time)
+        {
+            CurrentPlayer.set_condition("co", (int)CurrentActivePower, id_condition, _time);
         }
     }
 }

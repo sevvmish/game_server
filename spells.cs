@@ -1231,7 +1231,7 @@ namespace game_server
                 if (bulk[0] == ":co")
                 {
                     p.conditions.TryRemove(cond_id, out x);
-                    p.conditions.TryAdd(cond_id, $"{bulk[0]}-{bulk[1]}-9999,");
+                    p.conditions.TryAdd(cond_id, $"{bulk[0]}-{bulk[1]}-0,");
                 }
             }
 
@@ -1489,20 +1489,22 @@ namespace game_server
                 case 9:
 
                     break;
+                
+                //elementalist
                 case 51:
-
+                    new SpellCharacteristics(0, 1, 0, 1); //fire bolt
                     break;
                 case 52:
-
+                    new SpellCharacteristics(0, 1, 0, 1); //meteor
                     break;
                 case 53:
-
+                    new SpellCharacteristics(0, 1, 1, 1); //pillar of fire
                     break;
                 case 54:
-
+                    new SpellCharacteristics(0, 1, 1, 1); //fire steps
                     break;
                 case 55:
-
+                    new SpellCharacteristics(0, 1, 0, 2); //frost nova
                     break;
                 case 56:
 

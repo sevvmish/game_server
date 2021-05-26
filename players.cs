@@ -222,6 +222,8 @@ namespace game_server
                     CurrentSpecial += currelem.UpdateSpecial;
                     break;
                 case 3:
+                    BarbarianSpecial currbarbar = new BarbarianSpecial(this);
+                    CurrentSpecial += currbarbar.UpdateSpecial;
                     break;
                 case 4:
                     break;
@@ -391,10 +393,17 @@ namespace game_server
         {
             string x;
             conditions.Remove(cond_id, out x);
-            conditions.TryAdd(cond_id, $":{cond_type}-{condition_number}-{timer.ToString("f1")},"); //.Replace(',', '.')
+            conditions.TryAdd(cond_id, $":{cond_type}-{condition_number}-{timer.ToString("f1").Replace(',', '.')},"); //.Replace(',', '.')
         }
 
-        
+        public void set_condition(string cond_type, int condition_number, string cond_id, float timer, int stack)
+        {
+            string x;
+            conditions.Remove(cond_id, out x);
+            conditions.TryAdd(cond_id, $":{cond_type}-{condition_number}-{timer.ToString("f1").Replace(',', '.')}-{stack},"); //.Replace(',', '.')
+        }
+
+
         //find in certain cond type any of spells in array
         public bool is_any_cond_inarray_of_spellnumber(string type_of_cond, string[] array_to_check)
         {
@@ -578,20 +587,7 @@ namespace game_server
             return false;
         }
 
-        /*
-        public bool is_hiddencond_here_by_type_and_spell(string searched_cond)
-        {
-            
-            foreach (string items in hidden_conds.Values.ToList())
-            {
-                if (items.Contains(searched_cond))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        */
+       
 
         //cheking for 1002 and 1003 and 1005 plus MOVEMENET and SPELLS
         public bool is_casting_failed()
@@ -609,12 +605,6 @@ namespace game_server
             }
 
 
-            /*
-            if (is_spell_button_touched)
-            {
-                
-                return true;
-            }*/
 
             string[] array_of_spells = new string[] { "1002", "1003", "1005", "1006" };
             bool result = is_any_cond_inarray_of_spellnumber("co", array_of_spells);
@@ -628,24 +618,7 @@ namespace game_server
         }
 
 
-        /*
-        //find any HIDDEN COND like type by naming condition only
-        public bool is_hiddencond_here_by_type_only(string searched_cond)
-        {
-            
-            foreach (string vall in conditions.Values.ToList())
-            {
-                if (vall.Contains(searched_cond))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-        */
-
-
+     
         public void minus_energy(float amount)
         {            
             energy = energy - amount;
@@ -670,11 +643,14 @@ namespace game_server
     public class WarriorSpecial
     {
         private float CurrentArmorStack;
+        private float DefaultTimeforNextSpecial = 5f;
         private int CurrentIterationStack;
         
         private readonly float DefaultArmorSingleStack = 50f;
-        private readonly float DefaultTimeforStack = 5f;
-        private readonly float DefaultTimeforNextSpecial = 5f;
+        private readonly float DefaultTimeforStack = 5f;        
+        private readonly int TimeForSpecialFrom = 5;
+        private readonly int TimeForSpecialTo = 10;
+
 
         private DateTime TimeOfStackInitiated;
         private DateTime TimeOfEndForSpecial;
@@ -692,7 +668,7 @@ namespace game_server
         }
 
         public void UpdateSpecial()
-        {
+        {            
             if (CurrentIterationStack!=0)
             {
                 float _tick = (float)DateTime.Now.Subtract(TimeOfStackInitiated).TotalSeconds;
@@ -725,22 +701,35 @@ namespace game_server
             string _data = string.Join("", _temp_dat);
             
             if (_data == null) return;
-            
+
             if (_data.Contains("dt"))
             {
-                isDamageTaken = true;
                 string[] to_search = _data.Split(',');
                 for (int i = 0; i < to_search.Length; i++)
                 {
-                    if (to_search[i].Contains("dt") && to_search[i].Contains("-c-"))
+                    if (to_search[i].Contains("dt"))
                     {
-                        isDamageTakenCrit = true;                        
-                        break;
+                        int _where_starts = to_search[i].IndexOf("dt") + 3;
+                        int _where_ends = to_search[i].IndexOf("-", _where_starts + 1);
+                        float result = float.Parse(to_search[i].Substring(_where_starts, _where_ends - _where_starts));
+
+                        if (result > 0)
+                        {
+                            isDamageTaken = true;
+
+                            if (to_search[i].Contains("-c-"))
+                            {
+                                isDamageTakenCrit = true;
+
+                                break;
+                            }
+                        }
                     }
                 }
+
             }
 
-            
+
 
             if (isDamageTaken && CurrentIterationStack < 5)
             {
@@ -777,15 +766,21 @@ namespace game_server
             
         }
 
-        
+        private float GetRandom()
+        {
+            Random rnd = new Random();
+            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo);
+        }
+
         private void UpdateConditions()
         {
             TimeOfStackInitiated = DateTime.Now;            
-            CurrentPlayer.set_condition("co", 1010, id_condition, DefaultTimeforStack);            
+            CurrentPlayer.set_condition("co", 1010, id_condition, DefaultTimeforStack, CurrentIterationStack);            
         }
 
         private void EndTickAndRemove()
         {
+            DefaultTimeforNextSpecial = GetRandom();
             CurrentPlayer.armor -= CurrentArmorStack;
             CurrentIterationStack = 0;
             CurrentArmorStack = 0;
@@ -796,7 +791,7 @@ namespace game_server
 
         private void UpdateTimer(float _time)
         {
-            CurrentPlayer.set_condition("co", 1010, id_condition, _time);
+            CurrentPlayer.set_condition("co", 1010, id_condition, _time, CurrentIterationStack);
         }
     }
 
@@ -857,7 +852,7 @@ namespace game_server
                 TimeOfStartForSpecial = DateTime.Now;
                 isSpecialActive = true;
                 CurrentActivePower = GetSpecial();
-                Console.WriteLine((int)CurrentActivePower);
+                
                 UpdateConditions();
             }
 
@@ -896,6 +891,316 @@ namespace game_server
         private void UpdateTimer(float _time)
         {
             CurrentPlayer.set_condition("co", (int)CurrentActivePower, id_condition, _time);
+        }
+    }
+
+    public class BarbarianSpecial
+    {
+        private float CurrentAttackPowerStack;
+        private float DefaultTimeforNextSpecial = 5f;
+        private int CurrentIterationStack;
+        private readonly int DefaultSpellNumber = 1015;
+
+        private readonly float DefaultAttackPowerSingleStack = 20f;
+        private readonly float DefaultTimeforStack = 5f;
+        private readonly int TimeForSpecialFrom = 5;
+        private readonly int TimeForSpecialTo = 10;
+
+
+        private DateTime TimeOfStackInitiated;
+        private DateTime TimeOfEndForSpecial;
+        private bool isReadyToUse;
+
+        private string id_condition = "";
+        private Players CurrentPlayer;
+
+        public BarbarianSpecial(Players _current_player)
+        {
+            CurrentPlayer = _current_player;
+            isReadyToUse = true;
+            id_condition = functions.get_random_set_of_symb(4);
+            TimeOfEndForSpecial = DateTime.Now;
+        }
+
+        public void UpdateSpecial()
+        {            
+            if (CurrentIterationStack != 0)
+            {
+                float _tick = (float)DateTime.Now.Subtract(TimeOfStackInitiated).TotalSeconds;
+                if (_tick < DefaultTimeforStack)
+                {
+                    UpdateTimer(DefaultTimeforStack - _tick);
+                }
+                else
+                {
+                    EndTickAndRemove();
+                }
+
+            }
+
+            if (DateTime.Now.Subtract(TimeOfEndForSpecial).TotalSeconds > DefaultTimeforNextSpecial)
+            {
+                isReadyToUse = true;
+            }
+            else
+            {
+                isReadyToUse = false;
+            }
+
+            if (!isReadyToUse || CurrentPlayer.conditions.Count == 0) return;
+
+            bool isDamageTaken = false;
+            bool isDamageTakenCrit = false;
+
+            var _temp_dat = from r in CurrentPlayer.conditions.Values select r;
+            string _data = string.Join("", _temp_dat);
+
+            if (_data == null) return;
+
+            if (_data.Contains("dg"))
+            {                
+                string[] to_search = _data.Split(',');                
+                for (int i = 0; i < to_search.Length; i++)
+                {
+                    if (to_search[i].Contains("dg"))
+                    {
+                        int _where_starts = to_search[i].IndexOf("dg") + 3;
+                        int _where_ends = to_search[i].IndexOf("-", _where_starts + 1);
+                        float result = float.Parse(to_search[i].Substring(_where_starts, _where_ends - _where_starts));
+                        
+                        if (result>0)
+                        {
+                            isDamageTaken = true;
+                            
+                            if (to_search[i].Contains("-c-"))
+                            {
+                                isDamageTakenCrit = true;
+                                
+                                break;
+                            }
+                        }
+                    }
+                }
+
+            }
+
+
+
+            if (isDamageTaken && CurrentIterationStack < 5)
+            {
+                //break before next stack is available
+                if ((float)DateTime.Now.Subtract(TimeOfStackInitiated).TotalSeconds < 1f)
+                {
+                    return;
+                }
+
+                if (isDamageTakenCrit)
+                {
+                    CurrentPlayer.hit_power += DefaultAttackPowerSingleStack * 2;
+                    CurrentAttackPowerStack += DefaultAttackPowerSingleStack * 2;
+                }
+                else
+                {
+                    CurrentPlayer.hit_power += DefaultAttackPowerSingleStack;
+                    CurrentAttackPowerStack += DefaultAttackPowerSingleStack;
+                }
+
+                CurrentIterationStack++;
+
+                UpdateConditions();
+            }
+            else if (isDamageTaken && CurrentIterationStack >= 5)
+            {
+                //EndTickAndRemove();
+            }
+            else if (!isDamageTaken)
+            {
+                return;
+            }
+
+        }
+
+        private float GetRandom()
+        {
+            Random rnd = new Random();
+            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo);
+        }
+
+        private void UpdateConditions()
+        {
+            TimeOfStackInitiated = DateTime.Now;
+            CurrentPlayer.set_condition("co", DefaultSpellNumber, id_condition, CurrentIterationStack);
+        }
+
+        private void EndTickAndRemove()
+        {
+            DefaultTimeforNextSpecial = GetRandom();
+            CurrentPlayer.hit_power -= CurrentAttackPowerStack;
+            CurrentIterationStack = 0;
+            CurrentAttackPowerStack = 0;
+            TimeOfEndForSpecial = DateTime.Now;
+            spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
+            id_condition = functions.get_random_set_of_symb(4);
+        }
+
+        private void UpdateTimer(float _time)
+        {
+            CurrentPlayer.set_condition("co", DefaultSpellNumber, id_condition, _time, CurrentIterationStack);
+        }
+    }
+
+    public class RogueSpecial
+    {
+        private float CurrentAttackPowerStack;
+        private float DefaultTimeforNextSpecial = 5f;
+        private int CurrentIterationStack;
+        private readonly int DefaultSpellNumber = 1015;
+
+        private readonly float DefaultAttackPowerSingleStack = 20f;
+        private readonly float DefaultTimeforStack = 5f;
+        private readonly int TimeForSpecialFrom = 5;
+        private readonly int TimeForSpecialTo = 10;
+
+
+        private DateTime TimeOfStackInitiated;
+        private DateTime TimeOfEndForSpecial;
+        private bool isReadyToUse;
+
+        private string id_condition = "";
+        private Players CurrentPlayer;
+
+        public RogueSpecial(Players _current_player)
+        {
+            CurrentPlayer = _current_player;
+            isReadyToUse = true;
+            id_condition = functions.get_random_set_of_symb(4);
+            TimeOfEndForSpecial = DateTime.Now;
+        }
+
+        public void UpdateSpecial()
+        {
+            if (CurrentIterationStack != 0)
+            {
+                float _tick = (float)DateTime.Now.Subtract(TimeOfStackInitiated).TotalSeconds;
+                if (_tick < DefaultTimeforStack)
+                {
+                    UpdateTimer(DefaultTimeforStack - _tick);
+                }
+                else
+                {
+                    EndTickAndRemove();
+                }
+
+            }
+
+            if (DateTime.Now.Subtract(TimeOfEndForSpecial).TotalSeconds > DefaultTimeforNextSpecial)
+            {
+                isReadyToUse = true;
+            }
+            else
+            {
+                isReadyToUse = false;
+            }
+
+            if (!isReadyToUse || CurrentPlayer.conditions.Count == 0) return;
+
+            bool isDamageTaken = false;
+            bool isDamageTakenCrit = false;
+
+            var _temp_dat = from r in CurrentPlayer.conditions.Values select r;
+            string _data = string.Join("", _temp_dat);
+
+            if (_data == null) return;
+
+            if (_data.Contains("dg"))
+            {
+                string[] to_search = _data.Split(',');
+                for (int i = 0; i < to_search.Length; i++)
+                {
+                    if (to_search[i].Contains("dg"))
+                    {
+                        int _where_starts = to_search[i].IndexOf("dg") + 3;
+                        int _where_ends = to_search[i].IndexOf("-", _where_starts + 1);
+                        float result = float.Parse(to_search[i].Substring(_where_starts, _where_ends - _where_starts));
+
+                        if (result > 0)
+                        {
+                            isDamageTaken = true;
+
+                            if (to_search[i].Contains("-c-"))
+                            {
+                                isDamageTakenCrit = true;
+
+                                break;
+                            }
+                        }
+                    }
+                }
+
+            }
+
+
+
+            if (isDamageTaken && CurrentIterationStack < 5)
+            {
+                //break before next stack is available
+                if ((float)DateTime.Now.Subtract(TimeOfStackInitiated).TotalSeconds < 1f)
+                {
+                    return;
+                }
+
+                if (isDamageTakenCrit)
+                {
+                    CurrentPlayer.hit_power += DefaultAttackPowerSingleStack * 2;
+                    CurrentAttackPowerStack += DefaultAttackPowerSingleStack * 2;
+                }
+                else
+                {
+                    CurrentPlayer.hit_power += DefaultAttackPowerSingleStack;
+                    CurrentAttackPowerStack += DefaultAttackPowerSingleStack;
+                }
+
+                CurrentIterationStack++;
+
+                UpdateConditions();
+            }
+            else if (isDamageTaken && CurrentIterationStack >= 5)
+            {
+                //EndTickAndRemove();
+            }
+            else if (!isDamageTaken)
+            {
+                return;
+            }
+
+        }
+
+        private float GetRandom()
+        {
+            Random rnd = new Random();
+            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo);
+        }
+
+        private void UpdateConditions()
+        {
+            TimeOfStackInitiated = DateTime.Now;
+            CurrentPlayer.set_condition("co", DefaultSpellNumber, id_condition, DefaultTimeforStack);
+        }
+
+        private void EndTickAndRemove()
+        {
+            DefaultTimeforNextSpecial = GetRandom();
+            CurrentPlayer.hit_power -= CurrentAttackPowerStack;
+            CurrentIterationStack = 0;
+            CurrentAttackPowerStack = 0;
+            TimeOfEndForSpecial = DateTime.Now;
+            spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
+            id_condition = functions.get_random_set_of_symb(4);
+        }
+
+        private void UpdateTimer(float _time)
+        {
+            CurrentPlayer.set_condition("co", DefaultSpellNumber, id_condition, _time);
         }
     }
 }

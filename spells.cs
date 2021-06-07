@@ -1401,10 +1401,9 @@ namespace game_server
 
             //==========================
             string id = functions.get_random_set_of_symb(4);
-            //$me->animation_id = $anim_clip;
-            //p.conditions = p.conditions + id + ":dg-" + end_damage.ToString("f0") + "-" + critt + "-" + spell_number + ",";
+           
             p.conditions.TryAdd(id, $":dg-{end_damage.ToString("f0")}-{critt}-{spell_number},");
-            //enemy.conditions = enemy.conditions + id + ":dt-" + end_damage.ToString("f0") + "-" + critt + "-" + spell_number + ",";
+           
             enemy.conditions.TryAdd(id, $":dt-{end_damage.ToString("f0")}-{critt}-{spell_number},");
 
             remove_condition_in_player(table_id, me, id);
@@ -1419,9 +1418,9 @@ namespace game_server
                 string id_2 = functions.get_random_set_of_symb(4);
                 enemy.animation_id = 6; //6 - ID for DODGE
                 reset_animation_for_one(table_id, enemy1);
-                //enemy.conditions = enemy.conditions + id_2+ ":me-d,";
+               
                 enemy.conditions.TryAdd(id_2, ":me-d,");
-                //p.conditions = p.conditions + id_2 + ":him-d,";
+              
                 p.conditions.TryAdd(id_2, ":him-d,");
                 remove_condition_in_player(table_id, me, id_2);
                 remove_condition_in_player(table_id, enemy1, id_2);
@@ -1430,10 +1429,10 @@ namespace game_server
             {
                 string id_3 = functions.get_random_set_of_symb(4);
                 set_animation_for_one(table_id, enemy1, 7, 2, 0.2f);
-                //enemy.conditions = enemy.conditions + id_3 + ":me-b,";
+              
                 enemy.conditions.TryAdd(id_3, ":me-b,");
                 remove_condition_in_player(table_id, enemy1, id_3);
-                //p.conditions = p.conditions + id_3 + ":him-b,";
+               
                 p.conditions.TryAdd(id_3, ":him-b,");
                 remove_condition_in_player(table_id, me, id_3);
             }

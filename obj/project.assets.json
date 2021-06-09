@@ -150,19 +150,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\darkysha\\.nuget\\packages\\": {}
+    "C:\\Users\\krivtsovk\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\NONandroid\\game_server\\game_server.csproj",
+      "projectUniqueName": "C:\\android\\non-android projects\\game_server\\game_server.csproj",
       "projectName": "game_server",
-      "projectPath": "D:\\NONandroid\\game_server\\game_server.csproj",
-      "packagesPath": "C:\\Users\\darkysha\\.nuget\\packages\\",
-      "outputPath": "D:\\NONandroid\\game_server\\obj\\",
+      "projectPath": "C:\\android\\non-android projects\\game_server\\game_server.csproj",
+      "packagesPath": "C:\\Users\\krivtsovk\\.nuget\\packages\\",
+      "outputPath": "C:\\android\\non-android projects\\game_server\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\darkysha\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\krivtsovk\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -216,7 +216,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.300\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.301\\RuntimeIdentifierGraph.json"
       }
     }
   }

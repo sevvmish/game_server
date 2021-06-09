@@ -226,6 +226,8 @@ namespace game_server
                     CurrentSpecial += currbarbar.UpdateSpecial;
                     break;
                 case 4:
+                    RogueSpecial currrog = new RogueSpecial(this);
+                    CurrentSpecial += currrog.UpdateSpecial;
                     break;
                 case 5:
                     break;
@@ -639,6 +641,57 @@ namespace game_server
 
 
     }
+
+    public class RogueChecksWhenInvisible
+    {
+        private string id_condition = "";
+        private Players CurrentPlayer;
+        private bool isReady;
+
+        private readonly float CoolDownForChecks = 5f;
+
+        public RogueChecksWhenInvisible(Players _current_player)
+        {
+            CurrentPlayer = _current_player;            
+            id_condition = functions.get_random_set_of_symb(4);
+            isReady = true;
+        }
+
+        public void UpdateSpecial()
+        {
+            if (isReady)
+            {
+
+
+                if (CurrentPlayer.conditions.Count == 0) return;
+
+                var _temp_dat = from r in CurrentPlayer.conditions.Values select r;
+                string _data = string.Join("", _temp_dat);
+
+                if (_data == null) return;
+
+                if (_data.Contains("co-153"))
+                {
+                    if (functions.assess_chance(10))
+                    {
+                        MakeChecks();
+                    }
+                }
+
+
+            }
+
+        }
+
+        private void MakeChecks()
+        {
+            CurrentPlayer.conditions.TryAdd(id_condition, $":ad=153={CurrentPlayer.position_x.ToString("f1").Replace(',', '.')}={CurrentPlayer.position_z.ToString("f1").Replace(',', '.')}={CurrentPlayer.rotation_y.ToString("f1").Replace(',', '.')},");
+        }
+
+
+    }
+
+
 
     public class WarriorSpecial
     {

@@ -19,7 +19,7 @@ namespace game_server
             functions.turn_to_enemy(me, table_id, 0.1f, default_distance, -15, default_distance);
 
             //casting part
-            string check_cond_id = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
             int spell_id = 51;
 
             float cast_time = 2 * (100 - player.cast_speed) / 100;
@@ -54,7 +54,7 @@ namespace game_server
             player.minus_energy(energy_cost);
             //end casting
 
-            string check_cond_id2 = functions.get_random_set_of_symb(4);
+            string check_cond_id2 = functions.get_symb_for_IDs();
             player.animation_id = 5;
             spells.reset_animation_for_one(table_id, me);
             float[] magic_data = new float[] { player.position_x, player.position_y, player.position_z, player.rotation_x, player.rotation_y, player.rotation_z };
@@ -114,7 +114,7 @@ namespace game_server
                     float point_z = player.position_z;
                     string x;
                     player.conditions.TryRemove(check_cond_id, out x);
-                    check_cond_id = functions.get_random_set_of_symb(4);
+                    check_cond_id = functions.get_symb_for_IDs();
                     player.conditions.TryAdd(check_cond_id, $":cs=54={point_x.ToString("f1").Replace(',', '.')}={point_z.ToString("f1").Replace(',', '.')},");
                     firestep(table_id, me, base_damage, point_x, point_z, 0.75f);
                     old_x = point_x;
@@ -182,8 +182,8 @@ namespace game_server
             float distance = 4.5f;
 
             functions.turn_to_enemy(mee, table_id, 0.1f, distance, -15, distance);
-            string check_cond_id_for_casting = functions.get_random_set_of_symb(4);
-            string check_cond_id_for_spellcha = functions.get_random_set_of_symb(4);
+            string check_cond_id_for_casting = functions.get_symb_for_IDs();
+            string check_cond_id_for_spellcha = functions.get_symb_for_IDs();
 
             Players player = functions.GetPlayerData(table_id, mee);
             player.animation_id = 13;
@@ -264,7 +264,7 @@ namespace game_server
             Players player = functions.GetPlayerData(table_id, mee);
             float point_x = player.position_x;
             float point_z = player.position_z;
-            string cond_id = functions.get_random_set_of_symb(4);
+            string cond_id = functions.get_symb_for_IDs();
 
             for (float i = 0; i < 0.1f; i += 0.05f)
             {
@@ -298,8 +298,8 @@ namespace game_server
             }
 
             Players player = functions.GetPlayerData(table_id, enemy);
-            string check_cond_id = functions.get_random_set_of_symb(4);
-            string conds_id = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
+            string conds_id = functions.get_symb_for_IDs();
             string x;
             for (float i = time; i > 0; i -= 0.5f)
             {

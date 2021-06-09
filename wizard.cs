@@ -15,7 +15,7 @@ namespace game_server
             float casting_time = 2;
             float distance = 15;
             float damage = 10;
-            string check_cond_id = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
             functions.turn_to_enemy(mee, table_id, 0.1f, distance, -15, distance);
             int spell_id = 205;
             Players player = functions.GetPlayerData(table_id, mee);
@@ -55,7 +55,7 @@ namespace game_server
             {
                 return;
             }
-            string check_cond_id2 = functions.get_random_set_of_symb(4);
+            string check_cond_id2 = functions.get_symb_for_IDs();
 
             /*
             for (float i = how_long; i > 0; i-=0.2f)
@@ -74,7 +74,7 @@ namespace game_server
         public static async void auto_heal(string table_id, string mee, float how_long, float heal_amount, float energy_cost)
         {
             float casting_time = 1;
-            string check_cond_id = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
             int spell_id = 204;
             Players player = functions.GetPlayerData(table_id, mee);
             float cast_time = casting_time * (100 - player.cast_speed) / 100;
@@ -107,7 +107,7 @@ namespace game_server
             spells.button_cooldowns_cooldown_only(table_id, mee, 204, 4f);
 
             player.minus_energy(energy_cost);
-            string check_cond_id2 = functions.get_random_set_of_symb(4);
+            string check_cond_id2 = functions.get_symb_for_IDs();
             List<string> ids = new List<string>();
             Dictionary<string, string> conds = new Dictionary<string, string>();
 
@@ -137,7 +137,7 @@ namespace game_server
         //spell 203
         public static async void answer_attack_shield(string table_id, string mee, float how_long_shield, float how_long_knock)
         {
-            string check_cond_id2 = functions.get_random_set_of_symb(4);
+            string check_cond_id2 = functions.get_symb_for_IDs();
             Players player = functions.GetPlayerData(table_id, mee);
             player.is_immune_to_magic = true;
             player.is_immune_to_melee = true;
@@ -190,8 +190,8 @@ namespace game_server
             float distance = 3;
             float init_force = 20;
             float init_speed = 1;
-            string check_cond_id = functions.get_random_set_of_symb(4);
-            string check_cond_id2 = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
+            string check_cond_id2 = functions.get_symb_for_IDs();
             Players player = functions.GetPlayerData(table_id, mee);
             float new_x = player.position_x;
             float new_z = player.position_z;
@@ -260,7 +260,7 @@ namespace game_server
             string xxx;
 
             functions.turn_to_enemy(mee, table_id, 0.1f, dist, -15, dist);
-            string check_cond_id = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
             int spell_id = 201;
             float cast_time = casting_time * (100 - player.cast_speed) / 100;
 
@@ -292,7 +292,7 @@ namespace game_server
 
             float dam = damage / (10f * how_long);
             float power = 1 / (10f * how_long);
-            string check_cond_id1 = functions.get_random_set_of_symb(4);
+            string check_cond_id1 = functions.get_symb_for_IDs();
 
             for (float u = how_long; u > 0; u-=0.1f)
             {

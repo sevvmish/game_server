@@ -41,7 +41,7 @@ namespace game_server
             List<string> conds_ids = new List<string>();
             for (int ii = 0; ii < all_needed_players.Count; ii++)
             {
-                conds_ids.Add(functions.get_random_set_of_symb(4));
+                conds_ids.Add(functions.get_symb_for_IDs());
             }
 
             for (float i = 0; i < time_ticks; i++)
@@ -78,7 +78,7 @@ namespace game_server
             functions.turn_face_to_face(me, all_players, table_id);
 
             //await Task.Delay(100);
-            string id_condition = functions.get_random_set_of_symb(4);
+            string id_condition = functions.get_symb_for_IDs();
             Players enemy = functions.GetPlayerData(table_id, all_players);
             enemy.conditions.TryAdd(id_condition, $":co-{spell_number}-{time_ticks},");
             string x;
@@ -118,7 +118,7 @@ namespace game_server
             pl.speed *= 0.3f;
             
 
-            string check_cond_id = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
             for (float i = shield_on_time; i > 0; i--)
             {
                 pl.set_condition("co", 5, check_cond_id, i);
@@ -138,7 +138,7 @@ namespace game_server
             Players player = functions.GetPlayerData(table_id, me);
             //player.set_hiddenconds("sip", "1111");
             //player.is_spell_in_process = true;
-            string check_cond_id = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
 
             player.start_spell_in_process();
 
@@ -181,7 +181,7 @@ namespace game_server
                 List<string> conds_ids = new List<string>();
                 for (int ii = 0; ii < all_needed_players.Count; ii++)
                 {
-                    conds_ids.Add(functions.get_random_set_of_symb(4));
+                    conds_ids.Add(functions.get_symb_for_IDs());
                     if (ii == 0)
                     {
                         functions.turn_face_to_face(me, all_needed_players[ii].player_id, table_id);
@@ -218,7 +218,7 @@ namespace game_server
         public static async void series_of_hits(string table_id, string me, float interval)
         {
             Players player = functions.GetPlayerData(table_id, me);
-            string id = functions.get_random_set_of_symb(4);
+            string id = functions.get_symb_for_IDs();
             player.set_condition("co", 6, id, 0);
 
             player.speed *= 0.4f;
@@ -266,7 +266,7 @@ namespace game_server
             functions.turn_face_to_face(me, all_players, table_id);
 
             //await Task.Delay(100);
-            string id_condition = functions.get_random_set_of_symb(4);
+            string id_condition = functions.get_symb_for_IDs();
             Players enemy = functions.GetPlayerData(table_id, all_players);
             enemy.speed *= 0.4f;
             enemy.conditions.TryAdd(id_condition, $":co-{spell_number}-{time_ticks},");
@@ -305,7 +305,7 @@ namespace game_server
             float start_x = me.position_x;
             float start_z = me.position_z;
             me.is_reset_any_button = true;
-            string check_cond_id = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
 
             functions.turn_to_enemy(mee, table_id, 0.1f, distance, -15, distance);
 

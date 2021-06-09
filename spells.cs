@@ -282,7 +282,7 @@ namespace game_server
                 if (p.energy >= energy_cost) {
                     p.minus_energy(energy_cost);
                                             
-                    string check_cond_strike_id = functions.get_random_set_of_symb(4);
+                    string check_cond_strike_id = functions.get_symb_for_IDs();
                     p.conditions.TryAdd(check_cond_strike_id, $":cs=55={p.position_x.ToString("f1").Replace(',', '.')}={p.position_z.ToString("f1").Replace(',', '.')},");                    
                     remove_condition_in_player(table_id, player, check_cond_strike_id);
             
@@ -668,7 +668,7 @@ namespace game_server
             enemy.health_pool = (float.Parse(enemy_health[0]) + summ_heal).ToString("f0") + "=" + enemy_health[1];
             //==========================
 
-            string id = functions.get_random_set_of_symb(4);
+            string id = functions.get_symb_for_IDs();
             me.conditions.TryAdd(id, $":hg-{summ_heal.ToString("f0")}-{critt}-{spell_number},");
             enemy.conditions.TryAdd(id, $":ht-{summ_heal.ToString("f0")}-{critt}-{spell_number},");
             remove_condition_in_player(table_id, mee, id);
@@ -692,7 +692,7 @@ namespace game_server
 
             string[] enemy_healthenemy = enemy.health_pool.Split('=');
             enemy.health_pool = (float.Parse(enemy_healthenemy[0]) - end_damage).ToString("f1") + "=" + enemy_healthenemy[1];
-            string id = functions.get_random_set_of_symb(4);
+            string id = functions.get_symb_for_IDs();
             set_animation_for_one(table_id, enemyy, 4,2,0.3f);
             
             me.conditions.TryAdd(id, $":dg-{end_damage.ToString("f1").Replace(',', '.')}-s-{spell_number},");
@@ -714,7 +714,7 @@ namespace game_server
         //knocking down
         public static async void fall_down_get_app(string table_id, string pl, float tick_time_left)
         {
-            string id_knocked = functions.get_random_set_of_symb(4);
+            string id_knocked = functions.get_symb_for_IDs();
             reset_animation_for_one(table_id, pl);
             
             Players player = functions.GetPlayerData(table_id, pl);
@@ -827,7 +827,7 @@ namespace game_server
                 enemy.data_when_immune_magic = end_damage + "=" + spell_number;
                 end_damage = 0;
 
-                string id_rr = functions.get_random_set_of_symb(4);
+                string id_rr = functions.get_symb_for_IDs();
                 enemy.conditions.TryAdd(id_rr, ":me-i,");
                 remove_condition_in_player(table_id, enemyy, id_rr);
 
@@ -840,7 +840,7 @@ namespace game_server
             string[] enemy_health = enemy.health_pool.Split('=');
             enemy.health_pool = (float.Parse(enemy_health[0]) - end_damage).ToString("f0") + "=" + enemy_health[1];
 
-            string id = functions.get_random_set_of_symb(4);
+            string id = functions.get_symb_for_IDs();
             me.conditions.TryAdd(id, $":dg-{end_damage.ToString("f0").Replace(',','.')}-{critt}-{spell_number},");
             enemy.conditions.TryAdd(id, $":dt-{end_damage.ToString("f0").Replace(',', '.')}-{critt}-{spell_number},");
             remove_condition_in_player(table_id, mee, id);
@@ -848,7 +848,7 @@ namespace game_server
 
             if (is_resisted)
             {
-                string id_r = functions.get_random_set_of_symb(4);
+                string id_r = functions.get_symb_for_IDs();
                 enemy.conditions.TryAdd(id_r, ":me-r,");
                 remove_condition_in_player(table_id, enemyy, id_r);
                 me.conditions.TryAdd(id_r, ":him-r,");
@@ -858,7 +858,7 @@ namespace game_server
                 set_animation_for_one(table_id, enemyy, 4,2,0.1f);
             } else if (isblocked)
             {
-                string id_3 = functions.get_random_set_of_symb(4);
+                string id_3 = functions.get_symb_for_IDs();
                 if (enemy.animation_id<2)
                 {
                     enemy.animation_id = 7;
@@ -931,7 +931,7 @@ namespace game_server
             float old_speed = player.speed;
             player.speed = 1;
 
-            string id = functions.get_random_set_of_symb(4);
+            string id = functions.get_symb_for_IDs();
             player.conditions.TryAdd(id, ":co-997-0.3,");
             float[] delta = new float[] {45,15,-5,0,0 };
 
@@ -1105,7 +1105,7 @@ namespace game_server
                 p.spell6 = 0;
             }
 
-            string res = $"|1~2~{button_place}~0~{cool_down}~{functions.get_random_set_of_symb(5)}";
+            string res = $"|1~2~{button_place}~0~{cool_down}~{functions.get_symb_for_IDs()}";
             p.AdditionalPacketData = res;
             await Task.Delay(100);
             p.AdditionalPacketData = "";
@@ -1269,7 +1269,7 @@ namespace game_server
 
             if (functions.assess_chance(player1.magic_resistance))
             {
-                string id_r = functions.get_random_set_of_symb(4);
+                string id_r = functions.get_symb_for_IDs();
                 player1.conditions.TryAdd(id_r, ":me-r,");
                 remove_condition_in_player(table_id, enemy, id_r);
                 me.conditions.TryAdd(id_r, ":him-r,");
@@ -1290,8 +1290,8 @@ namespace game_server
             //for dodge
             if (functions.assess_chance(enemy.dodge))
             {
-                string id_r = functions.get_random_set_of_symb(4);
-        
+                string id_r = functions.get_symb_for_IDs();
+
                 enemy.animation_id = 6; //6 - ID for DODGE
                 reset_animation_for_one(table_id, enemyy);
                 enemy.conditions.TryAdd(id_r, ":me-d,");
@@ -1307,7 +1307,7 @@ namespace game_server
 
             if (current_angle_of_enemy <= default_angle && functions.assess_chance(enemy.shield_block))
             {
-                string id_r = functions.get_random_set_of_symb(4);
+                string id_r = functions.get_symb_for_IDs();
 
                 enemy.animation_id = 7; 
                 reset_animation_for_one(table_id, enemyy);
@@ -1386,7 +1386,7 @@ namespace game_server
                 enemy.data_when_immune_melee = end_damage + "=" + spell_number;
                 end_damage = 0;
 
-                string id_rr = functions.get_random_set_of_symb(4);
+                string id_rr = functions.get_symb_for_IDs();
                 enemy.conditions.TryAdd(id_rr, ":me-i,");
                 remove_condition_in_player(table_id, enemy1, id_rr);
 
@@ -1400,8 +1400,8 @@ namespace game_server
             enemy.health_pool = (float.Parse(enemy_health[0]) - end_damage).ToString("f0") + "=" + enemy_health[1];
 
             //==========================
-            string id = functions.get_random_set_of_symb(4);
-           
+            string id = functions.get_symb_for_IDs();
+
             p.conditions.TryAdd(id, $":dg-{end_damage.ToString("f0")}-{critt}-{spell_number},");
            
             enemy.conditions.TryAdd(id, $":dt-{end_damage.ToString("f0")}-{critt}-{spell_number},");
@@ -1415,7 +1415,7 @@ namespace game_server
             }
             if (is_dodged)
             {
-                string id_2 = functions.get_random_set_of_symb(4);
+                string id_2 = functions.get_symb_for_IDs();
                 enemy.animation_id = 6; //6 - ID for DODGE
                 reset_animation_for_one(table_id, enemy1);
                
@@ -1427,7 +1427,7 @@ namespace game_server
             }
             if (is_blocked)
             {
-                string id_3 = functions.get_random_set_of_symb(4);
+                string id_3 = functions.get_symb_for_IDs();
                 set_animation_for_one(table_id, enemy1, 7, 2, 0.2f);
               
                 enemy.conditions.TryAdd(id_3, ":me-b,");

@@ -13,7 +13,7 @@ namespace game_server
         public static async void step(string table_id, string pl, Players enemy)
         {
             Players player = functions.GetPlayerData(table_id, pl);
-            string check_cond_strike_id = functions.get_random_set_of_symb(4);
+            string check_cond_strike_id = functions.get_symb_for_IDs();
             player.conditions.TryAdd(check_cond_strike_id, $":cs=155={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
             float[] res = new float[] { enemy.position_x, 0, enemy.position_z, 0, enemy.rotation_y, 0 };
             functions.mover(ref res, 0, -6, 2);
@@ -22,7 +22,7 @@ namespace game_server
             spells.remove_condition_in_player(table_id, pl, check_cond_strike_id);
             await Task.Delay(100);
 
-            check_cond_strike_id = functions.get_random_set_of_symb(4);
+            check_cond_strike_id = functions.get_symb_for_IDs();
             player.conditions.TryAdd(check_cond_strike_id, $":cs=155={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
             spells.remove_condition_in_player(table_id, pl, check_cond_strike_id);
             enemy.speed *= 0.4f;
@@ -32,7 +32,7 @@ namespace game_server
             {
                 string x;
                 enemy.conditions.TryRemove(check_cond_strike_id, out x);
-                check_cond_strike_id = functions.get_random_set_of_symb(4);
+                check_cond_strike_id = functions.get_symb_for_IDs();
                 enemy.rotation_y = new_enemy_angle;
                 enemy.conditions.TryAdd(check_cond_strike_id, $":co-155-{i.ToString("f1").Replace(',', '.')},");
                 await Task.Delay(100);
@@ -49,8 +49,8 @@ namespace game_server
         public static async void butchery(string table_id, string mee, float attack_time)
         {
             functions.turn_to_enemy(mee, table_id, 0.1f, 0, 0, 3);
-            string check_cond_id = functions.get_random_set_of_symb(4);
-            string check_immob_id = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
+            string check_immob_id = functions.get_symb_for_IDs();
             Players player = functions.GetPlayerData(table_id, mee);
             player.is_spell_in_process = true;
 
@@ -87,7 +87,7 @@ namespace game_server
         public static void from_inviz_to_viz(string table_id, string player_name)
         {
             Players player = functions.GetPlayerData(table_id, player_name);
-            string check_cond_strike_id = functions.get_random_set_of_symb(4);
+            string check_cond_strike_id = functions.get_symb_for_IDs();
             //player.conditions.TryAdd(check_cond_strike_id, $":cs=157={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
             player.conditions.TryAdd(check_cond_strike_id, $":co-157-0,");
             spells.remove_condition_in_player(table_id, player_name, player.get_id_by_type_and_spell("co-153"));
@@ -97,15 +97,16 @@ namespace game_server
 
         //invizibility 153
         public static async void invizibility(string table_id, string me)
-        {
+        {   
             Players player = functions.GetPlayerData(table_id, me);
-            string check_cond_strike_id = functions.get_random_set_of_symb(4);
-            string check_cond = functions.get_random_set_of_symb(4);
+            string check_cond_strike_id = functions.get_symb_for_IDs();
+            string check_cond = functions.get_symb_for_IDs();
             player.conditions.TryAdd(check_cond_strike_id, $":cs=153={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
             player.conditions.TryAdd(check_cond, $":co-153-999,");
             await Task.Delay(20);
             spells.remove_condition_in_player(table_id, me, check_cond_strike_id);
             player.is_invisible = true;
+
         }
 
 
@@ -125,9 +126,9 @@ namespace game_server
         public static async void pistol_shot(string table_id, string me)
         {
             float shot_distance = 15f;
-            string check_cond_id = functions.get_random_set_of_symb(4);
-            string check_immob_id = functions.get_random_set_of_symb(4);
-            string check_cond_strike_id = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
+            string check_immob_id = functions.get_symb_for_IDs();
+            string check_cond_strike_id = functions.get_symb_for_IDs();
             Players player = functions.GetPlayerData(table_id, me);            
             player.start_spell_in_process();
             bool isShooted = false;

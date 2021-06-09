@@ -228,6 +228,10 @@ namespace game_server
                 case 4:
                     RogueSpecial currrog = new RogueSpecial(this);
                     CurrentSpecial += currrog.UpdateSpecial;
+
+                    RogueChecksWhenInvisible rogcheck = new RogueChecksWhenInvisible(this);
+                    CurrentSpecial += rogcheck.UpdateSpecial;
+
                     break;
                 case 5:
                     break;
@@ -647,47 +651,65 @@ namespace game_server
         private string id_condition = "";
         private Players CurrentPlayer;
         private bool isReady;
+        private DateTime TimeOfLastEffect;
 
-        private readonly float CoolDownForChecks = 5f;
+        private float CoolDownForChecks;
+
+        private readonly int TimeForSpecialFrom = 5;
+        private readonly int TimeForSpecialTo = 10;
 
         public RogueChecksWhenInvisible(Players _current_player)
         {
             CurrentPlayer = _current_player;            
-            id_condition = functions.get_random_set_of_symb(4);
+            id_condition = functions.get_symb_for_IDs();
             isReady = true;
+            CoolDownForChecks = GetRandom();
         }
 
         public void UpdateSpecial()
         {
-            if (isReady)
+            bool isOK = false;
+            foreach (string item in CurrentPlayer.conditions.Values)
             {
-
-
-                if (CurrentPlayer.conditions.Count == 0) return;
-
-                var _temp_dat = from r in CurrentPlayer.conditions.Values select r;
-                string _data = string.Join("", _temp_dat);
-
-                if (_data == null) return;
-
-                if (_data.Contains("co-153"))
+                if (item.Contains("co-153"))
                 {
-                    if (functions.assess_chance(10))
-                    {
-                        MakeChecks();
-                    }
+                    isOK = true;                    
+                    break;
                 }
-
-
             }
+
+            if (!isOK)
+            {
+                TimeOfLastEffect = DateTime.Now;
+                return;
+            }
+
+            float _tick = (float)DateTime.Now.Subtract(TimeOfLastEffect).TotalSeconds;
+            if (_tick > CoolDownForChecks)
+            {
+                if (functions.assess_chance(10))
+                {
+                    MakeChecks();
+                    TimeOfLastEffect = DateTime.Now;
+                    CoolDownForChecks = GetRandom();
+                }
+            }
+
 
         }
 
         private void MakeChecks()
-        {
+        {            
             CurrentPlayer.conditions.TryAdd(id_condition, $":ad=153={CurrentPlayer.position_x.ToString("f1").Replace(',', '.')}={CurrentPlayer.position_z.ToString("f1").Replace(',', '.')}={CurrentPlayer.rotation_y.ToString("f1").Replace(',', '.')},");
+            spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
+            id_condition = functions.get_symb_for_IDs();
         }
 
+        private float GetRandom()
+        {
+            Random rnd = new Random();
+            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo);
+        }
 
     }
 
@@ -716,7 +738,7 @@ namespace game_server
         {
             CurrentPlayer = _current_player;
             isReadyToUse = true;
-            id_condition = functions.get_random_set_of_symb(4);
+            id_condition = functions.get_symb_for_IDs();
             TimeOfEndForSpecial = DateTime.Now;
         }
 
@@ -839,7 +861,7 @@ namespace game_server
             CurrentArmorStack = 0;
             TimeOfEndForSpecial = DateTime.Now;
             spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
-            id_condition = functions.get_random_set_of_symb(4);
+            id_condition = functions.get_symb_for_IDs();
         }
 
         private void UpdateTimer(float _time)
@@ -881,7 +903,7 @@ namespace game_server
         {
             CurrentPlayer = _current_player;
             isReadyToUse = true;
-            id_condition = functions.get_random_set_of_symb(4);
+            id_condition = functions.get_symb_for_IDs();
             TimeOfEndForSpecial = DateTime.Now;
             TimeTillNextSpecial = 10f;
         }
@@ -938,7 +960,7 @@ namespace game_server
             TimeTillNextSpecial = GetRandom();
 
             spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
-            id_condition = functions.get_random_set_of_symb(4);
+            id_condition = functions.get_symb_for_IDs();
         }
 
         private void UpdateTimer(float _time)
@@ -971,7 +993,7 @@ namespace game_server
         {
             CurrentPlayer = _current_player;
             isReadyToUse = true;
-            id_condition = functions.get_random_set_of_symb(4);
+            id_condition = functions.get_symb_for_IDs();
             TimeOfEndForSpecial = DateTime.Now;
         }
 
@@ -1093,7 +1115,7 @@ namespace game_server
             CurrentAttackPowerStack = 0;
             TimeOfEndForSpecial = DateTime.Now;
             spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
-            id_condition = functions.get_random_set_of_symb(4);
+            id_condition = functions.get_symb_for_IDs();
         }
 
         private void UpdateTimer(float _time)
@@ -1126,12 +1148,13 @@ namespace game_server
         {
             CurrentPlayer = _current_player;
             isReadyToUse = true;
-            id_condition = functions.get_random_set_of_symb(4);
+            id_condition = functions.get_symb_for_IDs();
             TimeOfEndForSpecial = DateTime.Now;
         }
 
         public void UpdateSpecial()
         {
+            
             if (CurrentIterationStack != 0)
             {
                 float _tick = (float)DateTime.Now.Subtract(TimeOfStackInitiated).TotalSeconds;
@@ -1248,7 +1271,7 @@ namespace game_server
             CurrentAttackPowerStack = 0;
             TimeOfEndForSpecial = DateTime.Now;
             spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
-            id_condition = functions.get_random_set_of_symb(4);
+            id_condition = functions.get_symb_for_IDs();
         }
 
         private void UpdateTimer(float _time)

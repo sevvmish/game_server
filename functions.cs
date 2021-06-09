@@ -459,6 +459,21 @@ namespace game_server
             return false;
         }
 
+        public static string get_symb_for_IDs()
+        {
+            int nub_of_symb = 6;
+            string[] arr_name = { "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "z", "x", "c", "v", "b", "n", "m", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
+            string result = "";
+            Random rnd = new Random();
+            for (int i = 0; i < nub_of_symb; i++)
+            {
+                result = result + arr_name[rnd.Next(0, arr_name.Length - 1)];
+            }
+
+            return result;
+        }
+
+        
         public static string get_random_set_of_symb(int nub_of_symb)
         {
             string[] arr_name = { "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "z", "x", "c", "v", "b", "n", "m", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
@@ -471,6 +486,7 @@ namespace game_server
 
             return result;
         }
+        
 
         public static bool assess_chance(float chance)
         {
@@ -943,7 +959,7 @@ namespace game_server
         public static void inform_of_cancel_casting(string player_name, string table_id, int spell_number)
         {
             Players player = GetPlayerData(table_id, player_name);
-            string check_cond_id = get_random_set_of_symb(4);
+            string check_cond_id = get_symb_for_IDs();
             player.conditions.TryAdd(check_cond_id, $":ca-cncld-{spell_number},");
             if (get_id_by_type_and_spell(player_name, table_id, "ca-cncld") != null)
             {

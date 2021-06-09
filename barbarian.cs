@@ -11,8 +11,8 @@ namespace game_server
         //block prep 104
         public static async void block_prep(string table_id, string me, float block_time)
         {
-            string check_cond_id = functions.get_random_set_of_symb(4);
-            string check_immob_id = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
+            string check_immob_id = functions.get_symb_for_IDs();
             Players player = functions.GetPlayerData(table_id, me);
             player.shield_block += 50;
             player.start_spell_in_process();
@@ -53,7 +53,7 @@ namespace game_server
         //spell 103 HEROIC LEAP
         public static async void heroic_leap(string table_id, string me, float max_distance)
         {
-            string check_cond_id = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
             functions.turn_to_enemy(me, table_id, 0.1f, max_distance, -10, max_distance);
 
             Players player1 = functions.GetPlayerData(table_id, me);
@@ -100,7 +100,7 @@ namespace game_server
                 await Task.Delay(100);
             }
 
-            string check_cond_strike_id = functions.get_random_set_of_symb(4);
+            string check_cond_strike_id = functions.get_symb_for_IDs();
             player1.conditions.TryAdd(check_cond_strike_id, $":cs=103={player1.position_x.ToString("f1").Replace(',', '.')}={player1.position_z.ToString("f1").Replace(',', '.')},");
             List<Players> enemies = functions.get_all_nearest_enemy_inradius(player1.position_x, player1.position_z, me, table_id, 2);
             if (enemies.Count > 0)
@@ -123,7 +123,7 @@ namespace game_server
         //spell 102 hurricane
         public static async void hurricane(string table_id, string me, float how_long)
         {
-            string check_cond_id = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
             Players player = functions.GetPlayerData(table_id, me);
 
             player.speed *= 0.5f;
@@ -204,7 +204,7 @@ namespace game_server
         public static async void power_attack(string table_id, string me)
         {
             float casting_time = 1;
-            string check_cond_id = functions.get_random_set_of_symb(4);
+            string check_cond_id = functions.get_symb_for_IDs();
             Players player = functions.GetPlayerData(table_id, me);
             player.start_spell_in_process();
             functions.turn_to_enemy(me, table_id, 0.1f, 2, -15, 2);

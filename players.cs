@@ -694,8 +694,6 @@ namespace game_server
                     CoolDownForChecks = GetRandom();
                 }
             }
-
-
         }
 
         private void MakeChecks()

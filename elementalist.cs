@@ -79,7 +79,10 @@ namespace game_server
                 {
                     for (int u = 0; u < result.Count; u++)
                     {
-                        spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 51, 10, 1, 2);
+                        if (result.Count > 0)
+                        {
+                            spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 51, 10, 1, 2);
+                        }
                     }
                     break;
                 }
@@ -160,7 +163,10 @@ namespace game_server
                 {
                     for (int u = 0; u < hit_players.Count; u++)
                     {
-                        spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 54, base_damage / 2, 0.5f, 2);
+                        if (result.Count > 0)
+                        {
+                            spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 54, base_damage / 2, 0.5f, 2);
+                        }
                     }
                     hit_counter = 0;
                     hit_players.Clear();

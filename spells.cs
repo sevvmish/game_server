@@ -645,6 +645,12 @@ namespace game_server
         {
             Players me = functions.GetPlayerData(table_id, mee);
             Players enemy = functions.GetPlayerData(table_id, aim);
+
+            if (enemy.isDead)
+            {
+                return;
+            }
+
             float summ_heal = amount + me.spell_power * power_koef;
             string critt = "s";
 
@@ -688,6 +694,12 @@ namespace game_server
         {
             Players me = functions.GetPlayerData(table_id, mee);
             Players enemy = functions.GetPlayerData(table_id, enemyy);
+
+            if (enemy.isDead)
+            {
+                return;
+            }
+
             float end_damage = base_damage * power_koef;
 
             string[] enemy_healthenemy = enemy.health_pool.Split('=');
@@ -781,6 +793,11 @@ namespace game_server
         {
             Players me = functions.GetPlayerData(table_id, mee);
             Players enemy = functions.GetPlayerData(table_id, enemyy);
+
+            if (enemy.isDead)
+            {
+                return;
+            }
 
             float summ_attack = base_magic_damage + me.spell_power * spell_power_koef;
             float default_angle = 80;
@@ -1334,6 +1351,12 @@ namespace game_server
             float weapon_attack = rnd.Next(int.Parse(main_hand[0]), int.Parse(main_hand[1]));
             float summ_attack = weapon_attack + p.hit_power * hit_power_koef;
             Players enemy = functions.GetPlayerData(table_id, enemy1);
+
+            if (enemy.isDead)
+            {
+                return;
+            }
+
             float default_angle = 80;
             float current_angle_of_enemy = functions.player_angle_unity(enemy.position_x, 0, enemy.position_z, 0, enemy.rotation_y, 0, p.position_x, 0, p.position_z);
             bool is_dodged = false;

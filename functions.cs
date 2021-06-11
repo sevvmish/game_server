@@ -623,7 +623,7 @@ namespace game_server
                 for (int i = 0; i < AllPlayersList.Count; i++)
                 {
                     float check_radius = vector3_distance_unity(coord_x, 0, coord_z, AllPlayersList[i].position_x, 0, AllPlayersList[i].position_z);
-                    if (AllPlayersList[i].player_id != my_name && !AllPlayersList[i].is_invisible && AllPlayersList[i].team_id != p.team_id && max_radius > check_radius)
+                    if (!AllPlayersList[i].isDead   && AllPlayersList[i].player_id != my_name && !AllPlayersList[i].is_invisible && AllPlayersList[i].team_id != p.team_id && max_radius > check_radius)
                     {
                         if (check_radius < min_distance_checked)
                         {
@@ -660,7 +660,7 @@ namespace game_server
             AllPlayersList = GetAllPlayersInList(table_id);
             for (int i = 0; i < AllPlayersList.Count; i++)
             {
-                if (AllPlayersList[i].player_id != p.player_id && AllPlayersList[i].team_id != p.team_id && radius > vector3_distance_unity(coord_x, 0, coord_z, AllPlayersList[i].position_x, 0, AllPlayersList[i].position_z))
+                if (!AllPlayersList[i].isDead && AllPlayersList[i].player_id != p.player_id && AllPlayersList[i].team_id != p.team_id && radius > vector3_distance_unity(coord_x, 0, coord_z, AllPlayersList[i].position_x, 0, AllPlayersList[i].position_z))
                 {
                     result.Add(AllPlayersList[i]);
                 }
@@ -686,7 +686,7 @@ namespace game_server
             {
                 float current_distance = vector3_distance_unity(p.position_x, 0, p.position_z, AllPlayersList[i].position_x, 0, AllPlayersList[i].position_z);
                 float current_angle = player_angle_unity(p.position_x, 0, p.position_z, 0, p.rotation_y, 0, AllPlayersList[i].position_x, 0, AllPlayersList[i].position_z);
-                if (AllPlayersList[i].player_id != p.player_id && AllPlayersList[i].team_id != p.team_id &&
+                if (AllPlayersList[i].player_id != p.player_id && !AllPlayersList[i].isDead && AllPlayersList[i].team_id != p.team_id &&
                     ((current_distance < default_distance && current_angle < default_angle) ||
                     (current_distance < default_small_distance && current_angle < default_small_angle) ||
                     (default_min_radius > vector3_distance_unity(p.position_x, 0, p.position_z, AllPlayersList[i].position_x, 0, AllPlayersList[i].position_z)))
@@ -717,7 +717,7 @@ namespace game_server
             {
                 float current_distance = vector3_distance_unity(p.position_x, 0, p.position_z, AllPlayersList[i].position_x, 0, AllPlayersList[i].position_z);
                 float current_angle = player_angle_unity(p.position_x, 0, p.position_z, 0, p.rotation_y, 0, AllPlayersList[i].position_x, 0, AllPlayersList[i].position_z);
-                if (AllPlayersList[i].player_id != p.player_id && AllPlayersList[i].team_id != p.team_id &&
+                if (AllPlayersList[i].player_id != p.player_id && !AllPlayersList[i].isDead && AllPlayersList[i].team_id != p.team_id &&
                     ((current_distance < default_distance && current_angle < default_angle) ||
                     (current_distance < default_small_distance && current_angle < default_small_angle) ||
                     (default_min_radius > vector3_distance_unity(p.position_x, 0, p.position_z, AllPlayersList[i].position_x, 0, AllPlayersList[i].position_z)))
@@ -774,10 +774,13 @@ namespace game_server
                     return false;
                 }
             }
-            
 
+            if (enemy.isDead)
+            {
+                return false;
+            }
 
-           Players p = GetPlayerData(table_id, me_name);
+            Players p = GetPlayerData(table_id, me_name);
             int sign = 0;
             float current_angle = player_angle_unity(p.position_x, 0, p.position_z, 0, p.rotation_y, 0, enemy.position_x, 0, enemy.position_z);
             float current_angle1 = player_angle_unity(p.position_x, 0, p.position_z, 0, p.rotation_y + 1f, 0, enemy.position_x, 0, enemy.position_z);
@@ -818,6 +821,11 @@ namespace game_server
         {
             Players player = GetPlayerData(table_id, me_name);
             Players enemy1 = GetPlayerData(table_id, enemy_name);
+
+            if (enemy1.isDead)
+            {
+                return;
+            }
 
             float current_angle = player_angle_unity(player.position_x, 0, player.position_z, 0, player.rotation_y, 0, enemy1.position_x, 0, enemy1.position_z);
             float current_angle1 = player_angle_unity(player.position_x, 0, player.position_z, 0, player.rotation_y + 1f, 0, enemy1.position_x, 0, enemy1.position_z);

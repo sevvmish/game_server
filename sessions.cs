@@ -14,6 +14,7 @@ namespace game_server
     {
         public int PlayersCount;
         public int ZoneType;
+        public int GameType;
         public Dictionary<string, Players> LocalPlayersPool;
         public string Session_id, environment_packet;
 
@@ -22,10 +23,11 @@ namespace game_server
         private delegate void Environment();
         private Environment CurrentEnvironment;
 
-        public Sessions(int NumberOfPlayers, string sess_id, int zone)
+        public Sessions(int NumberOfPlayers, string sess_id, int zone, int game_type)
         {
             Session_id = sess_id;
             ZoneType = zone;
+            GameType = game_type;
             PlayersCount = NumberOfPlayers;
             
             //Console.WriteLine(ZoneType + " - zone");
@@ -61,6 +63,18 @@ namespace game_server
         }
 
        
+        private void ResetGameData()
+        {
+            foreach (Players CurrentPlayer in LocalPlayersPool.Values)
+            {
+                CurrentPlayer.isDead = false;                
+                CurrentPlayer.is_reset_any_button = false;
+                CurrentPlayer.conditions.Clear();
+
+            }
+        }
+
+
 
         private void Location1()
         {
@@ -82,7 +96,14 @@ namespace game_server
                     
                     foreach (Players CurrentPlayer in LocalPlayersPool.Values)
                     {
-                        if (1==1) //CurrentPlayer.endPointUDP != null   ПОТОМ ИСПРАВЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        if (float.Parse(CurrentPlayer.health_pool.Split('=')[0])<=0 || CurrentPlayer.isDead)
+                        {
+                            CurrentPlayer.isDead = true;
+                            CurrentPlayer.animation_id = 22;
+                            CurrentPlayer.is_reset_any_button = true;
+                            CurrentPlayer.conditions.Clear();
+                        }
+                        else if (1==1) //CurrentPlayer.endPointUDP != null   ПОТОМ ИСПРАВЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         {
                             //specials
                             CurrentPlayer.CurrentSpecial?.Invoke();

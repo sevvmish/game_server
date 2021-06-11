@@ -223,24 +223,30 @@ namespace game_server
                         }
 
 
-                        string sql = "SELECT `player_order`, `player_id`, `player_name`, `player_class`, `connection_number`, `team_id`, `zone_type`, `position_x`, `position_y`, `position_z`, `rotation_x`, `rotation_y`, `rotation_z`, `speed`, `animation_id`, `conditions`, `health_pool`, `energy`, `health_regen`, `energy_regen`, `weapon_attack`, `hit_power`, `armor`, `shield_block`, `magic_resistance`, `dodge`, `cast_speed`, `melee_crit`, `magic_crit`, `spell_power`, `spell1`, `spell2`, `spell3`, `spell4`, `spell5`, `hidden_conds`, `global_button_cooldown` FROM `" + sessionname + "`";
-                        string[,] result = mysql.GetMysqlSelect(sql).Result;
-                        
+                        string sql1 = "SELECT `player_order`, `player_id`, `player_name`, `player_class`, `connection_number`, `team_id`, `game_type_id`, `zone_type`, `position_x`, `position_y`, `position_z`, `rotation_x`, `rotation_y`, `rotation_z`, `speed`, `animation_id`, `conditions`, `health_pool`, `energy`, `health_regen`, `energy_regen`, `weapon_attack`, `hit_power`, `armor`, `shield_block`, `magic_resistance`, `dodge`, `cast_speed`, `melee_crit`, `magic_crit`, `spell_power`, `spell1`, `spell2`, `spell3`, `spell4`, `spell5`, `hidden_conds`, `global_button_cooldown` FROM `" + sessionname + "`";
+                        string[,] result1 = mysql.GetMysqlSelect(sql1).Result;
+
+
                         //get the list of arrays with data for each player to init player
-                        List<string[]> datausers = new List<string[]>(result.GetLength(0));
-                        for (int u = 0; u < result.GetLength(0); u++)
+                        List<string[]> datausers = new List<string[]>(result1.GetLength(0));
+                        for (int u = 0; u < result1.GetLength(0); u++)
                         {
-                            datausers.Add(new string[result.GetLength(1)]);
-                            for (int i = 0; i < result.GetLength(1); i++)
+                            
+                            datausers.Add(new string[result1.GetLength(1)]);
+                            for (int i = 0; i < result1.GetLength(1); i++)
                             {
-                                datausers[u].SetValue(result[u, i], i);
+                                datausers[u].SetValue(result1[u, i], i);
                             }
                         }
                         //init all players with arrays
-                        Sessions NewSession = new Sessions(datausers.Count, sessionname, int.Parse(result[0,6]));
+                        Sessions NewSession = new Sessions(datausers.Count, sessionname, int.Parse(result1[0,7]), int.Parse(result1[0, 6]));
                         string who_is_in_session = "";
+
+                        
+
                         for (int i = 0; i < datausers.Count; i++)
                         {
+                            
                             Players new_player = new Players(sessionname, datausers[i]);                            
                             NewSession.LocalPlayersPool.Add(new_player.player_id, new_player);
                             who_is_in_session = who_is_in_session + new_player.player_id + ", ";

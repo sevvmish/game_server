@@ -10,6 +10,9 @@ namespace game_server
 {
     public class Players: IDisposable
     {
+        public bool isDead = false;
+        private string[] init_data;
+
         public string Session_ID;
         public int player_order;
         public string player_id;
@@ -17,6 +20,7 @@ namespace game_server
         public int player_class;
         public string connection_number;
         public int team_id;
+        public int game_type;
         public int zone_type;
         public float position_x;
         public float position_y;
@@ -161,8 +165,75 @@ namespace game_server
         }
         
 
+        public void ResetData()
+        {
+            position_x = float.Parse(init_data[8]);
+            position_y = float.Parse(init_data[9]);
+            position_z = float.Parse(init_data[10]);
+            rotation_x = float.Parse(init_data[11]);
+            rotation_y = float.Parse(init_data[12]);
+            rotation_z = float.Parse(init_data[13]);
+            speed = float.Parse(init_data[14]);
+            animation_id = int.Parse(init_data[15]);
+            //conditions = data[16];
+            health_pool = init_data[17];
+            energy = float.Parse(init_data[18]);
+            health_regen = float.Parse(init_data[19]);
+            energy_regen = float.Parse(init_data[20]);
+            weapon_attack = init_data[21];
+            hit_power = float.Parse(init_data[22]);
+            armor = float.Parse(init_data[23]);
+            shield_block = float.Parse(init_data[24]);
+            magic_resistance = float.Parse(init_data[25]);
+            dodge = float.Parse(init_data[26]);
+            cast_speed = float.Parse(init_data[27]);
+            melee_crit = float.Parse(init_data[28]);
+            magic_crit = float.Parse(init_data[29]);
+            spell_power = float.Parse(init_data[30]);
+            spell1 = int.Parse(init_data[31]);
+            spell2 = int.Parse(init_data[32]);
+            spell3 = int.Parse(init_data[33]);
+            spell4 = int.Parse(init_data[34]);
+            spell5 = int.Parse(init_data[35]);
+            spell6 = 997;
+            hidden_conds = init_data[36];
+            global_button_cooldown = int.Parse(init_data[37]);
+
+            //specials
+            CurrentSpecial = null;
+            switch (player_class)
+            {
+                case 1:
+                    WarriorSpecial currwar = new WarriorSpecial(this);
+                    CurrentSpecial += currwar.UpdateSpecial;
+                    break;
+                case 2:
+                    ElementalistSpecial currelem = new ElementalistSpecial(this);
+                    CurrentSpecial += currelem.UpdateSpecial;
+                    break;
+                case 3:
+                    BarbarianSpecial currbarbar = new BarbarianSpecial(this);
+                    CurrentSpecial += currbarbar.UpdateSpecial;
+                    break;
+                case 4:
+                    RogueSpecial currrog = new RogueSpecial(this);
+                    CurrentSpecial += currrog.UpdateSpecial;
+
+                    RogueChecksWhenInvisible rogcheck = new RogueChecksWhenInvisible(this);
+                    CurrentSpecial += rogcheck.UpdateSpecial;
+
+                    break;
+                case 5:
+                    break;
+
+            }
+
+
+        }
+
         public Players(string _session, params string [] data)
         {
+            init_data = data;
             Session_ID = _session;
             player_order = int.Parse(data[0]);
             player_id = data[1];
@@ -170,38 +241,39 @@ namespace game_server
             player_class = int.Parse(data[3]);
             connection_number = data[4];
             team_id = int.Parse(data[5]);
-            zone_type = int.Parse(data[6]);
-            position_x = float.Parse(data[7]);
-            position_y = float.Parse(data[8]);
-            position_z = float.Parse(data[9]);
-            rotation_x = float.Parse(data[10]);
-            rotation_y = float.Parse(data[11]);
-            rotation_z = float.Parse(data[12]);
-            speed = float.Parse(data[13]);
-            animation_id = int.Parse(data[14]);
-            //conditions = data[15];
-            health_pool = data[16];
-            energy = float.Parse(data[17]);
-            health_regen = float.Parse(data[18]);
-            energy_regen = float.Parse(data[19]);
-            weapon_attack = data[20];
-            hit_power = float.Parse(data[21]);
-            armor = float.Parse(data[22]);
-            shield_block = float.Parse(data[23]);
-            magic_resistance = float.Parse(data[24]);
-            dodge = float.Parse(data[25]);
-            cast_speed = float.Parse(data[26]);
-            melee_crit = float.Parse(data[27]);
-            magic_crit = float.Parse(data[28]);
-            spell_power = float.Parse(data[29]);
-            spell1 = int.Parse(data[30]);
-            spell2 = int.Parse(data[31]);
-            spell3 = int.Parse(data[32]);
-            spell4 = int.Parse(data[33]);
-            spell5 = int.Parse(data[34]);
+            game_type = int.Parse(data[6]);
+            zone_type = int.Parse(data[7]);
+            position_x = float.Parse(data[8]);
+            position_y = float.Parse(data[9]);
+            position_z = float.Parse(data[10]);
+            rotation_x = float.Parse(data[11]);
+            rotation_y = float.Parse(data[12]);
+            rotation_z = float.Parse(data[13]);
+            speed = float.Parse(data[14]);
+            animation_id = int.Parse(data[15]);
+            //conditions = data[16];
+            health_pool = data[17];
+            energy = float.Parse(data[18]);
+            health_regen = float.Parse(data[19]);
+            energy_regen = float.Parse(data[20]);
+            weapon_attack = data[21];
+            hit_power = float.Parse(data[22]);
+            armor = float.Parse(data[23]);
+            shield_block = float.Parse(data[24]);
+            magic_resistance = float.Parse(data[25]);
+            dodge = float.Parse(data[26]);
+            cast_speed = float.Parse(data[27]);
+            melee_crit = float.Parse(data[28]);
+            magic_crit = float.Parse(data[29]);
+            spell_power = float.Parse(data[30]);
+            spell1 = int.Parse(data[31]);
+            spell2 = int.Parse(data[32]);
+            spell3 = int.Parse(data[33]);
+            spell4 = int.Parse(data[34]);
+            spell5 = int.Parse(data[35]);
             spell6 = 997;
-            hidden_conds = data[35];
-            global_button_cooldown = int.Parse(data[36]);
+            hidden_conds = data[36];
+            global_button_cooldown = int.Parse(data[37]);
 
             OrderNumber = 0;
             

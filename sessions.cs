@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 using System.Collections.Concurrent;
 
 namespace game_server
@@ -23,13 +24,17 @@ namespace game_server
         private delegate void Environment();
         private Environment CurrentEnvironment;
 
+        private int Round;
+        private bool isRoundChecked;
+
         public Sessions(int NumberOfPlayers, string sess_id, int zone, int game_type)
         {
             Session_id = sess_id;
             ZoneType = zone;
             GameType = game_type;
             PlayersCount = NumberOfPlayers;
-            
+            Round++;
+
             //Console.WriteLine(ZoneType + " - zone");
             LocalPlayersPool = new Dictionary<string, Players>(NumberOfPlayers);
             //CurrentTimer = new Timer(sendpackets, 0, 0, starter.GlobalTick);
@@ -93,17 +98,42 @@ namespace game_server
             {
                 if (CurrentTime < starter.stopWatch.ElapsedMilliseconds)
                 {
-                    
+                                        
                     foreach (Players CurrentPlayer in LocalPlayersPool.Values)
                     {
-                        if (float.Parse(CurrentPlayer.health_pool.Split('=')[0])<=0 || CurrentPlayer.isDead)
+                        CheckingRoundConditions();
+
+                        if (float.Parse(CurrentPlayer.health_pool.Split('=')[0])<=0 && !CurrentPlayer.isDead && !isRoundChecked)
                         {
                             CurrentPlayer.isDead = true;
                             CurrentPlayer.animation_id = 22;
                             CurrentPlayer.is_reset_any_button = true;
                             CurrentPlayer.conditions.Clear();
+                            CurrentPlayer.CurrentSpecial = null;
+                            CurrentPlayer.conditions.TryAdd(functions.get_symb_for_IDs(), $":co-1006-0,");
+                            CurrentPlayer.conditions.TryAdd(functions.get_symb_for_IDs(), $":co-1007-0,");
+                        } 
+                        else if (float.Parse(CurrentPlayer.health_pool.Split('=')[0]) > 0 && !CurrentPlayer.isDead && isRoundChecked)
+                        {
+                            CurrentPlayer.health_pool = $"{CurrentPlayer.health_pool.Split('=')[1]}={CurrentPlayer.health_pool.Split('=')[1]}";
+                            CurrentPlayer.animation_id = 0;
+                            CurrentPlayer.is_reset_any_button = true;
+                            CurrentPlayer.conditions.Clear();
+                            CurrentPlayer.CurrentSpecial = null;
+                            CurrentPlayer.conditions.TryAdd(functions.get_symb_for_IDs(), $":co-1007-0,");
                         }
-                        else if (1==1) //CurrentPlayer.endPointUDP != null   ПОТОМ ИСПРАВЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                        
+                        if (isRoundChecked)
+                        {
+                            //var _temp_dat = from r in CurrentPlayer.conditions.Values select r;
+                            //string _data = string.Join("", _temp_dat);
+                            //Console.WriteLine(_data + " :::: " + CurrentPlayer.player_name + " - " + CurrentPlayer.animation_id);
+                            //CurrentPlayer.conditions.TryAdd(functions.get_symb_for_IDs(), $":co-1007-0,");
+                        }
+                        
+                        
+                        if (1==1 && !CurrentPlayer.isDead && !isRoundChecked) //CurrentPlayer.endPointUDP != null   ПОТОМ ИСПРАВЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         {
                             //specials
                             CurrentPlayer.CurrentSpecial?.Invoke();
@@ -158,6 +188,52 @@ namespace game_server
             }
         }
 
+
+        private void CheckingRoundConditions()
+        {
+
+            if (!isRoundChecked)
+            {
+                //test for GAME TYPE 0==============
+                if (GameType == 0)
+                {
+                    int HowManyDead = 0;
+                    foreach (Players CurrentPlayer in LocalPlayersPool.Values)
+                    {
+                        if (CurrentPlayer.isDead)
+                        {
+                            HowManyDead++;
+                        }
+                    }
+
+                    if (HowManyDead > 0)
+                    {
+                        Task.Run(() => RestartRound(5000));
+                        Console.WriteLine("started...");
+                        isRoundChecked = true;
+                    }
+
+                }
+                //==================================
+
+
+
+            }
+            
+        }
+
+        private async void RestartRound(int _after_seconds)
+        {
+            await Task.Delay(_after_seconds);
+
+            foreach (Players CurrentPlayerCheck in LocalPlayersPool.Values)
+            {
+                CurrentPlayerCheck.ResetData();
+            }
+            Console.WriteLine("ended...");
+            isRoundChecked = false;
+
+        }
 
 
         public void Dispose()

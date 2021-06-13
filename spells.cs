@@ -1348,7 +1348,7 @@ namespace game_server
             Players p = functions.GetPlayerData(table_id, me);
             string[] main_hand = p.weapon_attack.Split('-');
             Random rnd = new Random();
-            float weapon_attack = rnd.Next(int.Parse(main_hand[0]), int.Parse(main_hand[1]));
+            float weapon_attack = rnd.Next(int.Parse(main_hand[0]), int.Parse(main_hand[1])+1);
             float summ_attack = weapon_attack + p.hit_power * hit_power_koef;
             Players enemy = functions.GetPlayerData(table_id, enemy1);
 
@@ -1357,6 +1357,7 @@ namespace game_server
                 return;
             }
 
+            
             float default_angle = 80;
             float current_angle_of_enemy = functions.player_angle_unity(enemy.position_x, 0, enemy.position_z, 0, enemy.rotation_y, 0, p.position_x, 0, p.position_z);
             bool is_dodged = false;

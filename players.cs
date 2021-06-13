@@ -116,6 +116,13 @@ namespace game_server
         public delegate void Specials();
         public Specials CurrentSpecial;
 
+        //power multipliers
+        public float PowerOfFireMulti = 1f;
+        public float PowerOfIceMulti = 1f;
+        public float PowerOfAirMulti = 1f;
+        public float PowerOfEarthMulti = 1f;
+
+
         public Players(int player_order, string player_id, string player_name, int player_class, string connection_number, int team_id,
         int zone_type, float position_x, float position_y, float position_z, float rotation_x, float rotation_y, float rotation_z,
         float speed, int animation_id, string health_pool, float energy, float health_regen, float energy_regen,
@@ -165,71 +172,7 @@ namespace game_server
         }
         
 
-        public void ResetData()
-        {
-            position_x = float.Parse(init_data[8]);
-            position_y = float.Parse(init_data[9]);
-            position_z = float.Parse(init_data[10]);
-            rotation_x = float.Parse(init_data[11]);
-            rotation_y = float.Parse(init_data[12]);
-            rotation_z = float.Parse(init_data[13]);
-            speed = float.Parse(init_data[14]);
-            animation_id = int.Parse(init_data[15]);
-            //conditions = data[16];
-            health_pool = init_data[17];
-            energy = float.Parse(init_data[18]);
-            health_regen = float.Parse(init_data[19]);
-            energy_regen = float.Parse(init_data[20]);
-            weapon_attack = init_data[21];
-            hit_power = float.Parse(init_data[22]);
-            armor = float.Parse(init_data[23]);
-            shield_block = float.Parse(init_data[24]);
-            magic_resistance = float.Parse(init_data[25]);
-            dodge = float.Parse(init_data[26]);
-            cast_speed = float.Parse(init_data[27]);
-            melee_crit = float.Parse(init_data[28]);
-            magic_crit = float.Parse(init_data[29]);
-            spell_power = float.Parse(init_data[30]);
-            spell1 = int.Parse(init_data[31]);
-            spell2 = int.Parse(init_data[32]);
-            spell3 = int.Parse(init_data[33]);
-            spell4 = int.Parse(init_data[34]);
-            spell5 = int.Parse(init_data[35]);
-            spell6 = 997;
-            hidden_conds = init_data[36];
-            global_button_cooldown = int.Parse(init_data[37]);
-
-            //specials
-            CurrentSpecial = null;
-            switch (player_class)
-            {
-                case 1:
-                    WarriorSpecial currwar = new WarriorSpecial(this);
-                    CurrentSpecial += currwar.UpdateSpecial;
-                    break;
-                case 2:
-                    ElementalistSpecial currelem = new ElementalistSpecial(this);
-                    CurrentSpecial += currelem.UpdateSpecial;
-                    break;
-                case 3:
-                    BarbarianSpecial currbarbar = new BarbarianSpecial(this);
-                    CurrentSpecial += currbarbar.UpdateSpecial;
-                    break;
-                case 4:
-                    RogueSpecial currrog = new RogueSpecial(this);
-                    CurrentSpecial += currrog.UpdateSpecial;
-
-                    RogueChecksWhenInvisible rogcheck = new RogueChecksWhenInvisible(this);
-                    CurrentSpecial += rogcheck.UpdateSpecial;
-
-                    break;
-                case 5:
-                    break;
-
-            }
-
-
-        }
+        
 
         public Players(string _session, params string [] data)
         {
@@ -282,8 +225,14 @@ namespace game_server
             MaxHealth = float.Parse(health_pool.Split('=')[1]);
             BaseHealthRegen = health_regen;
 
+            SetSpecials();
+        }
+
+        private void SetSpecials()
+        {
+            CurrentSpecial = null;
             //specials
-            switch(player_class)
+            switch (player_class)
             {
                 case 1:
                     WarriorSpecial currwar = new WarriorSpecial(this);
@@ -310,6 +259,79 @@ namespace game_server
 
             }
         }
+
+
+
+        public void ResetData()
+        {
+            position_x = float.Parse(init_data[8]);
+            position_y = float.Parse(init_data[9]);
+            position_z = float.Parse(init_data[10]);
+            rotation_x = float.Parse(init_data[11]);
+            rotation_y = float.Parse(init_data[12]);
+            rotation_z = float.Parse(init_data[13]);
+            speed = float.Parse(init_data[14]);
+            animation_id = int.Parse(init_data[15]);
+            //conditions = data[16];
+            health_pool = init_data[17];
+            energy = float.Parse(init_data[18]);
+            health_regen = float.Parse(init_data[19]);
+            energy_regen = float.Parse(init_data[20]);
+            weapon_attack = init_data[21];
+            hit_power = float.Parse(init_data[22]);
+            armor = float.Parse(init_data[23]);
+            shield_block = float.Parse(init_data[24]);
+            magic_resistance = float.Parse(init_data[25]);
+            dodge = float.Parse(init_data[26]);
+            cast_speed = float.Parse(init_data[27]);
+            melee_crit = float.Parse(init_data[28]);
+            magic_crit = float.Parse(init_data[29]);
+            spell_power = float.Parse(init_data[30]);
+            spell1 = int.Parse(init_data[31]);
+            spell2 = int.Parse(init_data[32]);
+            spell3 = int.Parse(init_data[33]);
+            spell4 = int.Parse(init_data[34]);
+            spell5 = int.Parse(init_data[35]);
+            spell6 = 997;
+            hidden_conds = init_data[36];
+            global_button_cooldown = int.Parse(init_data[37]);
+
+            SetSpecials();
+
+            //inner vars
+            horizontal_touch = 0;
+            vertical_touch = 0;
+            button1 = false;
+            button2 = false;
+            button3 = false;
+            button4 = false;
+            button5 = false;
+            button6 = false;
+            is_strafe_on = false; //0004 sia
+            is_invisible = false; //2222 inv
+            is_spell_in_process = false;//1111 sip
+            is_spell_button_touched = false;//0000 bst
+            is_reset_any_button = false; //0002 rab
+            is_reset_movement_button = false; //0003 rmb
+            is_movement_touched = false; //0001 bmt
+            is_immune_to_melee = false; //0005 immune to melee received
+            is_immune_to_magic = false; //0006 immune to magic received
+            is_reflecting_melee = false; //0007 reflect damage melee
+            is_reflecting_magic = false; //0008 reflect damage magic
+
+            //------------
+            start_cheking_if_spell_touched = false;
+            is_spell_touched_for_casting_failing = false;
+            data_when_immune_melee = null;
+            data_when_immune_magic = null;
+
+            isDead = false;
+
+            conditions.Clear();
+            Console.WriteLine("reseted...");
+        }
+
+
 
 
         public string GetPacketForSending(string current_player_id)
@@ -778,7 +800,7 @@ namespace game_server
         private float GetRandom()
         {
             Random rnd = new Random();
-            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo);
+            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo+1);
         }
 
     }
@@ -914,7 +936,7 @@ namespace game_server
         private float GetRandom()
         {
             Random rnd = new Random();
-            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo);
+            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo+1);
         }
 
         private void UpdateConditions()
@@ -1013,7 +1035,7 @@ namespace game_server
         private float GetRandom()
         {
             Random rnd = new Random();
-            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo);
+            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo+1);
         }
 
         private void UpdateConditions()
@@ -1168,7 +1190,7 @@ namespace game_server
         private float GetRandom()
         {
             Random rnd = new Random();
-            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo);
+            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo+1);
         }
 
         private void UpdateConditions()
@@ -1324,7 +1346,7 @@ namespace game_server
         private float GetRandom()
         {
             Random rnd = new Random();
-            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo);
+            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo+1);
         }
 
         private void UpdateConditions()

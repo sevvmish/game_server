@@ -307,12 +307,12 @@ namespace game_server
             string check_cond_id = functions.get_symb_for_IDs();
             string conds_id = functions.get_symb_for_IDs();
             string x;
-            for (float i = time; i > 0; i -= 0.5f)
+            for (float i = time; i > 0; i -= 0.1f)
             {
                 player.conditions.TryRemove(check_cond_id, out x);
                 player.conditions.TryAdd(check_cond_id, $":co-58-{i.ToString("f1").Replace(',', '.')},");
                 player.make_immob(conds_id, i);
-                await Task.Delay(500);
+                await Task.Delay(100);
             }
 
             spells.remove_condition_in_player(table_id, enemy, check_cond_id);

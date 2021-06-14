@@ -111,16 +111,17 @@ namespace game_server
                             CurrentPlayer.conditions.Clear();
                             CurrentPlayer.CurrentSpecial = null;
                             CurrentPlayer.conditions.TryAdd(functions.get_symb_for_IDs(), $":co-1006-0,");
-                            CurrentPlayer.conditions.TryAdd(functions.get_symb_for_IDs(), $":co-1007-0,");
+                            
                         } 
                         else if (float.Parse(CurrentPlayer.health_pool.Split('=')[0]) > 0 && !CurrentPlayer.isDead && isRoundChecked)
                         {
+                            /*
                             CurrentPlayer.health_pool = $"{CurrentPlayer.health_pool.Split('=')[1]}={CurrentPlayer.health_pool.Split('=')[1]}";
                             CurrentPlayer.animation_id = 0;
                             CurrentPlayer.is_reset_any_button = true;
                             CurrentPlayer.conditions.Clear();
                             CurrentPlayer.CurrentSpecial = null;
-                            CurrentPlayer.conditions.TryAdd(functions.get_symb_for_IDs(), $":co-1007-0,");
+                            */
                         }
 
                         
@@ -222,9 +223,34 @@ namespace game_server
             
         }
 
-        private async void RestartRound(int _after_seconds)
+        private async void RestartRound(float _after_seconds)
         {
-            await Task.Delay(_after_seconds);
+            //await Task.Delay(_after_seconds);
+            string ID = functions.get_symb_for_IDs();
+            string x;
+
+            for (float i = 0; i < _after_seconds; i+=1000)
+            {
+                foreach (Players CurrentPlayer in LocalPlayersPool.Values)
+                {
+                    CurrentPlayer.conditions.TryRemove(ID, out x);
+                    CurrentPlayer.conditions.TryAdd(ID, $":co-1007-{(_after_seconds-i)/1000f},");
+                                        
+                    if (!CurrentPlayer.isDead) {                        
+                        CurrentPlayer.animation_id = 0;
+                        CurrentPlayer.health_pool = $"{CurrentPlayer.health_pool.Split('=')[1]}={CurrentPlayer.health_pool.Split('=')[1]}";
+                    } else
+                    {
+                        CurrentPlayer.animation_id = 22;
+                    }
+
+                    CurrentPlayer.is_reset_any_button = true;
+                    //CurrentPlayer.conditions.Clear();
+                    CurrentPlayer.CurrentSpecial = null;
+                }
+
+                await Task.Delay(1000);
+            }
 
             foreach (Players CurrentPlayerCheck in LocalPlayersPool.Values)
             {

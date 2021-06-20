@@ -110,6 +110,7 @@ namespace game_server
                             CurrentPlayer.is_reset_any_button = true;
                             CurrentPlayer.conditions.Clear();
                             CurrentPlayer.CurrentSpecial = null;
+                            
                             CurrentPlayer.conditions.TryAdd(functions.get_symb_for_IDs(), $":co-1006-0,");
                             
                         } 

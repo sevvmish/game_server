@@ -230,6 +230,7 @@ namespace game_server
 
         private void SetSpecials()
         {
+            
             CurrentSpecial = null;
             //specials
             switch (player_class)
@@ -807,7 +808,7 @@ namespace game_server
 
 
 
-    public class WarriorSpecial
+    public class WarriorSpecial : IDisposable
     {
         private float CurrentArmorStack;
         private float DefaultTimeforNextSpecial = 5f;
@@ -868,6 +869,8 @@ namespace game_server
             string _data = string.Join("", _temp_dat);
             
             if (_data == null) return;
+
+            
 
             if (_data.Contains("dt"))
             {
@@ -959,6 +962,11 @@ namespace game_server
         private void UpdateTimer(float _time)
         {
             CurrentPlayer.set_condition("co", 1010, id_condition, _time, CurrentIterationStack);
+        }
+
+        public void Dispose()
+        {
+            this.Dispose();
         }
     }
 
@@ -1216,7 +1224,7 @@ namespace game_server
         }
     }
 
-    public class RogueSpecial
+    public class RogueSpecial : IDisposable
     {
         private float CurrentAttackPowerStack;
         private float DefaultTimeforNextSpecial = 5f;
@@ -1243,6 +1251,8 @@ namespace game_server
             id_condition = functions.get_symb_for_IDs();
             TimeOfEndForSpecial = DateTime.Now;
         }
+
+        
 
         public void UpdateSpecial()
         {
@@ -1369,6 +1379,11 @@ namespace game_server
         private void UpdateTimer(float _time)
         {
             CurrentPlayer.set_condition("co", DefaultSpellNumber, id_condition, _time);
+        }
+
+        public void Dispose()
+        {
+            this.Dispose();
         }
     }
 }

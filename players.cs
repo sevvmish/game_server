@@ -1124,8 +1124,8 @@ namespace game_server
 
             if (!isReadyToUse || CurrentPlayer.conditions.Count == 0) return;
 
-            bool isDamageTaken = false;
-            bool isDamageTakenCrit = false;
+            bool isDamageGiven = false;
+            bool isDamageGivenCrit = false;
 
             var _temp_dat = from r in CurrentPlayer.conditions.Values select r;
             string _data = string.Join("", _temp_dat);
@@ -1145,11 +1145,11 @@ namespace game_server
                         
                         if (result>0)
                         {
-                            isDamageTaken = true;
+                            isDamageGiven = true;
                             
                             if (to_search[i].Contains("-c-"))
                             {
-                                isDamageTakenCrit = true;
+                                isDamageGivenCrit = true;
                                 
                                 break;
                             }
@@ -1161,7 +1161,7 @@ namespace game_server
 
 
 
-            if (isDamageTaken && CurrentIterationStack < 5)
+            if (isDamageGiven && CurrentIterationStack < 5)
             {
                 //break before next stack is available
                 if ((float)DateTime.Now.Subtract(TimeOfStackInitiated).TotalSeconds < 1f)
@@ -1169,7 +1169,7 @@ namespace game_server
                     return;
                 }
 
-                if (isDamageTakenCrit)
+                if (isDamageGivenCrit)
                 {
                     CurrentPlayer.hit_power += DefaultAttackPowerSingleStack * 2;
                     CurrentAttackPowerStack += DefaultAttackPowerSingleStack * 2;
@@ -1184,11 +1184,11 @@ namespace game_server
 
                 UpdateConditions();
             }
-            else if (isDamageTaken && CurrentIterationStack >= 5)
+            else if (isDamageGiven && CurrentIterationStack >= 5)
             {
                 //EndTickAndRemove();
             }
-            else if (!isDamageTaken)
+            else if (!isDamageGiven)
             {
                 return;
             }
@@ -1224,23 +1224,20 @@ namespace game_server
         }
     }
 
-    public class RogueSpecial : IDisposable
+    public class RogueSpecial
     {
-        private float CurrentAttackPowerStack;
-        private float DefaultTimeforNextSpecial = 5f;
-        private int CurrentIterationStack;
-        private readonly int DefaultSpellNumber = 1015;
+        private int CurrentStackAmount;
 
-        private readonly float DefaultAttackPowerSingleStack = 20f;
-        private readonly float DefaultTimeforStack = 5f;
-        private readonly int TimeForSpecialFrom = 5;
-        private readonly int TimeForSpecialTo = 10;
+        private DateTime TimeOfLastStackAdded;
 
+        private readonly float TimeTillNextStackAdding = 5f;
+        private readonly float TimeForTickingOfCurrentStack = 5f;
+        private readonly float DefaultStackForMeleeCrit = 1f;
+        private readonly float DefaultStackForAttpower = 1f;
 
-        private DateTime TimeOfStackInitiated;
-        private DateTime TimeOfEndForSpecial;
+        private readonly int SpecializationSpellIndex = 1016;
+
         private bool isReadyToUse;
-
         private string id_condition = "";
         private Players CurrentPlayer;
 
@@ -1249,7 +1246,7 @@ namespace game_server
             CurrentPlayer = _current_player;
             isReadyToUse = true;
             id_condition = functions.get_symb_for_IDs();
-            TimeOfEndForSpecial = DateTime.Now;
+            TimeOfLastStackAdded = DateTime.Now;
         }
 
         
@@ -1257,41 +1254,24 @@ namespace game_server
         public void UpdateSpecial()
         {
             
-            if (CurrentIterationStack != 0)
-            {
-                float _tick = (float)DateTime.Now.Subtract(TimeOfStackInitiated).TotalSeconds;
-                if (_tick < DefaultTimeforStack)
-                {
-                    UpdateTimer(DefaultTimeforStack - _tick);
-                }
-                else
-                {
-                    EndTickAndRemove();
-                }
-
-            }
-
-            if (DateTime.Now.Subtract(TimeOfEndForSpecial).TotalSeconds > DefaultTimeforNextSpecial)
-            {
-                isReadyToUse = true;
-            }
-            else
-            {
-                isReadyToUse = false;
-            }
-
             if (!isReadyToUse || CurrentPlayer.conditions.Count == 0) return;
-
-            bool isDamageTaken = false;
-            bool isDamageTakenCrit = false;
 
             var _temp_dat = from r in CurrentPlayer.conditions.Values select r;
             string _data = string.Join("", _temp_dat);
 
-            if (_data == null) return;
-
-            if (_data.Contains("dg"))
+            if (_data.Contains("153"))
             {
+                if ((float)DateTime.Now.Subtract(TimeOfLastStackAdded).TotalSeconds > TimeTillNextStackAdding)
+                {
+                    AddBuffStack();
+                }
+            } 
+
+
+
+            if (_data.Contains("dg") && CurrentStackAmount>0)
+            {
+                bool isDamageGiven = false;
                 string[] to_search = _data.Split(',');
                 for (int i = 0; i < to_search.Length; i++)
                 {
@@ -1303,87 +1283,55 @@ namespace game_server
 
                         if (result > 0)
                         {
-                            isDamageTaken = true;
-
-                            if (to_search[i].Contains("-c-"))
-                            {
-                                isDamageTakenCrit = true;
-
-                                break;
-                            }
+                            isDamageGiven = true;
+                            break;
                         }
                     }
                 }
 
-            }
-
-
-
-            if (isDamageTaken && CurrentIterationStack < 5)
-            {
-                //break before next stack is available
-                if ((float)DateTime.Now.Subtract(TimeOfStackInitiated).TotalSeconds < 1f)
+                if (isDamageGiven)
                 {
-                    return;
+                    EndTickAndRemove();
                 }
 
-                if (isDamageTakenCrit)
-                {
-                    CurrentPlayer.hit_power += DefaultAttackPowerSingleStack * 2;
-                    CurrentAttackPowerStack += DefaultAttackPowerSingleStack * 2;
-                }
-                else
-                {
-                    CurrentPlayer.hit_power += DefaultAttackPowerSingleStack;
-                    CurrentAttackPowerStack += DefaultAttackPowerSingleStack;
-                }
-
-                CurrentIterationStack++;
-
-                UpdateConditions();
             }
-            else if (isDamageTaken && CurrentIterationStack >= 5)
-            {
-                //EndTickAndRemove();
-            }
-            else if (!isDamageTaken)
-            {
-                return;
-            }
+            
 
         }
 
-        private float GetRandom()
+       
+        private void AddBuffStack()
         {
-            Random rnd = new Random();
-            return rnd.Next(TimeForSpecialFrom, TimeForSpecialTo+1);
+            if (CurrentStackAmount<5)
+            {
+                CurrentStackAmount++;
+                CurrentPlayer.melee_crit += DefaultStackForMeleeCrit;
+                CurrentPlayer.hit_power += DefaultStackForAttpower;
+                TimeOfLastStackAdded = DateTime.Now;
+                UpdateTimer();
+            }
         }
 
-        private void UpdateConditions()
-        {
-            TimeOfStackInitiated = DateTime.Now;
-            CurrentPlayer.set_condition("co", DefaultSpellNumber, id_condition, DefaultTimeforStack);
-        }
-
+        
         private void EndTickAndRemove()
         {
-            DefaultTimeforNextSpecial = GetRandom();
-            CurrentPlayer.hit_power -= CurrentAttackPowerStack;
-            CurrentIterationStack = 0;
-            CurrentAttackPowerStack = 0;
-            TimeOfEndForSpecial = DateTime.Now;
+
+            CurrentPlayer.melee_crit -= CurrentStackAmount * DefaultStackForMeleeCrit;
+            CurrentPlayer.hit_power -= CurrentStackAmount * DefaultStackForAttpower;
+            CurrentStackAmount = 0;
+            TimeOfLastStackAdded = DateTime.Now;
+
             spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
             id_condition = functions.get_symb_for_IDs();
         }
 
-        private void UpdateTimer(float _time)
+        private void UpdateTimer()
         {
-            CurrentPlayer.set_condition("co", DefaultSpellNumber, id_condition, _time);
+            //float _time_left = TimeForTickingOfCurrentStack - (float)DateTime.Now.Subtract(TimeOfLastStackAdded).TotalSeconds;
+            
+            CurrentPlayer.set_condition("co", SpecializationSpellIndex, id_condition, 99, CurrentStackAmount);
         }
 
-        public void Dispose()
-        {
-            this.Dispose();
-        }
+
     }
 }

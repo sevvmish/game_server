@@ -102,7 +102,7 @@ namespace game_server
             string check_cond_strike_id = functions.get_symb_for_IDs();
             string check_cond = functions.get_symb_for_IDs();
             player.conditions.TryAdd(check_cond_strike_id, $":cs=153={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
-            player.conditions.TryAdd(check_cond, $":co-153-999,");
+            player.conditions.TryAdd(check_cond, $":co-153-99,");
             await Task.Delay(20);
             spells.remove_condition_in_player(table_id, me, check_cond_strike_id);
             player.is_invisible = true;

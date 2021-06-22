@@ -64,15 +64,5 @@ namespace game_server
     }
 
 
-    public struct SessionData
-    {
-        public string PlayerID;
-        public string SessionID;
-
-        public SessionData(string pl, string sess)
-        {
-            PlayerID = pl;
-            SessionID = sess;
-        }
-    }
+    
 }

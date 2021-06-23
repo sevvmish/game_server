@@ -138,14 +138,14 @@ namespace game_server
                         if (1==1 && !CurrentPlayer.isDead && !isRoundChecked) //CurrentPlayer.endPointUDP != null   ПОТОМ ИСПРАВЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         {
                             //specials
-                            CurrentPlayer.CurrentSpecial?.Invoke();
+                            //CurrentPlayer.CurrentSpecial?.Invoke();
 
                             //free regen
                             CurrentPlayer.CheckForFreeRegeneration();
 
                             if (CurrentPlayer.energy < 100)
                             {
-                                CurrentPlayer.energy = CurrentPlayer.energy + CurrentPlayer.energy_regen * 0.05f;
+                                CurrentPlayer.energy = CurrentPlayer.energy + CurrentPlayer.energy_regen * 0.05f*2;
                             }
 
                             string[] curr_health = CurrentPlayer.health_pool.Split('=');

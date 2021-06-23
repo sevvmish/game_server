@@ -91,7 +91,7 @@ namespace game_server
                 if (p.energy >= energy_cost) {
                                     
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 10));
-                    Task.Run(() => warrior.shield_bash(player, table_id, 0.6f, 3, energy_cost));
+                    Task.Run(() => warrior.shield_bash(player, table_id, 1f, 3, energy_cost));
 
                     return new float[] { 1, 0, 10 };
                 } else

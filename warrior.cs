@@ -104,7 +104,8 @@ namespace game_server
                 await Task.Delay(1000);
             }
 
-            enemy.conditions.TryRemove(id_condition, out x);
+            //enemy.conditions.TryRemove(id_condition, out x);
+            spells.remove_condition_in_player(table_id, all_players, id_condition);
         }
 
 
@@ -186,7 +187,7 @@ namespace game_server
                     {
                         functions.turn_face_to_face(me, all_needed_players[ii].player_id, table_id);
                     }
-                    spells.make_splash_melee_damage(table_id, me, 4, 0, 1, 2, 0, 0, 20);
+                    spells.make_splash_melee_damage(table_id, me, 4, 0, 3, 2, 0, 0, 20);
                 }
                 for (float i = stun_time; i > 0; i -= 0.1f)
                 {

@@ -196,32 +196,62 @@ namespace game_server
 
             if (!isRoundChecked)
             {
-                //test for GAME TYPE 0==============
+                //===================================test for GAME TYPE 0==============
                 if (GameType == 0)
                 {
                     int HowManyDead = 0;
+                    List<int> _which_teamID_winner = new List<int>();
                     foreach (Players CurrentPlayer in LocalPlayersPool.Values)
                     {
                         if (CurrentPlayer.isDead)
                         {
                             HowManyDead++;
+                        } else
+                        {
+                            _which_teamID_winner.Add(CurrentPlayer.team_id);
                         }
                     }
 
                     if (HowManyDead > 0)
                     {
+                        foreach (Players CurrentPlayer in LocalPlayersPool.Values)
+                        {
+                            if (_which_teamID_winner.Contains(CurrentPlayer.team_id))
+                            {
+                                CurrentPlayer.AddPVPScoreByTeamID(CurrentPlayer.team_id);
+                            }
+                            
+                        }
+
                         Task.Run(() => RestartRound(5000));
                         Console.WriteLine("started...");
                         isRoundChecked = true;
                     }
 
                 }
-                //==================================
+                //==================================test for GAME TYPE 0==============
 
 
 
             }
-            
+
+        }
+
+        public string SessionGamingStatistics()
+        {
+            string result = null;
+
+            result = $"{GameType}~{PlayersCount}~";
+
+            if (GameType == 0 || GameType == 1)
+            {
+                foreach (Players CurrentPlayer in LocalPlayersPool.Values)
+                {
+                    result = result + $"{CurrentPlayer.player_name}-{CurrentPlayer.player_class}-{CurrentPlayer.team_id}-{CurrentPlayer.PlayerScoreInPvP}~";
+                }
+            }
+
+            return result;
         }
 
         private async void RestartRound(float _after_seconds)

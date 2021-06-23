@@ -12,6 +12,7 @@ namespace game_server
     {
         public bool isDead = false;
         private string[] init_data;
+        public int PlayerScoreInPvP;
 
         public string Session_ID;
         public int player_order;
@@ -475,6 +476,14 @@ namespace game_server
         {
             Dispose();
         }
+
+        public void AddPVPScoreByTeamID(int teamID)
+        {
+            if (team_id==teamID)
+            {
+                PlayerScoreInPvP++;
+            }
+        }
                 
         public void ZeroInputs()
         {
@@ -487,7 +496,7 @@ namespace game_server
             button5 = false;
             button6 = false;
             is_strafe_on = false;
-    }
+        }
 
         //set condition
         public void set_condition(string cond_type, int condition_number, string cond_id, float timer)

@@ -181,7 +181,7 @@ namespace game_server
             // 0~4~player_id~session_id - data for each player about team and ur spells
             // 0~5~passpass~ SQL instruction - executes SQL in local database
             // 0~6~player_id~session_id~base part~ mod part~ open key1 ~ open key2~ open key 3
-
+            // 0~7~sessionID  - get the current game score
 
             string[] RawDataArray = RawPacket.Split('~');
 
@@ -346,7 +346,44 @@ namespace game_server
                     return "0";
                     break;
 
-               
+                case "7": //ord~spec~sessionID
+
+
+                    try
+                    {
+                        
+                        if (!StringChecker(RawDataArray[2]) || !StringChecker(RawDataArray[3]))
+                        {
+                            Console.WriteLine(DateTime.Now + ": wrong numerics from " + endpoint_address);
+                            return "0";
+                        }
+
+                        if (!starter.SessionsPool[RawDataArray[3]].LocalPlayersPool.ContainsKey(RawDataArray[2]))
+                        {
+                            Console.WriteLine(DateTime.Now + ": no such player ID " + RawDataArray[2] + " in session " + RawDataArray[3] + "... from " + endpoint_address);
+                            return "0";
+                        }
+
+                        if (!starter.SessionsPool.ContainsKey(RawDataArray[3]))
+                        {
+                            //Console.WriteLine("session " + sessionname + " allready exists");
+                            Console.WriteLine(DateTime.Now + $": error getting current score for session {RawDataArray[3]}: no such session");
+                            return "0";
+                        }
+
+                        string result = null;
+
+                        return $"0~7~{starter.SessionsPool[RawDataArray[3]].SessionGamingStatistics()}";
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("==============ERROR================\n" + ex + "\n" + DateTime.Now + "\n" + "==================ERROR_END===========\n");
+
+                    }
+                    return "0";
+                    break;
+
+
             }
 
             return "";

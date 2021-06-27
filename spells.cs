@@ -1357,7 +1357,20 @@ namespace game_server
                 return;
             }
 
-            
+            /*
+            foreach (var item in enemy.conditions)
+            {
+                if (item.Value.ToString().Contains("ca-"))
+                {                    
+                    enemy.make_broken_casting();                    
+                }
+
+               
+            }*/
+
+
+            enemy.make_broken_casting();
+
             float default_angle = 80;
             float current_angle_of_enemy = functions.player_angle_unity(enemy.position_x, 0, enemy.position_z, 0, enemy.rotation_y, 0, p.position_x, 0, p.position_z);
             bool is_dodged = false;

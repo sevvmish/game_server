@@ -289,18 +289,23 @@ namespace game_server
             spells.remove_condition_in_player(table_id, mee, check_cond_id);
             player.is_spell_in_process = false;
             player.minus_energy(energy_cost);
+            spells.reset_animation_for_one(table_id, mee);
 
             float dam = damage / (10f * how_long);
             float power = 1 / (10f * how_long);
             string check_cond_id1 = functions.get_symb_for_IDs();
+            
 
             for (float u = how_long; u > 0; u-=0.1f)
             {
                 if (player.is_casting_failed())
                 {
+                    player.conditions.TryRemove(check_cond_id1, out xxx);
+                    player.conditions.TryAdd(check_cond_id1, $":co-201-0,");
                     functions.inform_of_cancel_casting(mee, table_id, 201);
                     spells.reset_animation_for_one(table_id, mee);
                     spells.remove_condition_in_player(table_id, mee, check_cond_id1);
+                    //spells.remove_condition_in_player(table_id, mee, check_cond_id);
                     return;
                 }
                 functions.turn_to_enemy(mee, table_id, 0.1f, dist - 1, -15, dist + 1);
@@ -314,6 +319,10 @@ namespace game_server
                 float new_z = x[1];
                 player.conditions.TryRemove(check_cond_id1, out xxx);                
                 player.conditions.TryAdd(check_cond_id1, $":co-201-{u.ToString("f1").Replace(',', '.')},");
+
+                //player.conditions.TryRemove(check_cond_id, out xxx);
+                //player.conditions.TryAdd(check_cond_id, $":ca-201-{u.ToString("f1").Replace(',', '.')},");
+
                 //spells.remove_condition_in_player(table_id, mee, check_cond_id1);
                 List<Players> all_enemies = new List<Players>();
 
@@ -338,9 +347,7 @@ namespace game_server
                         }
                     }
 
-                }
-
-                await Task.Delay(100);
+                }                
 
                 if (all_enemies.Count > 0)
                 {
@@ -351,10 +358,13 @@ namespace game_server
                 }
                 all_enemies.Clear();
 
+                await Task.Delay(100);
+
             }
 
             spells.reset_animation_for_one(table_id, mee);
             spells.remove_condition_in_player(table_id, mee, check_cond_id1);
+            //spells.remove_condition_in_player(table_id, mee, check_cond_id);
 
         }
 

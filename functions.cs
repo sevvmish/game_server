@@ -964,15 +964,22 @@ namespace game_server
         }
 
         // CANCEL casting informing
-        public static void inform_of_cancel_casting(string player_name, string table_id, int spell_number)
+        public static async void inform_of_cancel_casting(string player_name, string table_id, int spell_number)
         {
             Players player = GetPlayerData(table_id, player_name);
             string check_cond_id = get_symb_for_IDs();
+            
             player.conditions.TryAdd(check_cond_id, $":ca-cncld-{spell_number},");
+            /*
             if (get_id_by_type_and_spell(player_name, table_id, "ca-cncld") != null)
             {
                 spells.remove_condition_in_player(table_id, player_name, get_id_by_type_and_spell(player_name, table_id, "ca-cncld"));
             }
+            */
+
+            await Task.Delay(100);
+            
+            spells.remove_condition_in_player(table_id, player_name, check_cond_id);
         }
 
         //get ID by type and spell like "xx-45"

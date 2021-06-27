@@ -138,7 +138,7 @@ namespace game_server
                         if (1==1 && !CurrentPlayer.isDead && !isRoundChecked) //CurrentPlayer.endPointUDP != null   ПОТОМ ИСПРАВЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         {
                             //specials
-                            //CurrentPlayer.CurrentSpecial?.Invoke();
+                            CurrentPlayer.CurrentSpecial?.Invoke();
 
                             //free regen
                             CurrentPlayer.CheckForFreeRegeneration();

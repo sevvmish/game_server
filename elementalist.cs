@@ -199,7 +199,7 @@ namespace game_server
             player.start_spell_in_process();
             int hit_counter = 0;
             List<Players> hit_players = new List<Players>();
-            for (float i = how_long; i > 0; i -= 0.25f)
+            for (float i = how_long; i > 0; i -= 0.250f)
             {
                 functions.turn_to_enemy(mee, table_id, 0.1f, distance - 1, -15, distance + 1);
                 if (!player.is_casting_failed())
@@ -230,6 +230,7 @@ namespace game_server
                 }
                 else
                 {
+                    Console.WriteLine("spell broken!!!!!!!!!!!!!!!!!!!!!!!!!");
                     spells.remove_condition_in_player(table_id, mee, check_cond_id_for_casting);
                     spells.remove_condition_in_player(table_id, mee, check_cond_id_for_spellcha);
                     player.stop_spell_in_process();

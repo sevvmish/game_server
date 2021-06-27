@@ -122,7 +122,7 @@ namespace game_server
         public float PowerOfIceMulti = 1f;
         public float PowerOfAirMulti = 1f;
         public float PowerOfEarthMulti = 1f;
-
+        public float ChanceOfSpellCastingBroken = 20f;
 
         public Players(int player_order, string player_id, string player_name, int player_class, string connection_number, int team_id,
         int zone_type, float position_x, float position_y, float position_z, float rotation_x, float rotation_y, float rotation_z,
@@ -662,6 +662,17 @@ namespace game_server
             string x;
             conditions.TryRemove(conds_id, out x);
             conditions.TryAdd(conds_id, $":co-1002-{tick_time_left.ToString("f1")},");
+        }
+
+        //break casting 1005
+        public async void make_broken_casting()
+        {
+            string conds_id = functions.get_symb_for_IDs();
+            string x;
+            conditions.TryRemove(conds_id, out x);
+            conditions.TryAdd(conds_id, $":co-1005-0,");
+            await Task.Delay(100);
+            spells.remove_condition_in_player(Session_ID, player_id, conds_id);
         }
 
         //cheking for 1002 and 1003 and 1005 stopping casting

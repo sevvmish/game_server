@@ -114,6 +114,7 @@ namespace game_server
         {
             functions.turn_to_enemy(me, table_id, 0.1f, 20, 15, 20);
             Players pl = functions.GetPlayerData(table_id, me);
+            pl.animation_id = 10;
             float current_shield_block = pl.shield_block;
             pl.shield_block = 100;
             pl.speed *= 0.3f;
@@ -126,7 +127,7 @@ namespace game_server
                 await Task.Delay(1000);
             }
             spells.remove_condition_in_player(table_id, me, check_cond_id);
-
+            spells.reset_animation_for_one(table_id, me);
             pl.shield_block = current_shield_block;
             pl.speed /= 0.3f;
             
@@ -194,6 +195,7 @@ namespace game_server
                     for (int u = 0; u < all_needed_players.Count; u++)
                     {
                         all_needed_players[u].make_stun(conds_ids[u], i);
+                        all_needed_players[u].set_condition("co", 4, conds_ids[u], i);
                     }
                     await Task.Delay(100);
                 }

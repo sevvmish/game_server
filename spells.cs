@@ -441,7 +441,7 @@ namespace game_server
 
                     //backstab($table_id, $player, $energy_cost);
                     p.minus_energy(energy_cost);                    
-                    make_direct_melee_damage(table_id, player, 152, 11, 2, 2, 0.2f);
+                    make_direct_melee_damage(table_id, player, 152, 11, 2, 2, 0.2f); //0.2f
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 5f));
                     return new float[] { 1, 5, 5f };
                 } else

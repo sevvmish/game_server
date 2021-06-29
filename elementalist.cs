@@ -285,14 +285,37 @@ namespace game_server
 
             spells.remove_condition_in_player(table_id, mee, cond_id);
             //explosion============================================
-            List<Players> result = functions.get_all_nearest_enemy_inradius(point_x, point_z, mee, table_id, 2);
-            if (result.Count > 0)
+            List<Players> result_p = functions.get_all_nearest_enemy_inradius(point_x, point_z, mee, table_id, 2);
+            //List<string> conds_ids_for_stun = new List<string>();
+            Dictionary<string, Players> result = new Dictionary<string, Players>();
+
+            for (int i = 0; i < result_p.Count; i++)
             {
-                for (int u = 0; u < result.Count; u++)
-                {
-                    spells.make_direct_magic_damage_exact_enemy(table_id, mee, result[u].player_id, 52, 20, 1, 2);
-                }
+                result.Add(functions.get_symb_for_IDs(), result_p[i]);
             }
+            
+
+            foreach (string item in result.Keys)
+            {
+                spells.make_direct_magic_damage_exact_enemy(table_id, mee, result[item].player_id, 52, 20, 1, 2);                
+            }
+
+            for (float i = 1; i > 0; i-=0.1f)
+            {
+                foreach (string item in result.Keys)
+                {
+                    result[item].make_stun(item, i);
+                    result[item].set_condition("co", 52, item, i);
+                }
+                await Task.Delay(100);
+            }
+
+            foreach (string item in result.Keys)
+            {
+                spells.remove_condition_in_player(table_id, result[item].player_id, item);
+                spells.reset_animation_for_one(table_id, result[item].player_id);
+            }
+
         }
 
 

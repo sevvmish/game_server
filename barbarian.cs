@@ -56,6 +56,8 @@ namespace game_server
             string check_cond_id = functions.get_symb_for_IDs();
             functions.turn_to_enemy(me, table_id, 0.1f, max_distance, -10, max_distance);
 
+            float time_for_slow = 2f;
+
             Players player1 = functions.GetPlayerData(table_id, me);
             Players enemy = functions.get_one_nearest_enemy_inmelee(me, table_id, max_distance - 2, -10, true);
             float start_x = player1.position_x;
@@ -103,10 +105,15 @@ namespace game_server
             string check_cond_strike_id = functions.get_symb_for_IDs();
             player1.conditions.TryAdd(check_cond_strike_id, $":cs=103={player1.position_x.ToString("f1").Replace(',', '.')}={player1.position_z.ToString("f1").Replace(',', '.')},");
             List<Players> enemies = functions.get_all_nearest_enemy_inradius(player1.position_x, player1.position_z, me, table_id, 2);
+            List<string> IDs_for_slow = new List<string>(enemies.Count);
             if (enemies.Count > 0)
             {
                 for (int u = 0; u < enemies.Count; u++)
                 {
+                    IDs_for_slow.Add(functions.get_symb_for_IDs());
+                    enemies[u].make_slow(IDs_for_slow[u], time_for_slow);
+                    enemies[u].speed *= 0.8f;
+                    enemies[u].make_broken_casting();
                     spells.make_direct_melee_damage_exact_enemy(table_id, me, enemies[u].player_id, 103, 2, 1, 2, 0);
                 }
             }
@@ -117,6 +124,14 @@ namespace game_server
             spells.reset_animation_for_one(table_id, me);
             spells.remove_condition_in_player(table_id, me, check_cond_id);
             spells.remove_condition_in_player(table_id, me, check_cond_strike_id);
+
+            await Task.Delay((int)time_for_slow*1000-100);
+
+            for (int u = 0; u < enemies.Count; u++)
+            {                
+                spells.remove_condition_in_player(table_id, enemies[u].player_id, IDs_for_slow[u]);
+                enemies[u].speed /= 0.8f;                
+            }
         }
 
 
@@ -131,6 +146,8 @@ namespace game_server
 
             List<Players> hit_players = new List<Players>();
             int hit_counter = 0;
+            player.is_immune_to_movement_imparing = true;
+
             for (float i = how_long; i > 0; i -= 0.25f)
             {
                 if (!player.is_casting_stopped_by_spells())
@@ -172,7 +189,7 @@ namespace game_server
                 {
                     for (int u = 0; u < hit_players.Count; u++)
                     {
-                        spells.make_direct_melee_damage_exact_enemy(table_id, me, hit_players[u].player_id, 102, 0, 0.5f, 2, 0);
+                        spells.make_direct_melee_damage_exact_enemy(table_id, me, hit_players[u].player_id, 102, 0, 0.25f, 2, 0);
                     }
                     hit_counter = 0;
                     hit_players.Clear();
@@ -182,6 +199,7 @@ namespace game_server
                 await Task.Delay(250);
             }
 
+            player.is_immune_to_movement_imparing = false;
             player.stop_spell_in_process();
             spells.remove_condition_in_player(table_id, me, check_cond_id);
             player.speed /= 0.5f;
@@ -203,14 +221,14 @@ namespace game_server
         //spell 105 power attack
         public static async void power_attack(string table_id, string me)
         {
-            float casting_time = 1;
+            float casting_time = 1f;
             string check_cond_id = functions.get_symb_for_IDs();
             Players player = functions.GetPlayerData(table_id, me);
             player.start_spell_in_process();
             functions.turn_to_enemy(me, table_id, 0.1f, 2, -15, 2);
             string x;
 
-            for (float i = 1; i > 0; i -= 0.2f)
+            for (float i = casting_time; i > 0; i -= 0.2f)
             {
                 functions.turn_to_enemy(me, table_id, 0.1f, 2, -15, 2);
 

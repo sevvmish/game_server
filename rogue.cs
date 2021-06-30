@@ -25,7 +25,14 @@ namespace game_server
             check_cond_strike_id = functions.get_symb_for_IDs();
             player.conditions.TryAdd(check_cond_strike_id, $":cs=155={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
             spells.remove_condition_in_player(table_id, pl, check_cond_strike_id);
-            enemy.speed *= 0.4f;
+            bool isSlowed = false;
+            if (!enemy.is_immune_to_movement_imparing)
+            {
+                isSlowed = true;
+            }
+            
+            if (isSlowed) enemy.speed *= 0.4f;
+
             player.rotation_y = enemy.rotation_y;
             float new_enemy_angle = enemy.rotation_y;
             for (float i = 2; i > 0; i -= 0.1f)
@@ -38,7 +45,7 @@ namespace game_server
                 await Task.Delay(100);
             }
             spells.remove_condition_in_player(table_id, enemy.player_id, check_cond_strike_id);
-            enemy.speed /= 0.4f;
+            if (isSlowed) enemy.speed /= 0.4f;
 
         }
 
@@ -54,7 +61,7 @@ namespace game_server
             Players player = functions.GetPlayerData(table_id, mee);
             player.is_spell_in_process = true;
 
-            for (float i = attack_time; i > 0; i -= 0.2f)
+            for (float i = attack_time; i > 0; i -= 0.201f)
             {
                 if (!player.is_casting_failed())
                 {
@@ -65,7 +72,7 @@ namespace game_server
                     //check_cond_id = functions.get_random_set_of_symb(4);
                     player.conditions.TryAdd(check_cond_id, $":co-154-{i.ToString("f1").Replace(',', '.')},");
                     player.animation_id = 15;
-                    spells.make_splash_melee_damage(table_id, mee, 154, 0, 0.2f, 2, 0, 0, 0);
+                    spells.make_splash_melee_damage(table_id, mee, 154, 0, 0.5f, 2, 0, 0, 0);
                 }
                 else
                 {
@@ -126,6 +133,8 @@ namespace game_server
         public static async void pistol_shot(string table_id, string me)
         {
             float shot_distance = 15f;
+            float time_for_aiming = 2f;
+
             string check_cond_id = functions.get_symb_for_IDs();
             string check_immob_id = functions.get_symb_for_IDs();
             string check_cond_strike_id = functions.get_symb_for_IDs();
@@ -135,7 +144,7 @@ namespace game_server
             float[] bullet_pos_for_assess = new float[2];
             string x;
 
-            for (float i = 3f; i > 0; i -= 0.1f)
+            for (float i = time_for_aiming; i > 0; i -= 0.1f)
             {
                 if (!player.is_casting_stopped_by_spells())
                 {
@@ -164,13 +173,12 @@ namespace game_server
 
                             for (int c = 0; c < candidates.Count; c++)
                             {
-                                if (candidates[c].is_invisible || candidates[c].player_id==me || candidates[c].team_id==player.team_id)
+                                if ( candidates[c].player_id==me || candidates[c].team_id==player.team_id) //candidates[c].is_invisible ||
                                 {
                                     candidates.Remove(candidates[c]);
                                 }
                             }
-
-                            
+                                                        
 
                             bool isFound = false;
                             for (float d = 0; d < shot_distance; d+=0.2f)
@@ -181,7 +189,7 @@ namespace game_server
                                 {
                                     if (functions.vector3_distance_unity(bullet_pos_for_assess[0], 0, bullet_pos_for_assess[1], candidates[c].position_x, 0, candidates[c].position_z)<0.25f)
                                     {
-                                        spells.melee_damage(table_id, me, candidates[c].player_id, 156, 1, 2);
+                                        spells.melee_damage(table_id, me, candidates[c].player_id, 156, 5, 2);
                                         
                                         player.conditions.TryAdd(check_cond_strike_id, $":cs=156={candidates[c].position_x.ToString("f1").Replace(',', '.')}={candidates[c].position_z.ToString("f1").Replace(',', '.')},");
                                         spells.remove_condition_in_player(table_id, me, check_cond_strike_id);

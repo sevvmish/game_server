@@ -247,7 +247,7 @@ namespace game_server
                 if (p.energy >= energy_cost) {
                     p.minus_energy(energy_cost);
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
-                    Task.Run(() => elementalist.firehands(table_id, player, 40));
+                    Task.Run(() => elementalist.firehands(table_id, player, 0));
                     return new float[] { 1, 5, 5 };
                 }
                 else
@@ -264,7 +264,7 @@ namespace game_server
                 if (p.energy >= energy_cost) {
                     p.minus_energy(energy_cost);
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
-                    Task.Run(() => elementalist.firewalk(table_id, player, 40));
+                    Task.Run(() => elementalist.firewalk(table_id, player, 0));
                     return new float[] { 1, 5, 5 };
                 }
                 else
@@ -288,9 +288,11 @@ namespace game_server
             
                     List<Players> result = functions.get_all_nearest_enemy_inradius(p.position_x, p.position_z, player, table_id, 3);
 
+
                     if (result.Count>0)
                     {
                         for (int i = 0; i < result.Count; i++) {
+                            spells.make_direct_magic_damage_exact_enemy(table_id, player, result[i].player_id, 55, 0, 0.5f, 1);
                             elementalist.freezed(table_id, player, result[i].player_id, 5);
                         }
                     }
@@ -405,8 +407,8 @@ namespace game_server
                     p.minus_energy(energy_cost);
 
                     Task.Run(() => rogue.fast_strike(table_id, player));
-                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 0.7f));
-                    return new float[] { 1, 5, 0.7f };
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 1.5f));
+                    return new float[] { 1, 5, 1.5f };
                 } else
                 {
                     return new float[] { 0, 7, 0 };
@@ -441,7 +443,7 @@ namespace game_server
 
                     //backstab($table_id, $player, $energy_cost);
                     p.minus_energy(energy_cost);                    
-                    make_direct_melee_damage(table_id, player, 152, 11, 2, 2, 0.2f); //0.2f
+                    make_direct_melee_damage(table_id, player, 152, 11, 5, 3, 0.2f); //0.2f
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 5f));
                     return new float[] { 1, 5, 5f };
                 } else
@@ -514,7 +516,7 @@ namespace game_server
             }
             //================spell 155==================================
 
-            //================spell 156 step==================================
+            //================spell 156 pistol shot==================================
             if (spell_id == 156)
             {
                 float energy_cost = 10;
@@ -539,7 +541,7 @@ namespace game_server
                     return new float[] { 0, 7, 0 };
                 }
             }
-            //================spell 155==================================
+            //================spell 156==================================
 
 
             //================spell 201 death beam==================================
@@ -1252,7 +1254,7 @@ namespace game_server
                 }
             }
 
-            await Task.Delay(120);
+            await Task.Delay(200);
 
              
             p.conditions.TryRemove(cond_id, out x);

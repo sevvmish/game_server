@@ -104,12 +104,27 @@ namespace game_server
             float old_x = 0.01f;
             float old_z = 0.01f;
             Players player = functions.GetPlayerData(table_id, me);
+            int stacks_on_place = 0;
 
             for (float i = 2; i > 0; i -= 0.1f)
             {
                 if (Math.Abs(player.position_x - old_x) < 0.3f && Math.Abs(player.position_z - old_z) < 0.3f)
                 {
-
+                    stacks_on_place++;
+                    if (stacks_on_place==10)
+                    {
+                        stacks_on_place = 0;
+                        
+                        float point_x = player.position_x;
+                        float point_z = player.position_z;
+                        string x;
+                        player.conditions.TryRemove(check_cond_id, out x);
+                        check_cond_id = functions.get_symb_for_IDs();
+                        player.conditions.TryAdd(check_cond_id, $":cs=54={point_x.ToString("f1").Replace(',', '.')}={point_z.ToString("f1").Replace(',', '.')},");
+                        firestep(table_id, me, base_damage, point_x, point_z, 0.75f);
+                        old_x = point_x;
+                        old_z = point_z;
+                    }
                 }
                 else
                 {
@@ -165,7 +180,7 @@ namespace game_server
                     {
                         if (result.Count > 0)
                         {
-                            spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 54, base_damage / 2, 0.5f, 2);
+                            spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 54, base_damage / 2, 2, 2);
                         }
                     }
                     hit_counter = 0;
@@ -230,7 +245,7 @@ namespace game_server
                 }
                 else
                 {
-                    Console.WriteLine("spell broken!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    
                     spells.remove_condition_in_player(table_id, mee, check_cond_id_for_casting);
                     spells.remove_condition_in_player(table_id, mee, check_cond_id_for_spellcha);
                     player.stop_spell_in_process();
@@ -246,7 +261,7 @@ namespace game_server
                 {
                     for (int u = 0; u < hit_players.Count; u++)
                     {
-                        spells.make_direct_magic_damage_exact_enemy(table_id, mee, hit_players[u].player_id, 53, base_damage / 2, 0.5f, 2);
+                        spells.make_direct_magic_damage_exact_enemy(table_id, mee, hit_players[u].player_id, 53, base_damage / 2, 2, 2);
                     }
                     hit_counter = 0;
                     hit_players.Clear();
@@ -300,6 +315,7 @@ namespace game_server
                 spells.make_direct_magic_damage_exact_enemy(table_id, mee, result[item].player_id, 52, 20, 1, 2);                
             }
 
+            
             for (float i = 1; i > 0; i-=0.1f)
             {
                 foreach (string item in result.Keys)
@@ -322,12 +338,14 @@ namespace game_server
         //freezed any spell
         public static async void freezed(string table_id, string me, string enemy, float time)
         {
-            if (spells.if_resisted_magic(table_id, me, enemy))
+            Players player = functions.GetPlayerData(table_id, enemy);
+
+            if (spells.if_resisted_magic(table_id, me, enemy) || !player.is_immune_to_movement_imparing)
             {
                 return;
             }
 
-            Players player = functions.GetPlayerData(table_id, enemy);
+            
             string check_cond_id = functions.get_symb_for_IDs();
             string conds_id = functions.get_symb_for_IDs();
             string x;

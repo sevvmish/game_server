@@ -90,6 +90,7 @@ namespace game_server
         public bool is_reset_any_button = false; //0002 rab
         public bool is_reset_movement_button = false; //0003 rmb
         public bool is_movement_touched = false; //0001 bmt
+        public bool is_immune_to_movement_imparing = false; //
         public bool is_immune_to_melee = false; //0005 immune to melee received
         public bool is_immune_to_magic = false; //0006 immune to magic received
         public bool is_reflecting_melee = false; //0007 reflect damage melee
@@ -652,7 +653,15 @@ namespace game_server
             conditions.TryAdd(conds_id, $":co-1001-{tick_time_left.ToString("f1").Replace(',', '.')},");
 
         }
-      
+
+
+        //slower
+        public void make_slow(string conds_id, float tick_time_left)
+        {            
+            string x;
+            conditions.TryRemove(conds_id, out x);
+            conditions.TryAdd(conds_id, $":co-995-{tick_time_left.ToString("f1")},");
+        }
 
 
         //STUN
@@ -664,6 +673,7 @@ namespace game_server
             conditions.TryAdd(conds_id, $":co-1002-{tick_time_left.ToString("f1")},");
         }
 
+
         //break casting 1005
         public async void make_broken_casting()
         {
@@ -671,7 +681,7 @@ namespace game_server
             string x;
             conditions.TryRemove(conds_id, out x);
             conditions.TryAdd(conds_id, $":co-1005-0,");
-            await Task.Delay(100);
+            await Task.Delay(250);
             spells.remove_condition_in_player(Session_ID, player_id, conds_id);
         }
 

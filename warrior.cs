@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace game_server
 {
     class warrior
@@ -84,11 +85,11 @@ namespace game_server
             string x;
             for (float i = time_ticks; i > 0; i--)
             {
-                float prev_armor = enemy.armor;
+                //float prev_armor = enemy.armor;
                 float prev_dodge = enemy.dodge;
                 float prev_shieldbl = enemy.shield_block;
 
-                enemy.armor = 0;
+                //enemy.armor = 0;
                 enemy.dodge = 0;
                 enemy.shield_block = 0;
 
@@ -97,11 +98,11 @@ namespace game_server
 
                 spells.melee_damage(table_id, me, all_players, spell_number, att_pow_koef, 2);
 
-                enemy.armor = prev_armor;
+                //enemy.armor = prev_armor;
                 enemy.dodge = prev_dodge;
                 enemy.shield_block = prev_shieldbl;
 
-                await Task.Delay(1000);
+                await Task.Delay(2000);
             }
 
             //enemy.conditions.TryRemove(id_condition, out x);
@@ -277,11 +278,11 @@ namespace game_server
 
             for (float i = time_ticks; i > 0; i--)
             {
-                float prev_armor = enemy.armor;
+                //float prev_armor = enemy.armor;
                 float prev_dodge = enemy.dodge;
                 float prev_shieldbl = enemy.shield_block;
 
-                enemy.armor = 0;
+                //enemy.armor = 0;
                 enemy.dodge = 0;
                 enemy.shield_block = 0;
 
@@ -290,11 +291,11 @@ namespace game_server
 
                 spells.melee_damage(table_id, me, all_players, spell_number, att_pow_koef, 2);
 
-                enemy.armor = prev_armor;
+                //enemy.armor = prev_armor;
                 enemy.dodge = prev_dodge;
                 enemy.shield_block = prev_shieldbl;
 
-                await Task.Delay(1000);
+                await Task.Delay(2000);
             }
             enemy.speed /= 0.4f;
             enemy.conditions.TryRemove(id_condition, out x);

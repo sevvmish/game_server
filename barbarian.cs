@@ -112,7 +112,7 @@ namespace game_server
                 {
                     IDs_for_slow.Add(functions.get_symb_for_IDs());
                     enemies[u].make_slow(IDs_for_slow[u], time_for_slow);
-                    enemies[u].speed *= 0.8f;
+                    enemies[u].speed *= 0.6f;
                     enemies[u].make_broken_casting();
                     spells.make_direct_melee_damage_exact_enemy(table_id, me, enemies[u].player_id, 103, 2, 1, 2, 0);
                 }
@@ -130,7 +130,7 @@ namespace game_server
             for (int u = 0; u < enemies.Count; u++)
             {                
                 spells.remove_condition_in_player(table_id, enemies[u].player_id, IDs_for_slow[u]);
-                enemies[u].speed /= 0.8f;                
+                enemies[u].speed /= 0.6f;                
             }
         }
 

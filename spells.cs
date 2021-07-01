@@ -308,6 +308,25 @@ namespace game_server
             //================spell 55==================================
 
 
+            //================spell 56 fire bolt==================================
+            if (spell_id == 56)
+            {
+                float energy_cost = 10;
+
+                if (p.energy >= energy_cost)
+                {
+
+                    Task.Run(() => elementalist.frostbolt(table_id, player, energy_cost));
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 1));
+                    return new float[] { 1, 5, 1 };
+                }
+                else
+                {
+                    return new float[] { 0, 7, 0 };
+                }
+            }
+            //================spell 56==================================
+
 
             //================spell 101 swing melee hit==================================
             if (spell_id == 101) {

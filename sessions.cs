@@ -101,6 +101,7 @@ namespace game_server
                                         
                     foreach (Players CurrentPlayer in LocalPlayersPool.Values)
                     {
+                        
                         CheckingRoundConditions();
 
                         if (float.Parse(CurrentPlayer.health_pool.Split('=')[0])<=0 && !CurrentPlayer.isDead && !isRoundChecked)
@@ -116,22 +117,13 @@ namespace game_server
                         } 
                         else if (float.Parse(CurrentPlayer.health_pool.Split('=')[0]) > 0 && !CurrentPlayer.isDead && isRoundChecked)
                         {
-                            /*
-                            CurrentPlayer.health_pool = $"{CurrentPlayer.health_pool.Split('=')[1]}={CurrentPlayer.health_pool.Split('=')[1]}";
-                            CurrentPlayer.animation_id = 0;
-                            CurrentPlayer.is_reset_any_button = true;
-                            CurrentPlayer.conditions.Clear();
-                            CurrentPlayer.CurrentSpecial = null;
-                            */
+                          
                         }
 
                         
                         if (isRoundChecked)
                         {
-                            //var _temp_dat = from r in CurrentPlayer.conditions.Values select r;
-                            //string _data = string.Join("", _temp_dat);
-                            //Console.WriteLine(_data + " :::: " + CurrentPlayer.player_name + " - " + CurrentPlayer.animation_id);
-                            //CurrentPlayer.conditions.TryAdd(functions.get_symb_for_IDs(), $":co-1007-0,");
+                           
                         }
                         
                         
@@ -175,7 +167,7 @@ namespace game_server
                             environment_packet = environment_packet + LocalEnvironmentPool[i].GetPacketForSending_nonPlayer();
                         }
                     }
-
+                        
                     
                     //Console.WriteLine("tick" + starter.stopWatch.ElapsedMilliseconds);
                     CurrentTime += 50;

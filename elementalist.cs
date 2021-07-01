@@ -9,6 +9,114 @@ namespace game_server
     class elementalist
     {
 
+
+        public static async void frostbolt(string table_id, string me, float energy_cost)
+        {
+            Players player = functions.GetPlayerData(table_id, me);
+            float default_distance = 15;
+          
+            player.start_spell_in_process();
+            functions.turn_to_enemy(me, table_id, 0.1f, default_distance, -15, default_distance);
+
+            //casting part
+            string check_cond_id = functions.get_symb_for_IDs();
+            int spell_id = 56;
+
+            float cast_time = 1.5f * (100 - player.cast_speed) / 100;
+
+            for (float i = cast_time; i > 0; i -= 0.1f)
+            {
+                functions.turn_to_enemy(me, table_id, 0.1f, default_distance, -15, default_distance);
+                if (!player.is_casting_failed())
+                {
+                    player.animation_id = 3;
+                    string x;
+                    player.conditions.TryRemove(check_cond_id, out x);
+                    player.conditions.TryAdd(check_cond_id, $":ca-{spell_id}-{i.ToString("f1").Replace(',', '.')},");
+                }
+                else
+                {
+                    spells.remove_condition_in_player(table_id, me, check_cond_id);
+                    functions.inform_of_cancel_casting(me, table_id, spell_id);
+                    spells.reset_animation_for_one(table_id, me);                
+                    player.stop_spell_in_process();
+                    return;
+                }
+                await Task.Delay(100);
+            }
+
+            spells.remove_condition_in_player(table_id, me, check_cond_id);       
+            player.stop_spell_in_process();
+            player.minus_energy(energy_cost);
+            //end casting
+
+            string check_cond_id2 = functions.get_symb_for_IDs();
+            player.animation_id = 5;
+            spells.reset_animation_for_one(table_id, me);
+            float[] magic_data = new float[] { player.position_x, player.position_y, player.position_z, player.rotation_x, player.rotation_y, player.rotation_z };
+            float default_player_x = player.position_x;
+            float default_player_z = player.position_z;
+            List<Players> result = new List<Players>();
+
+            for (float i = 0; i < 2; i += 0.05f)
+            {
+                float curr_dist = functions.vector3_distance_unity(default_player_x, 0, default_player_z, magic_data[0], 0, magic_data[2]);
+                if (curr_dist > default_distance)
+                {
+                    break;
+                }
+                string x;
+                player.conditions.TryRemove(check_cond_id2, out x);
+                functions.mover(ref magic_data, 0, 10, 1.5f);
+                //check_cond_id2 = functions.get_random_set_of_symb(4);
+                player.conditions.TryAdd(check_cond_id2, $":cs={spell_id}={magic_data[0].ToString("f1").Replace(',', '.')}={magic_data[2].ToString("f1").Replace(',', '.')},");
+                result = functions.get_all_nearest_enemy_inradius(magic_data[0], magic_data[2], me, table_id, 1);
+                if (result.Count > 0)
+                {
+                    for (int u = 0; u < result.Count; u++)
+                    {
+                        if (result.Count > 0)
+                        {
+                            spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, spell_id, 0, 1, 2);
+                            foreach (string item in result[u].conditions.Values)
+                            {
+                                if (!item.Contains("co-59"))
+                                {
+                                    freezing_slow(table_id, result[u].player_id, 3);
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+
+                if (magic_data[6] == 1)
+                {
+                    break;
+                }
+                await Task.Delay(50);
+            }
+            spells.remove_condition_in_player(table_id, me, check_cond_id2);
+        }
+
+
+        public static async void freezing_slow(string table_id, string aim, float time_for_slow)
+        {
+            Players aim_player = functions.GetPlayerData(table_id, aim);
+            aim_player.speed *= 0.6f;
+            string ID_cond = functions.get_symb_for_IDs();
+
+            for (float i = time_for_slow; i > 0; i-=0.1f)
+            {
+                aim_player.set_condition("co", 59, ID_cond, i);
+
+                await Task.Delay(100);
+            }
+            aim_player.speed /= 0.6f;
+            spells.remove_condition_in_player(table_id, aim, ID_cond);
+        }
+
+
         public static async void firebolt51(string table_id, string me, float energy_cost)
         {
             Players player = functions.GetPlayerData(table_id, me);
@@ -81,7 +189,7 @@ namespace game_server
                     {
                         if (result.Count > 0)
                         {
-                            spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 51, 10, 1, 2);
+                            spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 51, 0, 1, 2);
                         }
                     }
                     break;
@@ -340,7 +448,7 @@ namespace game_server
         {
             Players player = functions.GetPlayerData(table_id, enemy);
 
-            if (spells.if_resisted_magic(table_id, me, enemy) || !player.is_immune_to_movement_imparing)
+            if (spells.if_resisted_magic(table_id, me, enemy) || player.is_immune_to_movement_imparing)
             {
                 return;
             }
@@ -355,6 +463,11 @@ namespace game_server
                 player.conditions.TryAdd(check_cond_id, $":co-58-{i.ToString("f1").Replace(',', '.')},");
                 player.make_immob(conds_id, i);
                 await Task.Delay(100);
+
+                if (player.is_immune_to_movement_imparing)
+                {
+                    break;
+                }
             }
 
             spells.remove_condition_in_player(table_id, enemy, check_cond_id);

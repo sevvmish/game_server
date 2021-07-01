@@ -334,7 +334,7 @@ namespace game_server
         {
             if (vert_touch < 0)
             {
-                speed = speed * 0.6f;
+                speed = speed * 0.7f;
             }
 
             

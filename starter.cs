@@ -18,7 +18,7 @@ namespace game_server
         public static byte[] secret_key_for_game_servers;
         public static string InnerServerConnectionPassword;
         public static string MysqlConnectionData_login;
-        public static string address_for_data_config = @"/home/admin/data_gameserver";  //@"C:\android\data_gameserver";
+        public static string address_for_data_config = @"C:\android\data_gameserver";  //@"C:\android\data_gameserver"; @"/home/admin/data_gameserver"
 
         public const float GlobalButtonCooldown = 0.7f;
         public const float GlobalTickFloat = 0.05f;
@@ -32,6 +32,7 @@ namespace game_server
         public const float def_hit_melee_small_angle = 50;
         public const float def_hit_melee_min_radius = 1;
         public const float armor_max = 1000;
+        public const float def_chance_break_spell_by_meleehit = 10;
         public const float max_free_regeneration = 50;
         public static Stopwatch stopWatch = new Stopwatch();
 

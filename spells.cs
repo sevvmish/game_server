@@ -1389,8 +1389,11 @@ namespace game_server
                
             }*/
 
+            if (functions.assess_chance(enemy.ChanceOfSpellCastingBroken + starter.def_chance_break_spell_by_meleehit))
+            {
+                enemy.make_broken_casting();
+            }
 
-            enemy.make_broken_casting();
 
             float default_angle = 80;
             float current_angle_of_enemy = functions.player_angle_unity(enemy.position_x, 0, enemy.position_z, 0, enemy.rotation_y, 0, p.position_x, 0, p.position_z);
@@ -1498,6 +1501,18 @@ namespace game_server
                         
         }
         
+        public static bool isMeleeAttack(int spell_number)
+        {
+            SpellCharacteristics current_spell = SpellID(spell_number);
+
+            if (current_spell.damage_type == TypeofDamaging.close_melee)
+            {
+                return true;
+            } 
+
+            return false;
+        }
+
 
         public static SpellCharacteristics SpellID(int spell_number)
         {
@@ -1512,7 +1527,7 @@ namespace game_server
             instant = 0, dot,  not_damage
        
             public enum TypeOfMagic        
-            not_magic = 0,  fire,  frost,        
+            not_magic = 0,  fire,  frost, air, earth, death, light, other       
             */
 
             switch(spell_number)
@@ -1523,28 +1538,28 @@ namespace game_server
                     new SpellCharacteristics(0,0,0,0);
                     break;
                 case 2:
-
+                    new SpellCharacteristics(0,0,1,0);
                     break;
                 case 3:
-
+                    new SpellCharacteristics(1, 4, 2, 7);
                     break;
                 case 4:
-
+                    new SpellCharacteristics(0, 0, 0, 0);
                     break;
                 case 5:
-
+                    new SpellCharacteristics(1,3,0,0);
                     break;
                 case 6:
-
+                    new SpellCharacteristics(0, 0, 0, 0);
                     break;
                 case 7:
-
+                    new SpellCharacteristics(0, 0, 1, 0);
                     break;
                 case 8:
-
+                    new SpellCharacteristics(0, 0, 1, 0);
                     break;
                 case 9:
-
+                    new SpellCharacteristics(0, 0, 0, 0);
                     break;
                 
                 //elementalist
@@ -1564,8 +1579,59 @@ namespace game_server
                     new SpellCharacteristics(0, 1, 0, 2); //frost nova
                     break;
                 case 56:
-
+                    new SpellCharacteristics(0, 1, 0, 2); //frost bolt
                     break;
+                case 57:
+                    new SpellCharacteristics(2, 1, 1, 1); //burning
+                    break;
+                case 58:
+                    new SpellCharacteristics(2, 1, 2, 2); //freezed
+                    break;
+                case 59:
+                    new SpellCharacteristics(2, 1, 2, 2); //freezing slow
+                    break;
+
+
+                case 101:
+                    new SpellCharacteristics(0, 0, 0, 0); //swing
+                    break;
+                case 102:
+                    new SpellCharacteristics(0, 2, 2, 0); //hurricane
+                    break;
+                case 103:
+                    new SpellCharacteristics(0, 0, 0, 0); //heroic leap
+                    break;
+                case 104:
+                    new SpellCharacteristics(0, 0, 0, 0); //??????
+                    break;
+                case 105:
+                    new SpellCharacteristics(0, 0, 0, 0); //powerfull blow
+                    break;
+
+
+                case 151:
+                    new SpellCharacteristics(0, 0, 0, 0); //fast strike
+                    break;
+                case 152:
+                    new SpellCharacteristics(0, 0, 0, 0); //backstab
+                    break;
+                case 153:
+                    new SpellCharacteristics(1, 3, 0, 0); //inviz
+                    break;
+                case 154:
+                    new SpellCharacteristics(0, 0, 0, 0); //butchery
+                    break;
+                case 155:
+                    new SpellCharacteristics(1, 3, 0, 0); //back
+                    break;
+                case 156:
+                    new SpellCharacteristics(0, 2, 0, 0); //pistol shot
+                    break;
+                case 157:
+                    new SpellCharacteristics(1, 3, 0, 0); //from inviz
+                    break;
+
+
 
             }
 
@@ -1591,9 +1657,6 @@ namespace game_server
         }
 
         
-
-
-
     }
 
 
@@ -1622,11 +1685,16 @@ namespace game_server
         not_damage=2
     }
 
-    public enum TypeOfMagic
+    public enum TypeOfMagic //fire,  frost, air, earth, death, other   
     {
         not_magic=0,
         fire=1,
         frost=2,
+        air = 3,
+        earth = 4,
+        death = 5,
+        light = 6,
+        other = 7
     }
 
 

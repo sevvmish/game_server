@@ -1109,6 +1109,48 @@ namespace game_server
         }
 
 
+        public static float what_damage_or_heal_received_analysis(string table_id, string player_for_searching, string what_condition_type) {
+
+            Players player = functions.GetPlayerData(table_id, player_for_searching);
+            
+            var _temp_dat = from r in player.conditions.Values select r;
+            string _data = string.Join("", _temp_dat);
+
+            if (_data.Contains(what_condition_type))
+            {
+                bool isDamageGiven = false;
+                string[] to_search = _data.Split(',');
+                for (int i = 0; i < to_search.Length; i++)
+                {
+                    if (to_search[i].Contains(what_condition_type))
+                    {
+                        int _where_starts = to_search[i].IndexOf(what_condition_type) + 3;
+                        int _where_ends = to_search[i].IndexOf("-", _where_starts + 1);
+                        float result = float.Parse(to_search[i].Substring(_where_starts, _where_ends - _where_starts));
+
+                        if (result > 0)
+                        {
+                            return result;                            
+                        } 
+                        else
+                        {
+                            return 0;
+                        }
+                    }
+                }
+
+               
+            } else
+            {
+                return 0;
+            }
+
+            return 0;
+        }
+
+
+
+
 
 
     }

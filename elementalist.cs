@@ -8,6 +8,105 @@ namespace game_server
 {
     class elementalist
     {
+        //fire armor 61
+        public static async void fire_armor(string table_id, string me, float how_long)
+        {
+            float base_armor = 200f;
+            float base_speed = 1.2f;
+            float base_cast_speed = 30f;
+
+            Players player = functions.GetPlayerData(table_id, me);
+            player.armor += base_armor;
+            player.speed *= base_speed;
+            player.cast_speed += base_cast_speed;
+
+            string ID_cond = functions.get_symb_for_IDs();
+
+            for (float i = how_long; i > 0; i -= 0.15f)
+            {
+                player.set_condition("co", 62, ID_cond, i);
+
+                await Task.Delay(150);
+            }
+
+            player.armor -= base_armor;
+            player.speed /= base_speed;
+            player.cast_speed -= base_cast_speed;
+
+            spells.remove_condition_in_player(table_id, me, ID_cond);
+        }
+
+
+        //air armor 62
+        public static async void air_armor(string table_id, string me, float how_long)
+        {
+            float base_armor = 200f;
+            float base_speed = 1.2f;
+            float base_cast_speed = 30f;
+
+            Players player = functions.GetPlayerData(table_id, me);
+            player.armor += base_armor;
+            player.speed *= base_speed;
+            player.cast_speed += base_cast_speed;
+
+            string ID_cond = functions.get_symb_for_IDs();
+
+            for (float i = how_long; i > 0; i -= 0.15f)
+            {
+                player.set_condition("co", 62, ID_cond, i);
+
+                await Task.Delay(150);
+            }
+
+            player.armor -= base_armor;
+            player.speed /= base_speed;
+            player.cast_speed -= base_cast_speed;
+
+            spells.remove_condition_in_player(table_id, me, ID_cond);
+        }
+
+
+        //earth armor 63
+        public static async void earth_armor(string table_id, string me, float how_long)
+        {
+            float base_armor = 300f;
+            float base_speed = 0.7f;
+
+            Players player = functions.GetPlayerData(table_id, me);
+            player.armor += base_armor;
+            player.speed *= base_speed;
+            string ID_cond = functions.get_symb_for_IDs();
+
+            for (float i = how_long; i > 0; i -= 0.15f)
+            {
+                player.set_condition("co", 63, ID_cond, i);
+
+                await Task.Delay(150);
+            }
+
+            player.armor -= base_armor;
+            player.speed /= base_speed;
+            spells.remove_condition_in_player(table_id, me, ID_cond);
+        }
+
+
+
+        //frost armor 60
+        public static async void frost_armor(string table_id, string me, float how_long)
+        {
+            Players player = functions.GetPlayerData(table_id, me);
+            player.armor += 500;
+
+
+            for (float i = how_long; i > 0; i-=0.15f)
+            {
+
+
+                await Task.Delay(150);
+            }
+        }
+
+
 
 
         public static async void frostbolt(string table_id, string me, float energy_cost)
@@ -369,7 +468,7 @@ namespace game_server
                 {
                     for (int u = 0; u < hit_players.Count; u++)
                     {
-                        spells.make_direct_magic_damage_exact_enemy(table_id, mee, hit_players[u].player_id, 53, base_damage / 2, 2, 2);
+                        spells.make_direct_magic_damage_exact_enemy(table_id, mee, hit_players[u].player_id, 53, base_damage / 2, 0.5f, 2);
                     }
                     hit_counter = 0;
                     hit_players.Clear();
@@ -447,6 +546,7 @@ namespace game_server
         public static async void freezed(string table_id, string me, string enemy, float time)
         {
             Players player = functions.GetPlayerData(table_id, enemy);
+            float chance_to_break_after_hit_received = 20;
 
             if (spells.if_resisted_magic(table_id, me, enemy) || player.is_immune_to_movement_imparing)
             {
@@ -459,6 +559,8 @@ namespace game_server
             string x;
             for (float i = time; i > 0; i -= 0.1f)
             {
+                
+
                 player.conditions.TryRemove(check_cond_id, out x);
                 player.conditions.TryAdd(check_cond_id, $":co-58-{i.ToString("f1").Replace(',', '.')},");
                 player.make_immob(conds_id, i);
@@ -468,6 +570,17 @@ namespace game_server
                 {
                     break;
                 }
+
+                if (functions.what_damage_or_heal_received_analysis(table_id, enemy, "dt") > 0 && i<=(time-0.3f))
+                {
+                    if (functions.assess_chance(chance_to_break_after_hit_received))
+                    {
+                        Console.WriteLine("BBBBBBREEEEEEAAAAAAAAKKKKKKK IIIIIICEEEEEEEEEEEEE");
+                        functions.inform_of_cancel_casting(enemy, table_id, 58);
+                        break;
+                    }
+                }
+
             }
 
             spells.remove_condition_in_player(table_id, enemy, check_cond_id);

@@ -123,7 +123,7 @@ namespace game_server
         public float PowerOfIceMulti = 1f;
         public float PowerOfAirMulti = 1f;
         public float PowerOfEarthMulti = 1f;
-        public float ChanceOfSpellCastingBroken = 20f;
+        public float ChanceOfSpellCastingBroken = 0;
 
         public Players(int player_order, string player_id, string player_name, int player_class, string connection_number, int team_id,
         int zone_type, float position_x, float position_y, float position_z, float rotation_x, float rotation_y, float rotation_z,

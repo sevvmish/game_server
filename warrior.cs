@@ -22,6 +22,9 @@ namespace game_server
             List<Players> all_needed_players = new List<Players>();
             Players me = functions.GetPlayerData(table_id, mee);
 
+            me.animation_id = 23;
+            spells.reset_animation_for_one(table_id, mee);
+
             for (int i = 0; i < allgamers.Count; i++)
             {
                 if (allgamers[i].team_id == me.team_id &&
@@ -122,10 +125,23 @@ namespace game_server
             
 
             string check_cond_id = functions.get_symb_for_IDs();
-            for (float i = shield_on_time; i > 0; i--)
+            for (float i = shield_on_time; i > 0; i-=0.25f)
             {
-                pl.set_condition("co", 5, check_cond_id, i);
-                await Task.Delay(1000);
+                if (pl.vertical_touch>1)
+                {
+                    pl.animation_id = 101;
+                }
+                else if(pl.vertical_touch < -1)
+                {
+                    pl.animation_id = 102;
+                } 
+                else if (pl.vertical_touch == 0)
+                {
+                    pl.animation_id = 10;
+                }
+
+                    pl.set_condition("co", 5, check_cond_id, i);
+                await Task.Delay(250);
             }
             spells.remove_condition_in_player(table_id, me, check_cond_id);
             spells.reset_animation_for_one(table_id, me);
@@ -333,7 +349,7 @@ namespace game_server
                         functions.mover(ref res, 0, 20, 1);
                         me.position_x = res[0];
                         me.position_z = res[2];
-                        me.animation_id = 10;
+                        me.animation_id = 101;
                     }
                     string x;
                     me.conditions.TryRemove(check_cond_id, out x);
@@ -341,20 +357,25 @@ namespace game_server
                     Players enemy = functions.get_one_nearest_enemy_inmelee(mee, table_id, -1.5f, -10, true);
                     if (enemy != null)
                     {
+                        spells.reset_animation_for_one(table_id, mee);
+
                         if (!spells.if_resisted_nonmagic(table_id, mee, enemy.player_id))
                         {
-                            spells.fall_down_get_app(table_id, enemy.player_id, 0.5f);
-                            me.animation_id = 0;
-                            spells.set_animation_for_one(table_id, mee, 9, 4, 0.2f);
+                            me.animation_id = 9;
+                            await Task.Delay(200);
+                            spells.make_direct_melee_damage(table_id, mee, 9, 0, 1, 2, 0);
+                            spells.fall_down_get_app(table_id, enemy.player_id, 0.5f);                            
                             spells.remove_condition_in_player(table_id, mee, check_cond_id);
                             me.is_reset_any_button = false;
+                            spells.reset_animation_for_one(table_id, mee);
                             return;
                         }
                         else
                         {
                             spells.remove_condition_in_player(table_id, mee, check_cond_id);
                             me.is_reset_any_button = false;
-                            spells.reset_animation_for_one(table_id, mee);
+                            me.animation_id = 0;
+                            //spells.reset_animation_for_one(table_id, mee);
                             functions.inform_of_cancel_casting(mee, table_id, 9);
                             break;
                         }

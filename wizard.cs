@@ -190,6 +190,7 @@ namespace game_server
             float distance = 3;
             float init_force = 20;
             float init_speed = 1;
+            string x;
             string check_cond_id = functions.get_symb_for_IDs();
             string check_cond_id2 = functions.get_symb_for_IDs();
             Players player = functions.GetPlayerData(table_id, mee);
@@ -211,7 +212,7 @@ namespace game_server
 
                         result[u].position_x = new_x;
                         result[u].position_z = new_z;
-                        string x;
+                        
                         result[u].conditions.TryRemove(check_cond_id2, out x);
                         result[u].conditions.TryAdd(check_cond_id2, $":co-202-{i.ToString("f1").Replace(',', '.')},");
                         init_force = 20;
@@ -238,10 +239,16 @@ namespace game_server
 
                 await Task.Delay(100);
             }
+
+            player.conditions.TryRemove(check_cond_id, out x);
+            player.conditions.TryAdd(check_cond_id, $":cs=202=999=999,");
+
             for (int i = 0; i < result.Count; i++)
             {
                 spells.remove_condition_in_player(table_id, result[i].player_id, check_cond_id2);
             }
+
+            spells.remove_condition_in_player(table_id, mee, check_cond_id);
             
         }
 

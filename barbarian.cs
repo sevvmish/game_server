@@ -64,6 +64,8 @@ namespace game_server
             float start_z = player1.position_z;
             player1.animation_id = 16;
             player1.start_spell_in_process();
+            string x;
+            string check_cond_strike_id = functions.get_symb_for_IDs();
 
             for (float i = 0.9f; i > 0; i -= 0.1f)
             {
@@ -81,7 +83,7 @@ namespace game_server
                     spells.reset_animation_for_one(table_id, me);
                     break;
                 }
-                string x;
+                
                 player1.conditions.TryRemove(check_cond_id, out x);
                 player1.conditions.TryAdd(check_cond_id, $":co-103-{i.ToString("f1").Replace(',', '.')},");
                 enemy = functions.get_one_nearest_enemy_inmelee(me, table_id, -1.5f, -10, true);
@@ -102,7 +104,8 @@ namespace game_server
                 await Task.Delay(100);
             }
 
-            string check_cond_strike_id = functions.get_symb_for_IDs();
+                        
+            player1.conditions.TryRemove(check_cond_strike_id, out x);
             player1.conditions.TryAdd(check_cond_strike_id, $":cs=103={player1.position_x.ToString("f1").Replace(',', '.')}={player1.position_z.ToString("f1").Replace(',', '.')},");
             List<Players> enemies = functions.get_all_nearest_enemy_inradius(player1.position_x, player1.position_z, me, table_id, 2);
             List<string> IDs_for_slow = new List<string>(enemies.Count);

@@ -35,11 +35,13 @@ namespace game_server
 
             player.rotation_y = enemy.rotation_y;
             float new_enemy_angle = enemy.rotation_y;
+            check_cond_strike_id = functions.get_symb_for_IDs();
+
             for (float i = 2; i > 0; i -= 0.1f)
             {
                 string x;
                 enemy.conditions.TryRemove(check_cond_strike_id, out x);
-                check_cond_strike_id = functions.get_symb_for_IDs();
+                
                 enemy.rotation_y = new_enemy_angle;
                 enemy.conditions.TryAdd(check_cond_strike_id, $":co-155-{i.ToString("f1").Replace(',', '.')},");
                 await Task.Delay(100);
@@ -109,7 +111,7 @@ namespace game_server
             string check_cond_strike_id = functions.get_symb_for_IDs();
             string check_cond = functions.get_symb_for_IDs();
             player.conditions.TryAdd(check_cond_strike_id, $":cs=153={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
-            player.conditions.TryAdd(check_cond, $":co-153-99,");
+            player.conditions.TryAdd(check_cond, $":co-153-0,");
             await Task.Delay(20);
             spells.remove_condition_in_player(table_id, me, check_cond_strike_id);
             player.is_invisible = true;
@@ -209,6 +211,9 @@ namespace game_server
                             {
                                 player.conditions.TryAdd(check_cond_strike_id, $":cs=156={bullet_pos_for_assess[0].ToString("f1").Replace(',', '.')}={bullet_pos_for_assess[1].ToString("f1").Replace(',', '.')},");
                                 spells.remove_condition_in_player(table_id, me, check_cond_strike_id);
+                            } else
+                            {
+                                break;
                             }
 
                         }
@@ -224,11 +229,15 @@ namespace game_server
                 await Task.Delay(100);
             }
 
-            
-            spells.reset_animation_for_one(table_id, me);
+            await Task.Delay(400);
+
             spells.remove_condition_in_player(table_id, me, check_cond_id);
+            
             spells.remove_condition_in_player(table_id, me, check_immob_id);
             player.stop_spell_in_process();
+
+            
+            spells.reset_animation_for_one(table_id, me);
         }
 
     }

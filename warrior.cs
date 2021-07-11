@@ -198,9 +198,11 @@ namespace game_server
             if (all_needed_players != null)
             {
                 List<string> conds_ids = new List<string>();
+                List<string> conds_ids_stun = new List<string>();
                 for (int ii = 0; ii < all_needed_players.Count; ii++)
                 {
                     conds_ids.Add(functions.get_symb_for_IDs());
+                    conds_ids_stun.Add(functions.get_symb_for_IDs());
                     if (ii == 0)
                     {
                         functions.turn_face_to_face(me, all_needed_players[ii].player_id, table_id);
@@ -211,7 +213,7 @@ namespace game_server
                 {
                     for (int u = 0; u < all_needed_players.Count; u++)
                     {
-                        all_needed_players[u].make_stun(conds_ids[u], i);
+                        all_needed_players[u].make_stun(conds_ids_stun[u], i);
                         all_needed_players[u].set_condition("co", 4, conds_ids[u], i);
                     }
                     await Task.Delay(100);
@@ -224,6 +226,7 @@ namespace game_server
                 for (int ii = 0; ii < all_needed_players.Count; ii++)
                 {
                     spells.remove_condition_in_player(table_id, all_needed_players[ii].player_id, conds_ids[ii]);
+                    spells.remove_condition_in_player(table_id, all_needed_players[ii].player_id, conds_ids_stun[ii]);
                 }
             }
             else

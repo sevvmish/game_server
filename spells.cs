@@ -788,10 +788,6 @@ namespace game_server
         }
 
 
-      
-      
-
-
 
         //pooling &&&& spell +$power - pull, -$power - push
         public static void pooling(string table_id, float center_x, float center_z, string enemy, float power, float speed)

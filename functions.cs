@@ -155,8 +155,7 @@ namespace game_server
             }
             //CurrentPlayer.horizontal_touch *= 1.4f;
 
-
-
+         
 
             //CHECK for stun, fear, immobilize
             if (CurrentPlayer.conditions.Count > 0)
@@ -171,6 +170,7 @@ namespace game_server
                 //STUN co-1002 or FEAR co-1003
                 if (CurrentPlayer.is_cond_here_by_type_and_spell("co-1002") || CurrentPlayer.is_cond_here_by_type_and_spell("co-1003"))
                 {
+                    Console.WriteLine("ZERO because 1002 or 1003");
                     CurrentPlayer.ZeroInputs();                    
                 }
 

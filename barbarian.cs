@@ -64,17 +64,18 @@ namespace game_server
             float start_z = player1.position_z;
             player1.animation_id = 16;
             player1.start_spell_in_process();
+            player1.is_reset_any_button = true;
             string x;
             string check_cond_strike_id = functions.get_symb_for_IDs();
 
             for (float i = 0.9f; i > 0; i -= 0.1f)
             {
-                if (player1.is_casting_failed())
+                if (player1.is_casting_stopped_by_spells() )
                 {
                     spells.reset_animation_for_one(table_id, me);
                     spells.remove_condition_in_player(table_id, me, check_cond_id);
                     player1.stop_spell_in_process();
-
+                    player1.is_reset_any_button = false;
                     return;
                 }
                 float distance = functions.vector3_distance_unity(player1.position_x, 0, player1.position_z, start_x, 0, start_z);
@@ -117,19 +118,19 @@ namespace game_server
                     enemies[u].make_slow(IDs_for_slow[u], time_for_slow);
                     enemies[u].speed *= 0.6f;
                     enemies[u].make_broken_casting();
-                    spells.make_direct_melee_damage_exact_enemy(table_id, me, enemies[u].player_id, 103, 2, 1, 2, 0);
+                    spells.make_direct_melee_damage_exact_enemy(table_id, me, enemies[u].player_id, 103, 0, 1, 2, 0);
                 }
             }
 
-            await Task.Delay(100);
+            //await Task.Delay(500);
 
             player1.stop_spell_in_process();
             spells.reset_animation_for_one(table_id, me);
             spells.remove_condition_in_player(table_id, me, check_cond_id);
             spells.remove_condition_in_player(table_id, me, check_cond_strike_id);
-
-            await Task.Delay((int)time_for_slow*1000-100);
-
+            
+            await Task.Delay(1000);
+            player1.is_reset_any_button = false;
             for (int u = 0; u < enemies.Count; u++)
             {                
                 spells.remove_condition_in_player(table_id, enemies[u].player_id, IDs_for_slow[u]);

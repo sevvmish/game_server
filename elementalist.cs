@@ -512,35 +512,37 @@ namespace game_server
             //explosion============================================
             List<Players> result_p = functions.get_all_nearest_enemy_inradius(point_x, point_z, mee, table_id, 2);
             //List<string> conds_ids_for_stun = new List<string>();
-            Dictionary<string, Players> result = new Dictionary<string, Players>();
+            //Dictionary<string, Players> result = new Dictionary<string, Players>();
+            List<string> conds_ids = new List<string>();
+            List<string> conds_ids_for_stun = new List<string>();
 
             for (int i = 0; i < result_p.Count; i++)
             {
-                result.Add(functions.get_symb_for_IDs(), result_p[i]);
-            }
-            
-
-            foreach (string item in result.Keys)
-            {
-                spells.make_direct_magic_damage_exact_enemy(table_id, mee, result[item].player_id, 52, 20, 1, 2);                
+                conds_ids.Add(functions.get_symb_for_IDs());
+                conds_ids_for_stun.Add(functions.get_symb_for_IDs());
+                spells.make_direct_magic_damage_exact_enemy(table_id, mee, result_p[i].player_id, 52, 20, 1, 2);
             }
 
             
             for (float i = 1; i > 0; i-=0.1f)
             {
-                foreach (string item in result.Keys)
+                for (int u = 0; u < result_p.Count; u++)
                 {
-                    result[item].make_stun(item, i);
-                    result[item].set_condition("co", 52, item, i);
+                    result_p[u].make_stun(conds_ids_for_stun[u], i);
+                    result_p[u].set_condition("co", 52, conds_ids[u], i);                   
                 }
+               
                 await Task.Delay(100);
             }
 
-            foreach (string item in result.Keys)
+
+            for (int i = 0; i < result_p.Count; i++)
             {
-                spells.remove_condition_in_player(table_id, result[item].player_id, item);
-                spells.reset_animation_for_one(table_id, result[item].player_id);
+                spells.remove_condition_in_player(table_id, result_p[i].player_id, conds_ids[i]);
+                spells.remove_condition_in_player(table_id, result_p[i].player_id, conds_ids_for_stun[i]);
+                spells.reset_animation_for_one(table_id, result_p[i].player_id);
             }
+           
 
         }
 

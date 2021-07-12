@@ -360,7 +360,7 @@ namespace game_server
                 {
                     for (int uu = 0; uu < all_enemies.Count; uu++)
                     {
-                        spells.make_direct_magic_damage_exact_enemy(table_id, mee, all_enemies[uu].player_id, 201, dam, power, 2);
+                        spells.make_direct_magic_damage_exact_enemy(table_id, mee, all_enemies[uu].player_id, 201, dam, power, 2, TypeOfMagic.other);
                     }
                 }
                 all_enemies.Clear();

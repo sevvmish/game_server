@@ -118,11 +118,14 @@ namespace game_server
         public delegate void Specials();
         public Specials CurrentSpecial;
 
-        //power multipliers
+        //GLOBALS FOR ELEMENTALIST
         public float PowerOfFireMulti = 1f;
         public float PowerOfIceMulti = 1f;
         public float PowerOfAirMulti = 1f;
         public float PowerOfEarthMulti = 1f;
+        public float ChanceOfCastBurningOnFireSpell = 10f;
+
+        //some globals
         public float ChanceOfSpellCastingBroken = 0;
 
         public Players(int player_order, string player_id, string player_name, int player_class, string connection_number, int team_id,

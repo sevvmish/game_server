@@ -53,7 +53,7 @@ namespace game_server
                 if (p.energy >= energy_cost)
                 {
                     p.minus_energy(energy_cost);
-                    Task.Run(() => warrior.bleeding(5, table_id, player, result.player_id, 2, 1));
+                    Task.Run(() => warrior.bleeding(10, table_id, player, result.player_id, 2, 1));
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
                     return new float[] { 1, 6, 5 };
                 }
@@ -152,7 +152,7 @@ namespace game_server
                 if (p.energy >= energy_cost)
                 {
                     p.minus_energy(energy_cost);
-                    Task.Run(() => warrior.bleeding(5, table_id, player, result.player_id, 7, 1.5f));
+                    Task.Run(() => warrior.bleeding(10, table_id, player, result.player_id, 7, 1.5f));
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
                     return new float[] { 1, 6, 5 };
                 }
@@ -176,7 +176,7 @@ namespace game_server
                 if (p.energy >= energy_cost) { 
                     p.minus_energy(energy_cost);
 
-                    Task.Run(() => warrior.bleeding_spell8(5, table_id, player, result.player_id, 8, 1));
+                    Task.Run(() => warrior.bleeding_spell8(10, table_id, player, result.player_id, 8, 1));
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
                     return new float[] { 1, 6, 5 };
                 } else
@@ -189,6 +189,11 @@ namespace game_server
 
             //================spell 9 charge run and hit==================================
             if (spell_id == 9) {
+
+                if (functions.is_cond_here_by_type_and_spell(player, table_id, "co-1001")) {
+                    return new float[] { 0, 15, 0 };
+                }
+
                 float energy_cost = 10;
 
                 if (p.energy >= energy_cost) {
@@ -292,7 +297,7 @@ namespace game_server
                     if (result.Count>0)
                     {
                         for (int i = 0; i < result.Count; i++) {
-                            spells.make_direct_magic_damage_exact_enemy(table_id, player, result[i].player_id, 55, 0, 0.5f, 1);
+                            spells.make_direct_magic_damage_exact_enemy(table_id, player, result[i].player_id, 55, 0, 0.5f, 1, TypeOfMagic.frost);
                             elementalist.freezed(table_id, player, result[i].player_id, 5);
                         }
                     }
@@ -806,7 +811,7 @@ namespace game_server
 
 
         //making DAMAGE with magic spells
-        public static void make_direct_magic_damage_exact_enemy(string table_id, string mee, string enemyy, int spell_number, float base_magic_damage, float spell_power_koef, float crit_add_damage_koef)
+        public static void make_direct_magic_damage_exact_enemy(string table_id, string mee, string enemyy, int spell_number, float base_magic_damage, float spell_power_koef, float crit_add_damage_koef, TypeOfMagic _magic_type)
         {
             Players me = functions.GetPlayerData(table_id, mee);
             Players enemy = functions.GetPlayerData(table_id, enemyy);
@@ -870,6 +875,18 @@ namespace game_server
             }
             //=====================================
 
+
+            //magic type adding conditions=====================================================
+            if (_magic_type== TypeOfMagic.fire && spell_number!=57 && !enemy.is_cond_here_by_type_and_spell("co-57"))
+            {
+                if (functions.assess_chance(me.ChanceOfCastBurningOnFireSpell))
+                {
+                    elementalist.burning(table_id, mee, enemyy);
+                }
+                
+            }
+
+            //=================================================================================
 
             string[] enemy_health = enemy.health_pool.Split('=');
             enemy.health_pool = (float.Parse(enemy_health[0]) - end_damage).ToString("f0") + "=" + enemy_health[1];

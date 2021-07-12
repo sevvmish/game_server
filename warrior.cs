@@ -88,24 +88,30 @@ namespace game_server
             string x;
             for (float i = time_ticks; i > 0; i--)
             {
-                //float prev_armor = enemy.armor;
-                float prev_dodge = enemy.dodge;
-                float prev_shieldbl = enemy.shield_block;
-
-                //enemy.armor = 0;
-                enemy.dodge = 0;
-                enemy.shield_block = 0;
-
                 enemy.conditions.TryRemove(id_condition, out x);
                 enemy.conditions.TryAdd(id_condition, $":co-{spell_number}-{i},");
 
-                spells.melee_damage(table_id, me, all_players, spell_number, att_pow_koef, 2);
+                if (i % 2 != 0)
+                {
+                    //float prev_armor = enemy.armor;
+                    float prev_dodge = enemy.dodge;
+                    float prev_shieldbl = enemy.shield_block;
 
-                //enemy.armor = prev_armor;
-                enemy.dodge = prev_dodge;
-                enemy.shield_block = prev_shieldbl;
+                    //enemy.armor = 0;
+                    enemy.dodge = 0;
+                    enemy.shield_block = 0;
 
-                await Task.Delay(2000);
+                    
+
+                    spells.melee_damage(table_id, me, all_players, spell_number, att_pow_koef, 2);
+
+                    //enemy.armor = prev_armor;
+                    enemy.dodge = prev_dodge;
+                    enemy.shield_block = prev_shieldbl;
+                }
+               
+
+                await Task.Delay(1000);
             }
 
             //enemy.conditions.TryRemove(id_condition, out x);
@@ -297,24 +303,26 @@ namespace game_server
 
             for (float i = time_ticks; i > 0; i--)
             {
-                //float prev_armor = enemy.armor;
-                float prev_dodge = enemy.dodge;
-                float prev_shieldbl = enemy.shield_block;
-
-                //enemy.armor = 0;
-                enemy.dodge = 0;
-                enemy.shield_block = 0;
-
                 enemy.conditions.TryRemove(id_condition, out x);
                 enemy.conditions.TryAdd(id_condition, $":co-{spell_number}-{i},");
 
-                spells.melee_damage(table_id, me, all_players, spell_number, att_pow_koef, 2);
+                if (i % 2 != 0)
+                {
+                    //float prev_armor = enemy.armor;
+                    float prev_dodge = enemy.dodge;
+                    float prev_shieldbl = enemy.shield_block;
 
-                //enemy.armor = prev_armor;
-                enemy.dodge = prev_dodge;
-                enemy.shield_block = prev_shieldbl;
+                    //enemy.armor = 0;
+                    enemy.dodge = 0;
+                    enemy.shield_block = 0;                    
 
-                await Task.Delay(2000);
+                    spells.melee_damage(table_id, me, all_players, spell_number, att_pow_koef, 2);
+
+                    //enemy.armor = prev_armor;
+                    enemy.dodge = prev_dodge;
+                    enemy.shield_block = prev_shieldbl;
+                }
+                await Task.Delay(1000);
             }
             enemy.speed /= 0.4f;
             enemy.conditions.TryRemove(id_condition, out x);
@@ -324,6 +332,7 @@ namespace game_server
         public static async void ram(string table_id, string mee)
         {
             Players me = functions.GetPlayerData(table_id, mee);
+                        
             float distance = 6.5f; //7 in real
             float start_x = me.position_x;
             float start_z = me.position_z;

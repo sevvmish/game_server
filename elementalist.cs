@@ -8,6 +8,22 @@ namespace game_server
 {
     class elementalist
     {
+        //burning 57
+        public static async void burning(string table_id, string me, string aim)
+        {
+            Players player = functions.GetPlayerData(table_id, aim);
+            string ID_cond = functions.get_symb_for_IDs();
+
+            for (float i = 10; i > 0; i--)
+            {
+                player.set_condition("co", 57, ID_cond, i);
+                await Task.Delay(1000);                
+                if (i % 2!=0) spells.make_direct_magic_damage_exact_enemy(table_id, me, aim, 57, 0, 0.2f, 2, TypeOfMagic.fire);                
+            }
+
+            spells.remove_condition_in_player(table_id, aim, ID_cond);
+        }
+
         //fire armor 61
         public static async void fire_armor(string table_id, string me, float how_long)
         {
@@ -176,7 +192,7 @@ namespace game_server
                     {
                         if (result.Count > 0)
                         {
-                            spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, spell_id, 0, 1, 2);
+                            spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, spell_id, 0, 1, 2, TypeOfMagic.frost);
                             foreach (string item in result[u].conditions.Values)
                             {
                                 if (!item.Contains("co-59"))
@@ -289,7 +305,7 @@ namespace game_server
                     {
                         if (result.Count > 0)
                         {
-                            spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 51, 0, 1, 2);
+                            spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 51, 0, 1, 2, TypeOfMagic.fire);
                         }
                     }
                     player.conditions.TryRemove(check_cond_id2, out x);
@@ -390,7 +406,7 @@ namespace game_server
                     {
                         if (result.Count > 0)
                         {
-                            spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 54, base_damage / 2, 2, 2);
+                            spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 54, base_damage / 2, 2, 2, TypeOfMagic.fire);
                         }
                     }
                     hit_counter = 0;
@@ -471,7 +487,7 @@ namespace game_server
                 {
                     for (int u = 0; u < hit_players.Count; u++)
                     {
-                        spells.make_direct_magic_damage_exact_enemy(table_id, mee, hit_players[u].player_id, 53, base_damage / 2, 0.5f, 2);
+                        spells.make_direct_magic_damage_exact_enemy(table_id, mee, hit_players[u].player_id, 53, base_damage / 2, 0.5f, 2, TypeOfMagic.fire);
                     }
                     hit_counter = 0;
                     hit_players.Clear();
@@ -520,7 +536,7 @@ namespace game_server
             {
                 conds_ids.Add(functions.get_symb_for_IDs());
                 conds_ids_for_stun.Add(functions.get_symb_for_IDs());
-                spells.make_direct_magic_damage_exact_enemy(table_id, mee, result_p[i].player_id, 52, 20, 1, 2);
+                spells.make_direct_magic_damage_exact_enemy(table_id, mee, result_p[i].player_id, 52, 20, 1, 2, TypeOfMagic.fire);
             }
 
             

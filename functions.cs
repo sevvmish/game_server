@@ -155,7 +155,13 @@ namespace game_server
             }
             //CurrentPlayer.horizontal_touch *= 1.4f;
 
-         
+            //Console.WriteLine("hor - " + CurrentPlayer.horizontal_touch + "   vert - " + CurrentPlayer.vertical_touch + "   rotY" + CurrentPlayer.rotation_y);
+            //Console.WriteLine((CurrentPlayer.vertical_touch / CurrentPlayer.horizontal_touch ).ToString("f1"));
+            if (CurrentPlayer.horizontal_touch != 0 || CurrentPlayer.vertical_touch != 0)
+            {
+                CurrentPlayer.rotation_y = GetRotationY(CurrentPlayer.horizontal_touch, CurrentPlayer.vertical_touch);
+            }
+            
 
             //CHECK for stun, fear, immobilize
             if (CurrentPlayer.conditions.Count > 0)
@@ -186,6 +192,9 @@ namespace game_server
 
                 if (CurrentPlayer.horizontal_touch != 0 || CurrentPlayer.vertical_touch != 0)
                 {
+
+                    
+                    /*
                     if (RawDataArray[5] == "ts")
                     {
                         
@@ -196,9 +205,10 @@ namespace game_server
                         }
 
                     } else
-                    {
-                        new_pos_n_rot(ref cur_pos_n_rot, CurrentPlayer.horizontal_touch, CurrentPlayer.vertical_touch, CurrentPlayer.speed);
-                    }
+                    */
+                    //{
+                    new_pos_n_rot(ref cur_pos_n_rot, CurrentPlayer.horizontal_touch, CurrentPlayer.vertical_touch, CurrentPlayer.speed);
+                    //}
 
                     CurrentPlayer.position_x = cur_pos_n_rot[0];
                     CurrentPlayer.position_y = cur_pos_n_rot[1];
@@ -207,9 +217,12 @@ namespace game_server
                     CurrentPlayer.rotation_y = cur_pos_n_rot[4];
                     CurrentPlayer.rotation_z = cur_pos_n_rot[5];
 
+                    
+
                     float delta = 1.5f;
                     if (CurrentPlayer.animation_id < 2)
                     {
+                        /*
                         if (CurrentPlayer.vertical_touch > delta)
                         {
                             CurrentPlayer.animation_id = 1;
@@ -220,7 +233,9 @@ namespace game_server
                         {
                             CurrentPlayer.animation_id = -1;
                         } 
+                        */
 
+                        CurrentPlayer.animation_id = 1;
                     }
 
                 } else
@@ -330,15 +345,68 @@ namespace game_server
         }
 
 
+        public static float GetRotationY(float hor, float ver)
+        {
+            float result = 0;
+            float[] new_vec = new float[3] {hor, ver, 0 };            
+            normalize_to_vector(ref new_vec);
+
+            //Console.WriteLine(new_vec[0].ToString("f1") + " - " + new_vec[1].ToString("f1"));
+            float brutto_angle = RadianToDegree(MathF.Atan(new_vec[0] / new_vec[1]));
+            
+            //Console.WriteLine(brutto_angle.ToString("f2"));
+
+            if (new_vec[0]>=0 && new_vec[1] >= 0)
+            {
+                result = brutto_angle;
+            } 
+            else if (new_vec[0] >= 0 && new_vec[1] < 0)
+            {
+                result = brutto_angle+180;
+            }
+            else if (new_vec[0] < 0 && new_vec[1] < 0)
+            {
+                result = brutto_angle + 180;
+            }
+            else if (new_vec[0] < 0 && new_vec[1] >= 0)
+            {
+                result = brutto_angle + 360;
+            }
+                      
+            return result;
+        }
+
         public static void new_pos_n_rot(ref float[] pos_rot, float hor_touch, float vert_touch, float speed)
         {
+            float[] new_vec = new float[3] { hor_touch, vert_touch, 0 };
+            normalize_to_vector(ref new_vec);
+
+            hor_touch = MathF.Abs(new_vec[0]*5f);
+            vert_touch = MathF.Abs(new_vec[1]*5f);
+
+            if (MathF.Abs(hor_touch)> MathF.Abs(vert_touch))
+            {
+                vert_touch = MathF.Abs(hor_touch);
+            } 
+            else if (MathF.Abs(hor_touch) == MathF.Abs(vert_touch))
+            {
+                vert_touch = MathF.Abs(hor_touch);
+            }
+            else if (MathF.Abs(hor_touch) < MathF.Abs(vert_touch))
+            {
+                vert_touch = MathF.Abs(vert_touch);
+            }
+
+
+            /*
             if (vert_touch < 0)
             {
                 speed = speed * 0.7f;
             }
+            */
 
-            
-            hor_touch *= 1.7f; //1.2   1.7   2.2
+            //hor_touch *= 1.7f; //1.2   1.7   2.2
+            hor_touch = 0;
 
             float position_x = pos_rot[0];
             float position_y = pos_rot[1];
@@ -360,8 +428,10 @@ namespace game_server
                 delta_for_rotation = 1.2f;
             }
 
-            float new_rotation_y = rotation_y + hor_touch * delta_for_rotation;
+            //float new_rotation_y = rotation_y + hor_touch * delta_for_rotation;
+            float new_rotation_y = rotation_y;
 
+            /*
             if (new_rotation_y >= 360)
             {
                 new_rotation_y = new_rotation_y - 360;
@@ -370,6 +440,7 @@ namespace game_server
             {
                 new_rotation_y = 360 + new_rotation_y;
             }
+            */
 
             float delta_for_position = 0.08f * speed;
 

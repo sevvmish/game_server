@@ -467,7 +467,8 @@ namespace game_server
 
                     //backstab($table_id, $player, $energy_cost);
                     p.minus_energy(energy_cost);                    
-                    make_direct_melee_damage(table_id, player, 152, 11, 5, 3, 0.2f); //0.2f
+                    //make_direct_melee_damage(table_id, player, 152, 11, 5, 3, 0.2f); //0.2f
+                    Task.Run(() => rogue.backstab(table_id, player, aim.player_id));
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 5f));
                     return new float[] { 1, 5, 5f };
                 } else
@@ -808,6 +809,21 @@ namespace game_server
         }
 
 
+
+        //pooling &&&& spell +$power - pull, -$power - push
+        public static void pooling_ver2(string table_id, string pl, string enem, float power, float speed)
+        {
+            Players player = functions.GetPlayerData(table_id, pl);
+            Players enemy = functions.GetPlayerData(table_id, enem);
+
+            enemy.rotation_y = player.rotation_y;
+
+            float[] res = new float[6] { enemy.position_x, enemy.position_y, enemy.position_z, 0, enemy.rotation_y, 0 };
+            functions.mover(ref res, 0, power, speed);
+            enemy.position_x = res[0];
+            enemy.position_y = res[1];
+            enemy.position_z = res[2];
+        }
 
 
         //making DAMAGE with magic spells

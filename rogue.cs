@@ -8,8 +8,44 @@ namespace game_server
 {
     class rogue
     {
+        //backstab 152
+        public static async void backstab(string table_id, string pl, string enem)
+        {
+            Players player = functions.GetPlayerData(table_id, pl);
+            Players enemy = functions.GetPlayerData(table_id, enem);
+            
+            player.start_spell_in_process();
+            player.is_reset_any_button = true;
 
-        //step to the back spell 155
+            player.animation_id = 11;
+            spells.make_direct_melee_damage(table_id, pl, 152, 0, 5, 3, 0.2f); //0.2f
+            string cond = functions.get_symb_for_IDs();
+            functions.set_condition("co", 152, cond, table_id, pl, 0);
+
+            
+            
+            spells.reset_animation_for_one(table_id, pl);
+            //spells.pooling(table_id, player.position_x, player.position_y, pl, 10, 2);
+            spells.pooling_ver2(table_id, pl, enem, 10, 2);
+
+            for (float i = 0.8f; i > 0; i-=0.1f)
+            {
+                if (player.is_casting_failed())
+                {
+                    break;
+                }
+
+                await Task.Delay(100);
+            }
+
+            
+            spells.remove_condition_in_player(table_id, pl, cond);
+            player.stop_spell_in_process();
+            player.is_reset_any_button = false;
+        }
+
+
+            //step to the back spell 155
         public static async void step(string table_id, string pl, Players enemy)
         {
             Players player = functions.GetPlayerData(table_id, pl);

@@ -93,12 +93,12 @@ namespace game_server
         {
             long CurrentTime = starter.stopWatch.ElapsedMilliseconds;
             
-
             while (true)
             {
-                if (CurrentTime < starter.stopWatch.ElapsedMilliseconds)
+                if (CurrentTime < starter.stopWatch.ElapsedMilliseconds) //CurrentTime < starter.stopWatch.ElapsedMilliseconds
                 {
-                                        
+                     
+                    
                     foreach (Players CurrentPlayer in LocalPlayersPool.Values)
                     {
                         
@@ -167,16 +167,13 @@ namespace game_server
                             environment_packet = environment_packet + LocalEnvironmentPool[i].GetPacketForSending_nonPlayer();
                         }
                     }
-                        
                     
-                    //Console.WriteLine("tick" + starter.stopWatch.ElapsedMilliseconds);
                     CurrentTime += 50;
                     if (CurrentTime> starter.stopWatch.ElapsedMilliseconds)
-                    {
-                        //Console.WriteLine((CurrentTime - starter.stopWatch.ElapsedMilliseconds).ToString());
-                        //Thread.Sleep( (int)(CurrentTime - starter.stopWatch.ElapsedMilliseconds));
+                    {                        
                         await Task.Delay((int)(CurrentTime - starter.stopWatch.ElapsedMilliseconds));
                     }
+                    
                 } 
                    
             }

@@ -91,6 +91,7 @@ namespace game_server
         public bool is_reset_movement_button = false; //0003 rmb
         public bool is_movement_touched = false; //0001 bmt
         public bool is_immune_to_movement_imparing = false; //
+        public bool is_reset_movement_not_rotation = false;
         public bool is_immune_to_melee = false; //0005 immune to melee received
         public bool is_immune_to_magic = false; //0006 immune to magic received
         public bool is_reflecting_melee = false; //0007 reflect damage melee
@@ -322,6 +323,7 @@ namespace game_server
             is_movement_touched = false; //0001 bmt
             is_immune_to_melee = false; //0005 immune to melee received
             is_immune_to_magic = false; //0006 immune to magic received
+            is_reset_movement_not_rotation = false;
             is_reflecting_melee = false; //0007 reflect damage melee
             is_reflecting_magic = false; //0008 reflect damage magic
 
@@ -691,7 +693,7 @@ namespace game_server
         //cheking for 1002 and 1003 and 1005 stopping casting
         public bool is_casting_stopped_by_spells()
         {
-            string[] array_of_spells = new string[] { "1002", "1003", "1005", "1006" };
+            string[] array_of_spells = new string[] { "1002", "1003", "1005", "1006", "1007" };
             return is_any_cond_inarray_of_spellnumber("co", array_of_spells);
         }
 
@@ -740,7 +742,7 @@ namespace game_server
 
 
 
-            string[] array_of_spells = new string[] { "1002", "1003", "1005", "1006" };
+            string[] array_of_spells = new string[] { "1002", "1003", "1005", "1006", "1007" };
             bool result = is_any_cond_inarray_of_spellnumber("co", array_of_spells);
             if (result)
             {

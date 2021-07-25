@@ -126,13 +126,17 @@ namespace game_server
             Players pl = functions.GetPlayerData(table_id, me);
             pl.animation_id = 10;
             float current_shield_block = pl.shield_block;
+            pl.start_spell_in_process();
+            pl.is_reset_movement_not_rotation = true;
+
             pl.shield_block = 100;
-            pl.speed *= 0.3f;
-            
+            //pl.speed *= 0.3f;            
 
             string check_cond_id = functions.get_symb_for_IDs();
-            for (float i = shield_on_time; i > 0; i-=0.25f)
+
+            for (float i = shield_on_time; i > 0; i-=0.1f)
             {
+                /*
                 if (pl.vertical_touch>1)
                 {
                     pl.animation_id = 101;
@@ -145,15 +149,19 @@ namespace game_server
                 {
                     pl.animation_id = 10;
                 }
-
-                    pl.set_condition("co", 5, check_cond_id, i);
-                await Task.Delay(250);
+                */
+                pl.animation_id = 10;
+                pl.shield_block = 100;
+                pl.set_condition("co", 5, check_cond_id, i);
+                await Task.Delay(100);
             }
             spells.remove_condition_in_player(table_id, me, check_cond_id);
             spells.reset_animation_for_one(table_id, me);
             pl.shield_block = current_shield_block;
-            pl.speed /= 0.3f;
-            
+            pl.stop_spell_in_process();
+            pl.is_reset_movement_not_rotation = false;
+            //pl.speed /= 0.3f;
+
         }
 
 
@@ -378,8 +386,10 @@ namespace game_server
                             spells.make_direct_melee_damage(table_id, mee, 9, 0, 1, 2, 0);
                             spells.fall_down_get_app(table_id, enemy.player_id, 0.5f);                            
                             spells.remove_condition_in_player(table_id, mee, check_cond_id);
-                            me.is_reset_any_button = false;
                             spells.reset_animation_for_one(table_id, mee);
+                            await Task.Delay(700);
+                            me.is_reset_any_button = false;
+                            
                             return;
                         }
                         else
@@ -407,8 +417,10 @@ namespace game_server
             }
 
             spells.remove_condition_in_player(table_id, mee, check_cond_id);
-            me.is_reset_any_button = false;
+            
             spells.reset_animation_for_one(table_id, mee);
+            
+            me.is_reset_any_button = false;
         }
     }
 }

@@ -68,7 +68,7 @@ namespace game_server
             string x;
             string check_cond_strike_id = functions.get_symb_for_IDs();
 
-            for (float i = 0.9f; i > 0; i -= 0.1f)
+            for (float i = 0.6f; i > 0; i -= 0.1f)
             {
                 if (player1.is_casting_stopped_by_spells() )
                 {
@@ -267,7 +267,8 @@ namespace game_server
                     if (!spells.if_resisted_nonmagic(table_id, me, all_players[i].player_id))
                     {
                         spells.fall_down_get_app(table_id, all_players[i].player_id, 0.1f);
-                        spells.pooling(table_id, new_x, new_z, all_players[i].player_id, -15, 2);
+                        //spells.pooling(table_id, new_x, new_z, all_players[i].player_id, -15, 2);
+                        spells.pooling_ver2(table_id, me, all_players[i].player_id, 15, 2);
                     }
                 }
             }

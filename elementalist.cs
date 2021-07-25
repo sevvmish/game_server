@@ -16,6 +16,11 @@ namespace game_server
 
             for (float i = 10; i > 0; i--)
             {
+                if (player.is_casting_stopped_by_spells())
+                {
+                    break;
+                }
+
                 player.set_condition("co", 57, ID_cond, i);
                 await Task.Delay(1000);                
                 if (i % 2!=0) spells.make_direct_magic_damage_exact_enemy(table_id, me, aim, 57, 0, 0.2f, 2, TypeOfMagic.fire);                
@@ -296,7 +301,7 @@ namespace game_server
                 }
                 string x;
                 player.conditions.TryRemove(check_cond_id2, out x);
-                functions.mover(ref magic_data, 0, 10, 1.5f);               
+                functions.mover(ref magic_data, 0, 17, 1.5f);               
                 player.conditions.TryAdd(check_cond_id2, $":cs=51={magic_data[0].ToString("f1").Replace(',', '.')}={magic_data[2].ToString("f1").Replace(',', '.')},");
                 result = functions.get_all_nearest_enemy_inradius(magic_data[0], magic_data[2], me, table_id, 1);
                 if (result.Count > 0)
@@ -400,14 +405,13 @@ namespace game_server
 
                 //damage case============
                 hit_counter++;
-                if (hit_counter == 2)
+                if (hit_counter == 2 && result.Count>0)
                 {
-                    for (int u = 0; u < hit_players.Count; u++)
+                    for (int u = 0; u < result.Count; u++)
                     {
-                        if (result.Count > 0)
-                        {
-                            spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 54, base_damage / 2, 2, 2, TypeOfMagic.fire);
-                        }
+                        
+                        spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 54, base_damage / 2, 2, 2, TypeOfMagic.fire);
+                        
                     }
                     hit_counter = 0;
                     hit_players.Clear();

@@ -109,7 +109,7 @@ namespace game_server
                 if (p.energy >= energy_cost) {
                     p.minus_energy(energy_cost);
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 20));
-                    Task.Run(() => warrior.shield_on(player, table_id, 3));
+                    Task.Run(() => warrior.shield_on(player, table_id, 5));
 
                     return new float[] { 1, 0, 20 };
                 } else
@@ -291,7 +291,7 @@ namespace game_server
                     p.conditions.TryAdd(check_cond_strike_id, $":cs=55={p.position_x.ToString("f1").Replace(',', '.')}={p.position_z.ToString("f1").Replace(',', '.')},");                    
                     remove_condition_in_player(table_id, player, check_cond_strike_id);
             
-                    List<Players> result = functions.get_all_nearest_enemy_inradius(p.position_x, p.position_z, player, table_id, 3);
+                    List<Players> result = functions.get_all_nearest_enemy_inradius(p.position_x, p.position_z, player, table_id, 4);
 
 
                     if (result.Count>0)
@@ -816,6 +816,7 @@ namespace game_server
             Players player = functions.GetPlayerData(table_id, pl);
             Players enemy = functions.GetPlayerData(table_id, enem);
 
+            float old_rotation_y = enemy.rotation_y;
             enemy.rotation_y = player.rotation_y;
 
             float[] res = new float[6] { enemy.position_x, enemy.position_y, enemy.position_z, 0, enemy.rotation_y, 0 };
@@ -823,6 +824,8 @@ namespace game_server
             enemy.position_x = res[0];
             enemy.position_y = res[1];
             enemy.position_z = res[2];
+
+            enemy.rotation_y = old_rotation_y;
         }
 
 

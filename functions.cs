@@ -153,14 +153,8 @@ namespace game_server
             {
                 CurrentPlayer.horizontal_touch = -10;
             }
-            //CurrentPlayer.horizontal_touch *= 1.4f;
-
-            //Console.WriteLine("hor - " + CurrentPlayer.horizontal_touch + "   vert - " + CurrentPlayer.vertical_touch + "   rotY" + CurrentPlayer.rotation_y);
-            //Console.WriteLine((CurrentPlayer.vertical_touch / CurrentPlayer.horizontal_touch ).ToString("f1"));
-            if (CurrentPlayer.horizontal_touch != 0 || CurrentPlayer.vertical_touch != 0)
-            {
-                CurrentPlayer.rotation_y = GetRotationY(CurrentPlayer.horizontal_touch, CurrentPlayer.vertical_touch);
-            }
+            
+            
             
 
             //CHECK for stun, fear, immobilize
@@ -175,12 +169,16 @@ namespace game_server
 
                 //STUN co-1002 or FEAR co-1003
                 if (CurrentPlayer.is_cond_here_by_type_and_spell("co-1002") || CurrentPlayer.is_cond_here_by_type_and_spell("co-1003"))
-                {
-                    Console.WriteLine("ZERO because 1002 or 1003");
+                {                    
                     CurrentPlayer.ZeroInputs();                    
                 }
 
             }
+
+
+            //MAIN ROTATION PART
+            if (CurrentPlayer.horizontal_touch != 0 || CurrentPlayer.vertical_touch != 0) 
+                CurrentPlayer.rotation_y = GetRotationY(CurrentPlayer.horizontal_touch, CurrentPlayer.vertical_touch);
 
 
             //===================================0000000000000000000000======================================
@@ -194,21 +192,14 @@ namespace game_server
                 {
 
                     
-                    /*
-                    if (RawDataArray[5] == "ts")
+                   
+
+
+                    if (!CurrentPlayer.is_reset_movement_not_rotation)
                     {
-                        
-                        if (Math.Abs(CurrentPlayer.horizontal_touch) <= 1)
-                        {
-                            CurrentPlayer.horizontal_touch = 0;
-
-                        }
-
-                    } else
-                    */
-                    //{
-                    new_pos_n_rot(ref cur_pos_n_rot, CurrentPlayer.horizontal_touch, CurrentPlayer.vertical_touch, CurrentPlayer.speed);
-                    //}
+                        new_pos_n_rot(ref cur_pos_n_rot, CurrentPlayer.horizontal_touch, CurrentPlayer.vertical_touch, CurrentPlayer.speed);
+                    }
+                 
 
                     CurrentPlayer.position_x = cur_pos_n_rot[0];
                     CurrentPlayer.position_y = cur_pos_n_rot[1];
@@ -378,6 +369,7 @@ namespace game_server
 
         public static void new_pos_n_rot(ref float[] pos_rot, float hor_touch, float vert_touch, float speed)
         {
+            
             float[] new_vec = new float[3] { hor_touch, vert_touch, 0 };
             normalize_to_vector(ref new_vec);
 
@@ -973,7 +965,7 @@ namespace game_server
                 return true;
             }
 
-            string[] array_of_spells = new string[] { "1002", "1003", "1005", "1006" };
+            string[] array_of_spells = new string[] { "1002", "1003", "1005", "1006", "1007" };
             bool result = is_any_cond_inarray_of_spellnumber(table_id, player_name, "co", array_of_spells);
             if (result)
             {
@@ -1092,7 +1084,7 @@ namespace game_server
         //cheking for 1002 and 1003 and 1005 stopping casting
         public static bool is_casting_stopped_by_spells(string table_id, string player_name)
         {
-            string[] array_of_spells = new string[] { "1002", "1003", "1005", "1006" };
+            string[] array_of_spells = new string[] { "1002", "1003", "1005", "1006", "1007" };
             return is_any_cond_inarray_of_spellnumber(table_id, player_name, "co", array_of_spells);
         }
 

@@ -187,7 +187,7 @@ namespace game_server
                 }
                 string x;
                 player.conditions.TryRemove(check_cond_id2, out x);
-                functions.mover(ref magic_data, 0, 10, 1.5f);
+                functions.mover(ref magic_data, 0, 20, 1.8f);
                 //check_cond_id2 = functions.get_random_set_of_symb(4);
                 player.conditions.TryAdd(check_cond_id2, $":cs={spell_id}={magic_data[0].ToString("f1").Replace(',', '.')}={magic_data[2].ToString("f1").Replace(',', '.')},");
                 result = functions.get_all_nearest_enemy_inradius(magic_data[0], magic_data[2], me, table_id, 1);
@@ -208,7 +208,7 @@ namespace game_server
                         }
                     }
                     player.conditions.TryRemove(check_cond_id2, out x);
-                    player.conditions.TryAdd(check_cond_id2, $":cs=51=999=999,");
+                    player.conditions.TryAdd(check_cond_id2, $":cs=59=999=999,");
                     break;
                 }
 
@@ -221,7 +221,7 @@ namespace game_server
             spells.remove_condition_in_player(table_id, me, check_cond_id2);
         }
 
-
+        //59 
         public static async void freezing_slow(string table_id, string aim, float time_for_slow)
         {
             Players aim_player = functions.GetPlayerData(table_id, aim);

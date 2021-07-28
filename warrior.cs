@@ -9,6 +9,29 @@ namespace game_server
 {
     class warrior
     {
+
+        //solid armor 10
+        public static async void solid_armor(string table_id, string me, float how_long)
+        {
+            Players Player = functions.GetPlayerData(table_id, me);
+            float old_armor = Player.armor;
+            Player.armor = 999;
+            string id_condition = functions.get_symb_for_IDs();
+
+            for (float i = how_long; i > 0; i--)
+            {
+                
+                Player.set_condition("co", 10, id_condition, i);
+                await Task.Delay(1000);
+            }
+
+            Player.armor = old_armor;
+            spells.remove_condition_in_player(table_id, me, id_condition);
+            
+        }
+
+
+
         public static void simple_hit(string table_id, string me)
         {
             

@@ -19,7 +19,8 @@ namespace game_server
             Players CurrentPlayer = GetPlayerData(RawDataArray[3], RawDataArray[2]);
 
             string result = "";
-            
+
+           
             CurrentPlayer.ZeroInputs();
 
             try
@@ -292,19 +293,11 @@ namespace game_server
                         CurrentPlayer.is_spell_button_touched = false;
                     }
                     if (CurrentPlayer.button6)
-                    {//spell6                        
-                        if (Math.Abs(CurrentPlayer.vertical_touch) > 1 || Math.Abs(CurrentPlayer.horizontal_touch) > 1)
-                        {                            
-                            Task.Run(() => spells.strafe(RawDataArray[3], RawDataArray[2], CurrentPlayer.vertical_touch, CurrentPlayer.horizontal_touch));
-                            Task.Run(() => spells.button_cooldowns(RawDataArray[3], RawDataArray[2], 997, 2f));
-                            return_result = new float[] { 1, 5, 2f };
-                            CurrentPlayer.button6 = false;
-                            CurrentPlayer.is_spell_button_touched = false;
-                        } else
-                        {
-                            //Console.WriteLine(CurrentPlayer.vertical_touch + " - vert   " + CurrentPlayer.horizontal_touch +  " - hor");
-                            return_result = new float[] { 1, 0, 0 };
-                        }
+                    {//spell6
+
+                        return_result = spells.CastSpell(CurrentPlayer.spell6, RawDataArray[3], RawDataArray[2], CurrentPlayer);
+                        CurrentPlayer.button6 = false;
+                        CurrentPlayer.is_spell_button_touched = false;
                     }
 
                     result = "|" + CurrentPlayer.OrderNumber.ToString() + "~1~" + return_result[0] + "~" + return_result[1] + "~" + return_result[2] + "~";

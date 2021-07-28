@@ -210,7 +210,25 @@ namespace game_server
             }
             //================spell 9==================================
 
+            //================spell 10 solid armor==================================
+            if (spell_id == 10)
+            {
+                float energy_cost = 10;
 
+                if (p.energy >= energy_cost)
+                {
+                    p.minus_energy(energy_cost);
+                    Task.Run(() => warrior.solid_armor(table_id, player, 2));
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
+                    return new float[] { 1, 0, 5 };
+                }
+                else
+                {
+                    return new float[] { 0, 7, 0 };
+                }
+
+            }
+            //================spell 9========================
 
             //================spell 51 fire bolt==================================
             if (spell_id == 51) {
@@ -654,9 +672,10 @@ namespace game_server
             //================STRAFE==================================
             if (spell_id == 997)
             {
-                //Task.Run(() => strafe(table_id, player));
-                Task.Run(() => button_cooldowns(table_id, player, spell_id, 2f));
-                return new float[] { 1, 5, 2f };
+                
+                Task.Run(() => strafe(table_id, player));
+                Task.Run(() => button_cooldowns(table_id, player, spell_id, 10f));
+                return new float[] { 1, 5, 10f };
             }
             //================STRAFE==================================
 
@@ -945,53 +964,15 @@ namespace game_server
 
 
         //base strafe from functions
-        public static async void strafe(string table_id, string player_name, float vert, float horiz)
+        public static async void strafe(string table_id, string player_name)
         {
             Players player = functions.GetPlayerData(table_id, player_name);
             player.is_strafe_on = true;
             player.is_spell_in_process = true;
             player.is_reset_any_button = true;
-            float destination_x = horiz / 7.5f;
-            float destination_z = vert / 6f;
-            float koeff = Math.Abs(MathF.Atan(destination_z / destination_x));
-            float angle = 0;
-            //Console.WriteLine(koeff);
-            //Console.WriteLine(CurrentPlayer.horizontal_touch + ":" + CurrentPlayer.vertical_touch + "      " + destination_x.ToString("f1") + " - horiz   " + destination_z.ToString("f1") + " -vert   = " + MathF.Atan(destination_z / destination_x).ToString("f5"));
             
 
-            if (vert >= 0 && horiz >= 0)
-            {
-                angle = 90f * (1f - koeff / 1.6f);
-                
-
-            } else if (vert < 0 && horiz >= 0)
-            {
-                angle = 90f + 90f * (koeff / 1.6f);
-                
-
-            } else if (vert < 0 && horiz < 0)
-            {
-                angle = 180f + 90f * (1f - koeff / 1.6f);
-                
-
-            } else if (vert >= 0 && horiz < 0)
-            {
-                angle = 270f + 90f * (koeff / 1.6f);
-                
-            }
-
-            float old_rot_y = 0;
-
-            if ((player.rotation_y + angle) > 360)
-            {
-                old_rot_y = player.rotation_y + angle - 360;
-            } else
-            {
-                old_rot_y = player.rotation_y + angle;
-            }
-            Console.WriteLine(player.horizontal_touch + "-" + player.vertical_touch + "       " + koeff + ": " + angle);
-
-            float[] pos_rot = new float[] {player.position_x, 0, player.position_z, 0, old_rot_y, 0 };
+            float[] pos_rot = new float[] {player.position_x, 0, player.position_z, 0, player.rotation_y, 0 };
 
             
             float old_dodge = player.dodge;
@@ -1003,12 +984,13 @@ namespace game_server
 
             string id = functions.get_symb_for_IDs();
             player.conditions.TryAdd(id, ":co-997-0.3,");
-            float[] delta = new float[] {45,15,-5,0,0 };
 
-                        
+                      
+
             for (int i = 0; i < 5; i++)
             {
-                functions.mover(ref pos_rot, 0, delta[i], 1f);
+               
+                functions.mover(ref pos_rot, 0, 10, 1f);
 
                 player.position_x = pos_rot[0];
                 player.position_z = pos_rot[2];

@@ -226,6 +226,7 @@ namespace game_server
         {
             Players aim_player = functions.GetPlayerData(table_id, aim);
             aim_player.speed *= 0.6f;
+            aim_player.cast_speed *= 0.8f;
             string ID_cond = functions.get_symb_for_IDs();
 
             for (float i = time_for_slow; i > 0; i-=0.1f)
@@ -235,6 +236,7 @@ namespace game_server
                 await Task.Delay(100);
             }
             aim_player.speed /= 0.6f;
+            aim_player.cast_speed /= 0.8f;
             spells.remove_condition_in_player(table_id, aim, ID_cond);
         }
 

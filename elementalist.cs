@@ -187,6 +187,7 @@ namespace game_server
                 }
                 string x;
                 player.conditions.TryRemove(check_cond_id2, out x);
+                functions.turn_object_to_enemy_indirect(me, table_id, ref magic_data, default_distance, 0, default_distance);
                 functions.mover(ref magic_data, 0, 20, 1.8f);
                 //check_cond_id2 = functions.get_random_set_of_symb(4);
                 player.conditions.TryAdd(check_cond_id2, $":cs={spell_id}={magic_data[0].ToString("f1").Replace(',', '.')}={magic_data[2].ToString("f1").Replace(',', '.')},");
@@ -207,8 +208,8 @@ namespace game_server
                             }
                         }
                     }
-                    player.conditions.TryRemove(check_cond_id2, out x);
-                    player.conditions.TryAdd(check_cond_id2, $":cs=59=999=999,");
+                    //player.conditions.TryRemove(check_cond_id2, out x);
+                    //player.conditions.TryAdd(check_cond_id2, $":cs=59=999=999,");
                     break;
                 }
 
@@ -303,6 +304,7 @@ namespace game_server
                 }
                 string x;
                 player.conditions.TryRemove(check_cond_id2, out x);
+                functions.turn_object_to_enemy_indirect(me, table_id, ref magic_data, default_distance, 0, default_distance);
                 functions.mover(ref magic_data, 0, 17, 1.5f);               
                 player.conditions.TryAdd(check_cond_id2, $":cs=51={magic_data[0].ToString("f1").Replace(',', '.')}={magic_data[2].ToString("f1").Replace(',', '.')},");
                 result = functions.get_all_nearest_enemy_inradius(magic_data[0], magic_data[2], me, table_id, 1);
@@ -315,8 +317,8 @@ namespace game_server
                             spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 51, 0, 1, 2, TypeOfMagic.fire);
                         }
                     }
-                    player.conditions.TryRemove(check_cond_id2, out x);
-                    player.conditions.TryAdd(check_cond_id2, $":cs=51=999=999,");
+                    //player.conditions.TryRemove(check_cond_id2, out x);
+                    //player.conditions.TryAdd(check_cond_id2, $":cs=51=999=999,");
                     break;
                 }
 

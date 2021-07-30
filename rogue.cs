@@ -80,6 +80,10 @@ namespace game_server
                 
                 enemy.rotation_y = new_enemy_angle;
                 enemy.conditions.TryAdd(check_cond_strike_id, $":co-155-{i.ToString("f1").Replace(',', '.')},");
+                if (enemy.is_stop_all_condition_by_checking_index(155)) 
+                {
+                    break;
+                }
                 await Task.Delay(100);
             }
             spells.remove_condition_in_player(table_id, enemy.player_id, check_cond_strike_id);

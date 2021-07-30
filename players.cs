@@ -355,7 +355,10 @@ namespace game_server
             {
                 foreach (string key in conditions.Keys.ToList())
                 {
-                    conditions_refactor = conditions_refactor + key + conditions[key];  //Console.WriteLine(key + " - " + t[key]);
+                    if (conditions[key] != ":,")
+                    {
+                        conditions_refactor = conditions_refactor + key + conditions[key];  //Console.WriteLine(key + " - " + t[key]);
+                    }
                 }
             }
             catch (Exception ex)
@@ -395,7 +398,11 @@ namespace game_server
             {
                 foreach (string key in conditions.Keys.ToList())
                 {
-                    conditions_refactor = conditions_refactor + key + conditions[key];  //Console.WriteLine(key + " - " + t[key]);
+                    if (conditions[key] != ":,")
+                    {
+                        conditions_refactor = conditions_refactor + key + conditions[key];  //Console.WriteLine(key + " - " + t[key]);
+                    }
+                    
                 }
             }
             catch (Exception ex)
@@ -426,7 +433,11 @@ namespace game_server
             {
                 foreach (string key in conditions.Keys.ToList())
                 {
-                    conditions_refactor = conditions_refactor + key + conditions[key];  //Console.WriteLine(key + " - " + t[key]);
+                    if (conditions[key] != ":,")
+                    {
+                        conditions_refactor = conditions_refactor + key + conditions[key];  //Console.WriteLine(key + " - " + t[key]);
+                    }
+                    
                 }
             }
             catch (Exception ex)
@@ -503,6 +514,98 @@ namespace game_server
             button6 = false;
             is_strafe_on = false;
         }
+
+        //stop all conditions
+        public void add_stop_to_spec_conditions(int type)
+        {                        
+            string x;
+
+            switch(type)
+            {
+                case 0:
+                    conditions.Remove("c10001", out x);
+                    conditions.TryAdd("c10001", $":,");
+                    break;
+                case 1:
+                    conditions.Remove("c10002", out x);
+                    conditions.TryAdd("c10002", $":,");
+                    break;
+                case 2:
+                    conditions.Remove("c10003", out x);
+                    conditions.TryAdd("c10003", $":,");
+                    break;
+            }            
+        }
+
+        public void remove_stop_to_spec_conditions(int type)
+        {
+            string x;
+
+            switch (type)
+            {
+                case 0:
+                    conditions.Remove("c10001", out x);                    
+                    break;
+                case 1:
+                    conditions.Remove("c10002", out x);                    
+                    break;
+                case 2:
+                    conditions.Remove("c10003", out x);                    
+                    break;
+            }
+        }
+        //======================================================
+
+
+        public bool is_stop_all_condition_by_checking_index(int index)
+        {
+            if (conditions.ContainsKey("c10001"))
+            {
+                return true;
+            }
+
+            if (conditions.ContainsKey("c10002"))
+            {
+                /*
+                foreach (string item in conditions.Values)
+                {
+                    if (item.Contains(":co"))
+                    {
+                        if (spells.SpellID(index).general != GeneralChars.negative)
+                        {
+                            return false;
+                        }
+
+                        int _where_starts = item.IndexOf("co") + 3;
+                        int _where_ends = item.IndexOf("-", _where_starts + 1);
+                        int result = int.Parse(item.Substring(_where_starts, _where_ends - _where_starts));
+
+                        if (index == result)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                */
+
+                if (spells.SpellID(index).general == GeneralChars.negative)
+                {
+                    return true;
+                }
+            }
+
+            if (conditions.ContainsKey("c10003"))
+            {
+                if (spells.SpellID(index).general == GeneralChars.positive)
+                {
+                    return true;
+                }
+            }
+
+
+            return false;
+        }
+
 
         //set condition
         public void set_condition(string cond_type, int condition_number, string cond_id, float timer)
@@ -641,6 +744,11 @@ namespace game_server
         //KNOCKED DOWN
         public void make_knocked(string conds_id, float tick_time_left)
         {
+            if (is_stop_all_condition_by_checking_index(1006))
+            {
+                return;
+            }
+
             string x;
             conditions.TryRemove(conds_id, out x);
             conditions.TryAdd(conds_id, $":co-1006-{tick_time_left.ToString("f1").Replace(',', '.')},");
@@ -651,6 +759,11 @@ namespace game_server
         //IMMOBILIZE
         public void make_immob(string conds_id, float tick_time_left)
         {
+            if (is_stop_all_condition_by_checking_index(1001))
+            {
+                return;
+            }
+
             //spells.set_animation_for_one($table_id, $player->player_id, 0, 2, 0.01);
             animation_id = 0;
             string x;
@@ -662,7 +775,12 @@ namespace game_server
 
         //slower
         public void make_slow(string conds_id, float tick_time_left)
-        {            
+        {
+            if (is_stop_all_condition_by_checking_index(995))
+            {
+                return;
+            }
+
             string x;
             conditions.TryRemove(conds_id, out x);
             conditions.TryAdd(conds_id, $":co-995-{tick_time_left.ToString("f1")},");
@@ -671,9 +789,15 @@ namespace game_server
 
         //STUN
         public void make_stun(string conds_id, float tick_time_left)
-        {            
+        {
+            if (is_stop_all_condition_by_checking_index(1002))
+            {
+                return;
+            }
+
             animation_id = 8;
             string x;
+            
             conditions.TryRemove(conds_id, out x);
             conditions.TryAdd(conds_id, $":co-1002-{tick_time_left.ToString("f1")},");
         }
@@ -682,6 +806,11 @@ namespace game_server
         //break casting 1005
         public async void make_broken_casting()
         {
+            if (is_stop_all_condition_by_checking_index(1005))
+            {
+                return;
+            }
+
             string conds_id = functions.get_symb_for_IDs();
             string x;
             conditions.TryRemove(conds_id, out x);

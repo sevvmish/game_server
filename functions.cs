@@ -634,6 +634,22 @@ namespace game_server
             return MathF.Acos(dot_clamp_result) * 57.29578f;
         }
 
+
+        public static Players GetPlayerByIDinConditions(string table_id, string ID_to_search)
+        {
+            Players result = null;
+
+            foreach (Players player in starter.SessionsPool[table_id].LocalPlayersPool.Values)
+            {
+                if (player.conditions.ContainsKey(ID_to_search))
+                {
+                    return player;
+                }
+            }
+
+            return result;
+        }
+
         public static Players GetPlayerData(string session_id, string player_id)
         {
             if (!starter.SessionsPool.ContainsKey(session_id))

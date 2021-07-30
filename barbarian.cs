@@ -16,12 +16,13 @@ namespace game_server
             Players player = functions.GetPlayerData(table_id, me);
             player.shield_block += 50;
             player.start_spell_in_process();
+            player.is_reset_movement_not_rotation = true;
 
             for (float i = block_time; i > 0; i -= 0.25f)
             {
                 if (!player.is_casting_stopped_by_spells())
                 {
-                    player.make_immob(check_immob_id, i);
+                    //player.make_immob(check_immob_id, i);
                     string x;
                     player.conditions.TryRemove(check_cond_id, out x);
                     player.conditions.TryAdd(check_cond_id, $":co-104-{i.ToString("f1").Replace(',', '.')},");
@@ -45,6 +46,7 @@ namespace game_server
             spells.remove_condition_in_player(table_id, me, check_cond_id);
             spells.remove_condition_in_player(table_id, me, check_immob_id);
             player.stop_spell_in_process();
+            player.is_reset_movement_not_rotation = false;
         }
 
 

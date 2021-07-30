@@ -14,16 +14,16 @@ namespace game_server
             Players player = functions.GetPlayerData(table_id, aim);
             string ID_cond = functions.get_symb_for_IDs();
 
-            for (float i = 10; i > 0; i--)
+            for (float i = 10; i > 0; i-=0.1f)
             {
-                if (player.is_casting_stopped_by_spells())
+                
+                player.set_condition("co", 57, ID_cond, i);
+                if (player.is_stop_all_condition_by_checking_index(57))
                 {
                     break;
                 }
-
-                player.set_condition("co", 57, ID_cond, i);
-                await Task.Delay(1000);                
-                if (i % 2!=0) spells.make_direct_magic_damage_exact_enemy(table_id, me, aim, 57, 0, 0.2f, 2, TypeOfMagic.fire);                
+                await Task.Delay(100);                
+                if (i==Math.Truncate(i) && i % 2!=0) spells.make_direct_magic_damage_exact_enemy(table_id, me, aim, 57, 0, 0.2f, 2, TypeOfMagic.fire);                
             }
 
             spells.remove_condition_in_player(table_id, aim, ID_cond);
@@ -32,28 +32,33 @@ namespace game_server
         //fire armor 61
         public static async void fire_armor(string table_id, string me, float how_long)
         {
-            float base_armor = 200f;
-            float base_speed = 1.2f;
-            float base_cast_speed = 30f;
-
+            float base_armor = 300f;
+            
             Players player = functions.GetPlayerData(table_id, me);
             player.armor += base_armor;
-            player.speed *= base_speed;
-            player.cast_speed += base_cast_speed;
-
+            
             string ID_cond = functions.get_symb_for_IDs();
 
-            for (float i = how_long; i > 0; i -= 0.15f)
+            for (float i = how_long; i > 0; i -= 0.2f)
             {
-                player.set_condition("co", 62, ID_cond, i);
+                if (player.conditions.Values.Contains("dt"))
+                {
+                    if (functions.what_damage_or_heal_received_analysis(table_id, me, "dt")>0)
+                    {
+                        //
+                    }
+                }
 
-                await Task.Delay(150);
+                player.set_condition("co", 62, ID_cond, i);
+                if (player.is_stop_all_condition_by_checking_index(61))
+                {
+                    break;
+                }
+                await Task.Delay(200);
             }
 
             player.armor -= base_armor;
-            player.speed /= base_speed;
-            player.cast_speed -= base_cast_speed;
-
+            
             spells.remove_condition_in_player(table_id, me, ID_cond);
         }
 
@@ -233,7 +238,10 @@ namespace game_server
             for (float i = time_for_slow; i > 0; i-=0.1f)
             {
                 aim_player.set_condition("co", 59, ID_cond, i);
-
+                if (aim_player.is_stop_all_condition_by_checking_index(59))
+                {
+                    break;
+                }
                 await Task.Delay(100);
             }
             aim_player.speed /= 0.6f;
@@ -553,7 +561,8 @@ namespace game_server
                 for (int u = 0; u < result_p.Count; u++)
                 {
                     result_p[u].make_stun(conds_ids_for_stun[u], i);
-                    result_p[u].set_condition("co", 52, conds_ids[u], i);                   
+                    result_p[u].set_condition("co", 52, conds_ids[u], i);
+                    
                 }
                
                 await Task.Delay(100);
@@ -595,16 +604,17 @@ namespace game_server
                 player.make_immob(conds_id, i);
                 await Task.Delay(100);
 
-                if (player.is_immune_to_movement_imparing)
+                if (player.is_immune_to_movement_imparing || player.is_stop_all_condition_by_checking_index(58))
                 {
                     break;
                 }
 
+
+                //breaking the ice immovement
                 if (functions.what_damage_or_heal_received_analysis(table_id, enemy, "dt") > 0 && i<=(time-0.3f))
                 {
                     if (functions.assess_chance(chance_to_break_after_hit_received))
-                    {
-                        Console.WriteLine("BBBBBBREEEEEEAAAAAAAAKKKKKKK IIIIIICEEEEEEEEEEEEE");
+                    {                        
                         functions.inform_of_cancel_casting(enemy, table_id, 58);
                         break;
                     }

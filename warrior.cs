@@ -17,17 +17,18 @@ namespace game_server
             float old_armor = Player.armor;
             Player.armor = 999;
             string id_condition = functions.get_symb_for_IDs();
+            Player.add_stop_to_spec_conditions(0);
 
-            for (float i = how_long; i > 0; i--)
-            {
-                
+            for (float i = how_long; i > 0; i-=0.1f)
+            {                
                 Player.set_condition("co", 10, id_condition, i);
-                await Task.Delay(1000);
+
+                await Task.Delay(100);
             }
 
+            Player.remove_stop_to_spec_conditions(0);
             Player.armor = old_armor;
-            spells.remove_condition_in_player(table_id, me, id_condition);
-            
+            spells.remove_condition_in_player(table_id, me, id_condition);            
         }
 
 
@@ -71,13 +72,17 @@ namespace game_server
                 conds_ids.Add(functions.get_symb_for_IDs());
             }
 
-            for (float i = 0; i < time_ticks; i++)
+            for (float i = time_ticks; i > 0; i-=0.250f)
             {
                 for (int u = 0; u < all_needed_players.Count; u++)
                 {
-                    all_needed_players[u].set_condition("co", 3, conds_ids[u], (time_ticks - i));
+                    all_needed_players[u].set_condition("co", 3, conds_ids[u], i);
+                    if (all_needed_players[u].is_stop_all_condition_by_checking_index(3))
+                    {
+                        break;
+                    }
                 }
-                await Task.Delay(1000);
+                await Task.Delay(250);
             }
 
             for (int ii = 0; ii < all_needed_players.Count; ii++)
@@ -109,12 +114,17 @@ namespace game_server
             Players enemy = functions.GetPlayerData(table_id, all_players);
             enemy.conditions.TryAdd(id_condition, $":co-{spell_number}-{time_ticks},");
             string x;
-            for (float i = time_ticks; i > 0; i--)
+            for (float i = time_ticks; i > 0; i-=0.250f)
             {
-                enemy.conditions.TryRemove(id_condition, out x);
-                enemy.conditions.TryAdd(id_condition, $":co-{spell_number}-{i},");
+                //enemy.conditions.TryRemove(id_condition, out x);
+                //enemy.conditions.TryAdd(id_condition, $":co-{spell_number}-{i},");
+                enemy.set_condition("co", spell_number, id_condition, i);
+                if (enemy.is_stop_all_condition_by_checking_index(2))
+                {
+                    break;
+                }
 
-                if (i % 2 != 0)
+                if (i==Math.Truncate(i) && i % 2 != 0)
                 {
                     //float prev_armor = enemy.armor;
                     float prev_dodge = enemy.dodge;
@@ -134,7 +144,7 @@ namespace game_server
                 }
                
 
-                await Task.Delay(1000);
+                await Task.Delay(250);
             }
 
             //enemy.conditions.TryRemove(id_condition, out x);
@@ -176,6 +186,10 @@ namespace game_server
                 pl.animation_id = 10;
                 pl.shield_block = 100;
                 pl.set_condition("co", 5, check_cond_id, i);
+                if (pl.is_stop_all_condition_by_checking_index(5))
+                {
+                    break;
+                }
                 await Task.Delay(100);
             }
             spells.remove_condition_in_player(table_id, me, check_cond_id);
@@ -332,12 +346,17 @@ namespace game_server
             enemy.conditions.TryAdd(id_condition, $":co-{spell_number}-{time_ticks},");
             string x;
 
-            for (float i = time_ticks; i > 0; i--)
+            for (float i = time_ticks; i > 0; i-=0.25f)
             {
-                enemy.conditions.TryRemove(id_condition, out x);
-                enemy.conditions.TryAdd(id_condition, $":co-{spell_number}-{i},");
-
-                if (i % 2 != 0)
+                //enemy.conditions.TryRemove(id_condition, out x);
+                //enemy.conditions.TryAdd(id_condition, $":co-{spell_number}-{i},");
+                enemy.set_condition("co", spell_number, id_condition, i);
+                if (enemy.is_stop_all_condition_by_checking_index(2))
+                {
+                    break;
+                }
+                
+                if (i == Math.Truncate(i) && i % 2 != 0)
                 {
                     //float prev_armor = enemy.armor;
                     float prev_dodge = enemy.dodge;
@@ -353,7 +372,7 @@ namespace game_server
                     enemy.dodge = prev_dodge;
                     enemy.shield_block = prev_shieldbl;
                 }
-                await Task.Delay(1000);
+                await Task.Delay(250);
             }
             enemy.speed /= 0.4f;
             enemy.conditions.TryRemove(id_condition, out x);

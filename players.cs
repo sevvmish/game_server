@@ -852,6 +852,21 @@ namespace game_server
             return false;
         }
 
+
+        public async void CastEndCS(float last_x, float last_z, string ID, int spell_index)
+        {
+            string x;
+
+            conditions.TryRemove(ID, out x);
+            conditions.TryAdd(ID, $":cs={spell_index}={last_x.ToString("f1").Replace(',', '.')}={last_z.ToString("f1").Replace(',', '.')},");
+            
+            await Task.Delay(100);
+            
+            conditions.TryRemove(ID, out x);
+            conditions.TryAdd(ID, $":cs={spell_index}=999=999,");
+
+            spells.remove_condition_in_player(Session_ID, player_id, ID);
+        }
        
 
         //cheking for 1002 and 1003 and 1005 plus MOVEMENET and SPELLS
@@ -859,7 +874,7 @@ namespace game_server
         {
 
             
-            if (Math.Abs(vertical_touch) > 1.5f)
+            if (Math.Abs(vertical_touch) > 1.5f || Math.Abs(horizontal_touch) > 1.5f)
             {
                 return true;
             }

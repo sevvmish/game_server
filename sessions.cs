@@ -140,6 +140,7 @@ namespace game_server
                                 CurrentPlayer.energy = CurrentPlayer.energy + CurrentPlayer.energy_regen * 0.05f*2;
                             }
 
+                           
                             string[] curr_health = CurrentPlayer.health_pool.Split('=');
                             float health_curr = float.Parse(curr_health[0]);
                             if (health_curr < float.Parse(curr_health[1]))

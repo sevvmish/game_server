@@ -14,7 +14,7 @@ namespace game_server
             Players player = functions.GetPlayerData(table_id, aim);
             string ID_cond = functions.get_symb_for_IDs();
 
-            for (float i = 10; i > 0; i-=0.1f)
+            for (float i = 10; i > 0; i-=0.25f)
             {
                 
                 player.set_condition("co", 57, ID_cond, i);
@@ -22,8 +22,13 @@ namespace game_server
                 {
                     break;
                 }
-                await Task.Delay(100);                
-                if (i==Math.Truncate(i) && i % 2!=0) spells.make_direct_magic_damage_exact_enemy(table_id, me, aim, 57, 0, 0.2f, 2, TypeOfMagic.fire);                
+                                
+                if (Math.Round(i, 2) == Math.Truncate(i) && Math.Round(i, 2) % 2 != 0)
+                {
+                    spells.make_direct_magic_damage_exact_enemy(table_id, me, aim, 57, 0, 0.2f, 2, TypeOfMagic.fire);
+                }
+                await Task.Delay(250);
+                
             }
 
             spells.remove_condition_in_player(table_id, aim, ID_cond);
@@ -185,6 +190,8 @@ namespace game_server
 
             for (float i = 0; i < 2; i += 0.05f)
             {
+                functions.turn_to_enemy(me, table_id, 0.1f, default_distance, -15, default_distance);
+
                 float curr_dist = functions.vector3_distance_unity(default_player_x, 0, default_player_z, magic_data[0], 0, magic_data[2]);
                 if (curr_dist > default_distance)
                 {
@@ -193,7 +200,7 @@ namespace game_server
                 string x;
                 player.conditions.TryRemove(check_cond_id2, out x);
                 functions.turn_object_to_enemy_indirect(me, table_id, ref magic_data, default_distance, 0, default_distance);
-                functions.mover(ref magic_data, 0, 20, 1.8f);
+                functions.mover(ref magic_data, 0, 25, 1f);
                 //check_cond_id2 = functions.get_random_set_of_symb(4);
                 player.conditions.TryAdd(check_cond_id2, $":cs={spell_id}={magic_data[0].ToString("f1").Replace(',', '.')}={magic_data[2].ToString("f1").Replace(',', '.')},");
                 result = functions.get_all_nearest_enemy_inradius(magic_data[0], magic_data[2], me, table_id, 1);
@@ -215,6 +222,7 @@ namespace game_server
                     }
                     //player.conditions.TryRemove(check_cond_id2, out x);
                     //player.conditions.TryAdd(check_cond_id2, $":cs=59=999=999,");
+                    player.CastEndCS(magic_data[0], magic_data[2], check_cond_id2, 59);
                     break;
                 }
 
@@ -305,6 +313,8 @@ namespace game_server
 
             for (float i = 0; i < 2; i += 0.05f)
             {
+                functions.turn_to_enemy(me, table_id, 0.1f, default_distance, -15, default_distance);
+
                 float curr_dist = functions.vector3_distance_unity(default_player_x, 0, default_player_z, magic_data[0], 0, magic_data[2]);
                 if (curr_dist > default_distance)
                 {
@@ -312,8 +322,8 @@ namespace game_server
                 }
                 string x;
                 player.conditions.TryRemove(check_cond_id2, out x);
-                functions.turn_object_to_enemy_indirect(me, table_id, ref magic_data, default_distance, 0, default_distance);
-                functions.mover(ref magic_data, 0, 17, 1.5f);               
+                functions.turn_object_to_enemy_indirect(me, table_id, ref magic_data, default_distance, -15, default_distance);
+                functions.mover(ref magic_data, 0, 17, 1f);               
                 player.conditions.TryAdd(check_cond_id2, $":cs=51={magic_data[0].ToString("f1").Replace(',', '.')}={magic_data[2].ToString("f1").Replace(',', '.')},");
                 result = functions.get_all_nearest_enemy_inradius(magic_data[0], magic_data[2], me, table_id, 1);
                 if (result.Count > 0)
@@ -327,6 +337,7 @@ namespace game_server
                     }
                     //player.conditions.TryRemove(check_cond_id2, out x);
                     //player.conditions.TryAdd(check_cond_id2, $":cs=51=999=999,");
+                    player.CastEndCS(magic_data[0], magic_data[2], check_cond_id2, 51);
                     break;
                 }
 
@@ -586,6 +597,7 @@ namespace game_server
             Players player = functions.GetPlayerData(table_id, enemy);
             float chance_to_break_after_hit_received = 20;
 
+            
             if (spells.if_resisted_magic(table_id, me, enemy) || player.is_immune_to_movement_imparing)
             {
                 return;
@@ -598,7 +610,6 @@ namespace game_server
             for (float i = time; i > 0; i -= 0.1f)
             {
                 
-
                 player.conditions.TryRemove(check_cond_id, out x);
                 player.conditions.TryAdd(check_cond_id, $":co-58-{i.ToString("f1").Replace(',', '.')},");
                 player.make_immob(conds_id, i);

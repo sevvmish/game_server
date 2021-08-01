@@ -124,7 +124,9 @@ namespace game_server
                     break;
                 }
 
-                if (i==Math.Truncate(i) && i % 2 != 0)
+
+
+                if (Math.Round(i, 2) == Math.Truncate(i) && Math.Round(i, 2) % 2 != 0)
                 {
                     //float prev_armor = enemy.armor;
                     float prev_dodge = enemy.dodge;
@@ -355,8 +357,8 @@ namespace game_server
                 {
                     break;
                 }
-                
-                if (i == Math.Truncate(i) && i % 2 != 0)
+
+                if (Math.Round(i, 2) == Math.Truncate(i) && Math.Round(i, 2) % 2 != 0)
                 {
                     //float prev_armor = enemy.armor;
                     float prev_dodge = enemy.dodge;

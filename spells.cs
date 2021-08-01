@@ -316,7 +316,7 @@ namespace game_server
                     {
                         for (int i = 0; i < result.Count; i++) {
                             spells.make_direct_magic_damage_exact_enemy(table_id, player, result[i].player_id, 55, 0, 0.5f, 1, TypeOfMagic.frost);
-                            elementalist.freezed(table_id, player, result[i].player_id, 5);
+                            elementalist.freezed(table_id, player, result[i].player_id, 5);                            
                         }
                     }
 
@@ -413,7 +413,7 @@ namespace game_server
                 if (p.energy >= energy_cost) {
                     p.minus_energy(energy_cost);
 
-                    Task.Run(() => barbarian.block_prep(table_id, player, 1));
+                    Task.Run(() => barbarian.block_prep(table_id, player, 2));
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 2f));
                     return new float[] { 1, 5, 2f };
                 } else

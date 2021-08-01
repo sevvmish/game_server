@@ -15,6 +15,7 @@ namespace game_server
             string check_immob_id = functions.get_symb_for_IDs();
             Players player = functions.GetPlayerData(table_id, me);
             player.shield_block += 50;
+            
             player.start_spell_in_process();
             player.is_reset_movement_not_rotation = true;
 

@@ -682,6 +682,43 @@ namespace game_server
             return null;
         }
 
+
+        //check if DAMAGE is crit
+        public bool isCrit_DamageAnalisys(string bulk_data)
+        {
+            if (!bulk_data.Contains("dg") || !bulk_data.Contains("dt"))
+            {
+                return false;
+            }
+
+            string[] data = bulk_data.Split('-');
+
+            if (data[2]=="c")
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
+                        
+        }
+
+        //check spell index in DAMAGE
+        public int GetSpellIndex_DamageAnalisys(string bulk_data)
+        {
+            if (!bulk_data.Contains("dg") || !bulk_data.Contains("dt"))
+            {
+                return 0;
+            }
+
+            string[] data = bulk_data.Split('-');
+
+            return int.Parse(data[3].Replace(',', ' '));
+            
+        }
+
+
+
         //get bulk data in condition by any cond data
         public string get_bulkconditiondata_by_anything_in_bulk(string searched_cond)
         {

@@ -350,6 +350,82 @@ namespace game_server
             }
             //================spell 56==================================
 
+            //================spell 60 frost armor==================================
+            if (spell_id == 60)
+            {
+                float energy_cost = 10;
+
+                if (p.energy >= energy_cost)
+                {
+
+                    Task.Run(() => elementalist.frost_armor(table_id, player, 5));
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
+                    return new float[] { 1, 0, 5 };
+                }
+                else
+                {
+                    return new float[] { 0, 7, 0 };
+                }
+            }
+            //================spell 60==================================
+
+            //================spell 61 fire armor==================================
+            if (spell_id == 61)
+            {
+                float energy_cost = 10;
+
+                if (p.energy >= energy_cost)
+                {
+
+                    Task.Run(() => elementalist.fire_armor(table_id, player, 5));
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
+                    return new float[] { 1, 0, 5 };
+                }
+                else
+                {
+                    return new float[] { 0, 7, 0 };
+                }
+            }
+            //================spell 61==================================
+
+
+            //================spell 62 air armor==================================
+            if (spell_id == 62)
+            {
+                float energy_cost = 10;
+
+                if (p.energy >= energy_cost)
+                {
+
+                    Task.Run(() => elementalist.air_armor(table_id, player, 5));
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
+                    return new float[] { 1, 0, 5 };
+                }
+                else
+                {
+                    return new float[] { 0, 7, 0 };
+                }
+            }
+            //================spell 62==================================
+
+            //================spell 63 earth armor==================================
+            if (spell_id == 63)
+            {
+                float energy_cost = 10;
+
+                if (p.energy >= energy_cost)
+                {
+
+                    Task.Run(() => elementalist.earth_armor(table_id, player, 5));
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
+                    return new float[] { 1, 0, 5 };
+                }
+                else
+                {
+                    return new float[] { 0, 7, 0 };
+                }
+            }
+            //================spell 63==================================
 
             //================spell 101 swing melee hit==================================
             if (spell_id == 101) {

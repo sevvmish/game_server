@@ -38,21 +38,50 @@ namespace game_server
         public static async void fire_armor(string table_id, string me, float how_long)
         {
             float base_armor = 300f;
+           
             
             Players player = functions.GetPlayerData(table_id, me);
+           
             player.armor += base_armor;
+            
             
             string ID_cond = functions.get_symb_for_IDs();
 
             for (float i = how_long; i > 0; i -= 0.2f)
             {
-                if (player.conditions.Values.Contains("dt"))
+
+                try
                 {
-                    if (functions.what_damage_or_heal_received_analysis(table_id, me, "dt")>0)
+                    foreach (string searched_ID in player.conditions.Keys)
                     {
-                        //
+                        if (player.conditions[searched_ID].Contains("dt"))
+                        {
+                            string[] data = player.conditions[searched_ID].Split('-');
+                            if (spells.SpellID(int.Parse(data[3].Replace(',', ' '))).damage_type == TypeofDamaging.close_melee)
+                            {
+                                foreach (Players pl in starter.SessionsPool[table_id].LocalPlayersPool.Values)
+                                {
+                                    if (pl.conditions.ContainsKey(searched_ID) && pl.player_id != me)
+                                    {
+                                        if (!pl.is_cond_here_by_type_and_spell("co-57"))
+                                        {                                            
+                                            burning(table_id, me, pl.player_id);
+                                            
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(DateTime.Now +  ": error in making somebody burning when strike fire armor - spell61");
+                }
+                
+                
+                
 
                 player.set_condition("co", 62, ID_cond, i);
                 if (player.is_stop_all_condition_by_checking_index(61))
@@ -71,9 +100,9 @@ namespace game_server
         //air armor 62
         public static async void air_armor(string table_id, string me, float how_long)
         {
-            float base_armor = 200f;
+            float base_armor = 100f;
             float base_speed = 1.2f;
-            float base_cast_speed = 30f;
+            float base_cast_speed = 20f;
 
             Players player = functions.GetPlayerData(table_id, me);
             player.armor += base_armor;
@@ -82,11 +111,14 @@ namespace game_server
 
             string ID_cond = functions.get_symb_for_IDs();
 
-            for (float i = how_long; i > 0; i -= 0.15f)
+            for (float i = how_long; i > 0; i -= 0.2f)
             {
                 player.set_condition("co", 62, ID_cond, i);
-
-                await Task.Delay(150);
+                if (player.is_stop_all_condition_by_checking_index(62))
+                {
+                    break;
+                }
+                await Task.Delay(200);
             }
 
             player.armor -= base_armor;
@@ -100,23 +132,31 @@ namespace game_server
         //earth armor 63
         public static async void earth_armor(string table_id, string me, float how_long)
         {
-            float base_armor = 300f;
-            float base_speed = 0.7f;
+            float base_armor = 500f;
+            float base_speed = 0.8f;
+            float base_cast_speed = 20f;
 
             Players player = functions.GetPlayerData(table_id, me);
             player.armor += base_armor;
             player.speed *= base_speed;
+            player.cast_speed -= base_cast_speed;
+
             string ID_cond = functions.get_symb_for_IDs();
 
-            for (float i = how_long; i > 0; i -= 0.15f)
+            for (float i = how_long; i > 0; i -= 0.2f)
             {
                 player.set_condition("co", 63, ID_cond, i);
-
-                await Task.Delay(150);
+                if (player.is_stop_all_condition_by_checking_index(63))
+                {
+                    break;
+                }
+                await Task.Delay(200);
             }
 
             player.armor -= base_armor;
             player.speed /= base_speed;
+            player.cast_speed += base_cast_speed;
+
             spells.remove_condition_in_player(table_id, me, ID_cond);
         }
 
@@ -125,16 +165,76 @@ namespace game_server
         //frost armor 60
         public static async void frost_armor(string table_id, string me, float how_long)
         {
+            float base_armor = 200f;
+            
             Players player = functions.GetPlayerData(table_id, me);
-            player.armor += 500;
+            player.armor += base_armor;
+            
 
+            string ID_cond = functions.get_symb_for_IDs();
 
-            for (float i = how_long; i > 0; i-=0.15f)
+            for (float i = how_long; i > 0; i -= 0.2f)
             {
+                player.set_condition("co", 60, ID_cond, i);
 
 
-                await Task.Delay(150);
+                try
+                {
+                    foreach (string searched_ID in player.conditions.Keys)
+                    {
+                        if (player.conditions[searched_ID].Contains("dt"))
+                        {
+                            
+                            if ( spells.SpellID(player.GetSpellIndex_DamageAnalisys(player.conditions[searched_ID])).damage_type == TypeofDamaging.close_melee)
+                            {
+                                foreach (Players pl in starter.SessionsPool[table_id].LocalPlayersPool.Values)
+                                {
+                                    if (pl.conditions.ContainsKey(searched_ID) && pl.player_id != me)
+                                    {
+                                        if (functions.assess_chance(50))
+                                        {
+                                            if (!pl.is_cond_here_by_type_and_spell("co-59"))
+                                            {
+                                                freezing_slow(table_id, pl.player_id, 5);
+                                            }
+                                        }
+
+                                        if (functions.assess_chance(20))
+                                        {
+                                            if (!pl.is_cond_here_by_type_and_spell("co-58"))
+                                            {
+                                                freezed(table_id, me, pl.player_id, 3);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(DateTime.Now + ": error in making somebody burning when strike fire armor - spell61");
+                }
+
+
+
+
+
+
+
+                if (player.is_stop_all_condition_by_checking_index(60))
+                {
+                    break;
+                }
+                await Task.Delay(200);
             }
+
+            player.armor -= base_armor;
+           
+
+            spells.remove_condition_in_player(table_id, me, ID_cond);
         }
 
 
@@ -609,9 +709,10 @@ namespace game_server
             string x;
             for (float i = time; i > 0; i -= 0.1f)
             {
-                
-                player.conditions.TryRemove(check_cond_id, out x);
-                player.conditions.TryAdd(check_cond_id, $":co-58-{i.ToString("f1").Replace(',', '.')},");
+
+                //player.conditions.TryRemove(check_cond_id, out x);
+                //player.conditions.TryAdd(check_cond_id, $":co-58-{i.ToString("f1").Replace(',', '.')},");
+                player.set_condition("co", 58, check_cond_id, i);
                 player.make_immob(conds_id, i);
                 await Task.Delay(100);
 

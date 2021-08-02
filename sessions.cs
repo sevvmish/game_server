@@ -132,6 +132,7 @@ namespace game_server
                             //specials
                             CurrentPlayer.CurrentSpecial?.Invoke();
 
+                          
                             //free regen
                             CurrentPlayer.CheckForFreeRegeneration();
 

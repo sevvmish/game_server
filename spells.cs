@@ -748,6 +748,29 @@ namespace game_server
             }
             //================spell 205==================================
 
+
+            //================spell 206 void zone==================================
+            if (spell_id == 206)
+            {
+
+                float energy_cost = 10;
+
+                if (p.energy >= energy_cost)
+                {
+                    p.minus_energy(energy_cost);
+
+                    Task.Run(() => wizard.void_zone(table_id, player, 2));
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 2f));
+                    return new float[] { 1, 5, 2f };
+                }
+                else
+                {
+                    return new float[] { 0, 7, 0 };
+                }
+            }
+            //================spell 206==================================
+
+
             //================STRAFE==================================
             if (spell_id == 997)
             {

@@ -10,14 +10,20 @@ namespace game_server
     {
 
         //frozen 64
-        public static async void frozen(string table_id, string aim, float how_long)
+        public static async void frozen(string table_id, string me, string aim, float how_long)
         {                  
             Players player = functions.GetPlayerData(table_id, aim);
-            
-            if (player.is_cond_here_by_type_and_spell("co-64") )
+            if (player.is_cond_here_by_type_and_spell("co-64"))
             {
                 return;
             }
+
+            if (spells.if_resisted_magic(table_id, me, aim) || player.is_immune_to_magic)
+            {
+                return;
+            }
+
+            
 
             float old_armor = player.armor;
             float old_magic_res = player.magic_resistance;
@@ -28,6 +34,7 @@ namespace game_server
             player.magic_resistance = 100;
             player.is_reset_any_button = true;
             player.add_stop_to_spec_conditions(0);
+            player.make_broken_casting();
 
             string ID_cond = functions.get_symb_for_IDs();
 
@@ -53,6 +60,14 @@ namespace game_server
         public static async void burning(string table_id, string me, string aim)
         {
             Players player = functions.GetPlayerData(table_id, aim);
+
+
+
+            if (spells.if_resisted_magic(table_id, me, aim) || player.is_immune_to_magic)
+            {
+                return;
+            }
+
             string ID_cond = functions.get_symb_for_IDs();
 
             for (float i = 10; i > 0; i-=0.25f)
@@ -232,19 +247,27 @@ namespace game_server
                                 {
                                     if (pl.conditions.ContainsKey(searched_ID) && pl.player_id != me)
                                     {
-                                        if (functions.assess_chance(50))
+                                        if (functions.assess_chance(20))
                                         {
                                             if (!pl.is_cond_here_by_type_and_spell("co-59"))
                                             {
-                                                freezing_slow(table_id, pl.player_id, 5);
+                                                freezing_slow(table_id, me, pl.player_id, 5);
                                             }
                                         }
 
-                                        if (functions.assess_chance(20))
+                                        if (functions.assess_chance(10))
                                         {
                                             if (!pl.is_cond_here_by_type_and_spell("co-58"))
                                             {
                                                 freezed(table_id, me, pl.player_id, 3);
+                                            }
+                                        }
+
+                                        if (functions.assess_chance(5))
+                                        {
+                                            if (!pl.is_cond_here_by_type_and_spell("co-64"))
+                                            {
+                                                frozen(table_id, me, pl.player_id, 3);
                                             }
                                         }
                                     }
@@ -356,7 +379,7 @@ namespace game_server
                             {
                                 if (!item.Contains("co-59"))
                                 {
-                                    freezing_slow(table_id, result[u].player_id, 3);
+                                    freezing_slow(table_id, me, result[u].player_id, 3);
                                 }
                             }
                         }
@@ -377,9 +400,20 @@ namespace game_server
         }
 
         //59 
-        public static async void freezing_slow(string table_id, string aim, float time_for_slow)
+        public static async void freezing_slow(string table_id, string me, string aim, float time_for_slow)
         {
             Players aim_player = functions.GetPlayerData(table_id, aim);
+
+            if (aim_player.is_cond_here_by_type_and_spell("co-59"))
+            {
+                return;
+            }
+
+            if (spells.if_resisted_magic(table_id, me, aim) || aim_player.is_immune_to_magic)
+            {
+                return;
+            }
+
             aim_player.speed *= 0.6f;
             aim_player.cast_speed *= 0.8f;
             string ID_cond = functions.get_symb_for_IDs();
@@ -627,7 +661,7 @@ namespace game_server
                             if (!hit_players.Contains(all_players[u]))
                             {
                                 hit_players.Add(all_players[u]);
-                                frozen(table_id, all_players[u].player_id, 5);
+                                frozen(table_id, mee, all_players[u].player_id, 5);
                             }
                         }
                         /*

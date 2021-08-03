@@ -9,6 +9,53 @@ namespace game_server
     class wizard
     {
 
+        //spell 206 void zone
+        public static async void void_zone(string table_id, string mee, float how_long)
+        {
+            float distance = 20f;
+            Players player = functions.GetPlayerData(table_id, mee);
+            functions.turn_to_enemy(mee, table_id, 0.1f, distance, 0, distance);
+            Players aim = functions.get_one_nearest_enemy_inmelee(mee, table_id, distance, 0, false);
+            float coord_x, coord_z;
+            if (aim==null)
+            {
+                coord_x = player.position_x;
+                coord_z = player.position_z;
+            } else
+            {
+                coord_x = aim.position_x;
+                coord_z = aim.position_z;
+            }
+
+            string ID_for_cs = functions.get_symb_for_IDs();
+                        
+            player.conditions.TryAdd(ID_for_cs, $":cs=206={coord_x.ToString("f1").Replace(',', '.')}={coord_z.ToString("f1").Replace(',', '.')},");
+
+            float koef = 1;
+
+            for (float u = how_long; u > 0; u-=0.25f)
+            {
+                List<Players> aims = functions.get_all_nearest_enemy_inradius(coord_x, coord_z, mee, table_id, 5);
+
+                if (aims.Count>0)
+                {
+                    Console.WriteLine(player.spell_power / (4f * how_long) * koef / player.spell_power);
+                    for (int i = 0; i < aims.Count; i++)
+                    {
+                        spells.make_direct_magic_damage_exact_enemy(table_id, mee, aims[i].player_id, 206, 0, (player.spell_power/(4f*how_long) * koef / player.spell_power ), 1.5f, TypeOfMagic.other);
+                    }
+                }
+
+                await Task.Delay(250);
+                koef++;
+
+            }
+
+            player.CastEndCS(coord_x, coord_z, ID_for_cs, 206);
+        }
+
+
+
         //spell 205 curse of casting
         public static async void curse_of_casting(string table_id, string mee, float how_long, float energy_cost)
         {

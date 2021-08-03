@@ -33,6 +33,7 @@ namespace game_server
 
                     }
 
+
                 }
                 else
                 {
@@ -104,6 +105,7 @@ namespace game_server
                 player1.position_x = new_pos_rot[0];
                 player1.position_y = new_pos_rot[1];
                 player1.position_z = new_pos_rot[2];
+
 
                 await Task.Delay(100);
             }
@@ -202,7 +204,7 @@ namespace game_server
                     hit_players.Clear();
                 }
                 //========================
-
+                
                 await Task.Delay(250);
             }
 

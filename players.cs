@@ -843,10 +843,12 @@ namespace game_server
         //break casting 1005
         public async void make_broken_casting()
         {
+            /*
             if (is_stop_all_condition_by_checking_index(1005))
             {
                 return;
             }
+            */
 
             string conds_id = functions.get_symb_for_IDs();
             string x;

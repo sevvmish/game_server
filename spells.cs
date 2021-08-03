@@ -71,7 +71,7 @@ namespace game_server
                 if (p.energy >= energy_cost)
                 {
                     p.minus_energy(energy_cost);
-                    Task.Run(() => warrior.make_hp_boost_spell_3(10, 1.2f, 5, table_id, player));
+                    Task.Run(() => warrior.make_hp_boost_spell_3(30, 1.2f, 1, 5, table_id, player));
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 20));
                     return new float[] { 1, 0, 20 };
                 }
@@ -427,6 +427,9 @@ namespace game_server
             }
             //================spell 63==================================
 
+
+
+
             //================spell 101 swing melee hit==================================
             if (spell_id == 101) {
                 float energy_cost = 10;
@@ -663,7 +666,7 @@ namespace game_server
             //================spell 156==================================
 
 
-            //================spell 201 death beam==================================
+            //================spell 201 glimmering beam==================================
             if (spell_id == 201) {
 
                 float energy_cost = 10;

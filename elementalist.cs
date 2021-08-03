@@ -8,6 +8,47 @@ namespace game_server
 {
     class elementalist
     {
+
+        //frozen 64
+        public static async void frozen(string table_id, string aim, float how_long)
+        {                  
+            Players player = functions.GetPlayerData(table_id, aim);
+            
+            if (player.is_cond_here_by_type_and_spell("co-64") )
+            {
+                return;
+            }
+
+            float old_armor = player.armor;
+            float old_magic_res = player.magic_resistance;
+
+            player.is_immune_to_magic = true;
+            player.is_immune_to_melee = true;
+            player.armor = 1000;
+            player.magic_resistance = 100;
+            player.is_reset_any_button = true;
+            player.add_stop_to_spec_conditions(0);
+
+            string ID_cond = functions.get_symb_for_IDs();
+
+            for (float i = how_long; i > 0; i -= 0.5f)
+            {
+                player.set_condition("co", 64, ID_cond, i);
+                
+                await Task.Delay(500);
+            }
+
+            player.is_immune_to_magic = false;
+            player.is_immune_to_melee = false;
+            player.armor = old_armor;
+            player.magic_resistance = old_magic_res;
+            player.is_reset_any_button = false;
+            player.remove_stop_to_spec_conditions(0);
+
+            spells.remove_condition_in_player(table_id, aim, ID_cond);
+        }
+
+
         //burning 57
         public static async void burning(string table_id, string me, string aim)
         {
@@ -586,6 +627,7 @@ namespace game_server
                             if (!hit_players.Contains(all_players[u]))
                             {
                                 hit_players.Add(all_players[u]);
+                                frozen(table_id, all_players[u].player_id, 5);
                             }
                         }
                         /*

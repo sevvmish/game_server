@@ -193,7 +193,7 @@ namespace game_server
                     player.make_immob(check_immob_id, i);
                     
                     player.conditions.TryRemove(check_cond_id, out x);
-                    player.conditions.TryAdd(check_cond_id, $":co-156-{i.ToString("f1").Replace(',', '.')},");
+                    player.conditions.TryAdd(check_cond_id, $":ca-156-{i.ToString("f1").Replace(',', '.')},");
 
                     if (i > 0.5f)
                     {
@@ -231,7 +231,7 @@ namespace game_server
                                 {
                                     if (functions.vector3_distance_unity(bullet_pos_for_assess[0], 0, bullet_pos_for_assess[1], candidates[c].position_x, 0, candidates[c].position_z)<0.25f)
                                     {
-                                        spells.melee_damage(table_id, me, candidates[c].player_id, 156, 5, 2);
+                                        spells.melee_damage(table_id, me, candidates[c].player_id, 156, 10, 2);
                                         
                                         player.conditions.TryAdd(check_cond_strike_id, $":cs=156={candidates[c].position_x.ToString("f1").Replace(',', '.')}={candidates[c].position_z.ToString("f1").Replace(',', '.')},");
                                         spells.remove_condition_in_player(table_id, me, check_cond_strike_id);

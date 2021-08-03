@@ -40,7 +40,7 @@ namespace game_server
             spells.make_direct_melee_damage(table_id, me, 1, 2, 1, 2, 0);
         }
 
-        public static async void make_hp_boost_spell_3(float time_ticks, float boost_koef, float distance, string table_id, string mee)
+        public static async void make_hp_boost_spell_3(float time_ticks, float boost_koef, float regen_koef, float distance, string table_id, string mee)
         {
             List<Players> allgamers = functions.GetAllPlayersInList(table_id);
             List<Players> all_needed_players = new List<Players>();
@@ -51,7 +51,7 @@ namespace game_server
 
             for (int i = 0; i < allgamers.Count; i++)
             {
-                if (allgamers[i].team_id == me.team_id &&
+                if (allgamers[i].team_id == me.team_id && !allgamers[i].isDead && 
                     functions.vector3_distance_unity(me.position_x, 0, me.position_z, allgamers[i].position_x, 0, allgamers[i].position_z) < distance)
                 {
                     all_needed_players.Add(allgamers[i]);
@@ -63,7 +63,7 @@ namespace game_server
                 //Players pl = all_needed_players[u];
                 string[] my_health = all_needed_players[u].health_pool.Split('=');
                 all_needed_players[u].health_pool = (float.Parse(my_health[0]) * boost_koef).ToString() + "=" + (float.Parse(my_health[1]) * boost_koef).ToString();
-                all_needed_players[u].health_regen += 5;
+                all_needed_players[u].health_regen += regen_koef;
             }
 
             List<string> conds_ids = new List<string>();
@@ -85,17 +85,13 @@ namespace game_server
                 await Task.Delay(250);
             }
 
-            for (int ii = 0; ii < all_needed_players.Count; ii++)
-            {
-                spells.remove_condition_in_player(table_id, all_needed_players[ii].player_id, conds_ids[ii]);
-            }
-
             for (int u = 0; u < all_needed_players.Count; u++)
             {
+                spells.remove_condition_in_player(table_id, all_needed_players[u].player_id, conds_ids[u]);
                 //Players pl = all_needed_players[u];
                 string[] my_health = all_needed_players[u].health_pool.Split('=');
                 all_needed_players[u].health_pool = (float.Parse(my_health[0]) / boost_koef).ToString() + "=" + (float.Parse(my_health[1]) / boost_koef).ToString();
-                all_needed_players[u].health_regen -= 5;
+                all_needed_players[u].health_regen -= regen_koef;
             }
 
         }

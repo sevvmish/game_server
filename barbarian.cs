@@ -8,6 +8,118 @@ namespace game_server
 {
     class barbarian
     {
+
+        //spell 106 throw axe
+        public static async void throw_axe(string table_id, string me, float distance)
+        {
+            Players player = functions.GetPlayerData(table_id, me);
+            player.is_spell_in_process = true;
+            player.is_reset_any_button = true;
+            string x;
+            player.animation_id = 11;
+            spells.reset_animation_for_one(table_id, me);
+            float time_to_fly_there = 2f;
+            float time_to_fly_back = 2f;
+
+            functions.turn_to_enemy(me, table_id, 0.1f, distance, 0, distance);
+
+            float[] axe_aim_coords = new float[2] { player.position_x, player.position_z };
+            float [] axe_start_coords = new float[2] { player.position_x, player.position_z };
+            float[] axe_current_coords = new float[2] { player.position_x, player.position_z };
+            float rot_y = player.rotation_y;
+
+            string ID_for_cs = functions.get_symb_for_IDs();
+            player.conditions.TryAdd(ID_for_cs, $":cs=106={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
+            
+            functions.projection(ref axe_aim_coords, player.position_x, player.position_z, player.rotation_y, distance);
+            
+            await Task.Delay(350);
+            
+            player.is_reset_any_button = false;
+            functions.turn_to_enemy(me, table_id, 0.1f, distance, 0, distance);
+
+            List<Players> victims = new List<Players>();
+            List<Players> pre_victims = new List<Players>();
+            
+            float koef = 0;
+            for (float i = time_to_fly_there; i > 0; i-=0.2f)
+            {
+                functions.lerp(ref axe_current_coords, axe_start_coords[0], axe_start_coords[1], axe_aim_coords[0], axe_aim_coords[1], rot_y, koef * (1f / (time_to_fly_there / 0.2f)));
+                
+                
+                player.conditions.TryRemove(ID_for_cs, out x);
+                player.conditions.TryAdd(ID_for_cs, $":cs=106={axe_current_coords[0].ToString("f1").Replace(',', '.')}={axe_current_coords[1].ToString("f1").Replace(',', '.')},");
+
+                //Console.WriteLine($":cs=106={axe_current_coords[0].ToString("f1").Replace(',', '.')}={axe_current_coords[1].ToString("f1").Replace(',', '.')},");
+                               
+                if (koef > 0)
+                {
+                    pre_victims = functions.get_all_nearest_enemy_inradius(axe_current_coords[0], axe_current_coords[1], me, table_id, 0.5f);                    
+                    if (pre_victims.Count > 0)
+                    {
+                        for (int iii = 0; iii < pre_victims.Count; iii++)
+                        {
+                            if (!victims.Contains(pre_victims[iii]))
+                            {
+                                victims.Add(pre_victims[iii]);
+                                spells.make_direct_melee_damage_exact_enemy(table_id, me, pre_victims[iii].player_id, 106, 0, 0.5f, 1.5f, 0);
+                                
+                            }
+                        }
+                    }
+                }
+
+
+                await Task.Delay((int)(koef*100/(time_to_fly_there/0.2f)));
+                koef++;
+            }
+            axe_start_coords[0] = axe_current_coords[0];
+            axe_start_coords[1] = axe_current_coords[1];
+            victims.Clear();
+            pre_victims.Clear();
+
+            //========
+            koef = 0;
+            float[] axe_y = new float[6] { axe_current_coords[0], 0, axe_current_coords[1], 0, rot_y, 0 };
+            for (float i = time_to_fly_back; i > 0; i -= 0.2f)
+            {
+                functions.turn_object_to_exact_player(me, table_id, ref axe_y);
+                functions.lerp(ref axe_current_coords, axe_start_coords[0], axe_start_coords[1], player.position_x, player.position_z, axe_y[4], koef * (1f / (time_to_fly_back / 0.2f)));
+
+                axe_y[0] = axe_current_coords[0];                
+                axe_y[2] = axe_current_coords[1];
+                
+                player.conditions.TryRemove(ID_for_cs, out x);
+                player.conditions.TryAdd(ID_for_cs, $":cs=106={axe_current_coords[0].ToString("f1").Replace(',', '.')}={axe_current_coords[1].ToString("f1").Replace(',', '.')},");
+
+                if (koef > 1f)
+                {
+                    pre_victims = functions.get_all_nearest_enemy_inradius(axe_current_coords[0], axe_current_coords[1], me, table_id, 0.5f);
+                    if (pre_victims.Count > 0)
+                    {
+                        for (int iii = 0; iii < pre_victims.Count; iii++)
+                        {
+                            if (!victims.Contains(pre_victims[iii]))
+                            {
+                                victims.Add(pre_victims[iii]);
+                                spells.make_direct_melee_damage_exact_enemy(table_id, me, pre_victims[iii].player_id, 106, 0, 0.5f, 1.5f, 0);
+                                
+                            }
+                        }
+                    }
+                }
+
+                await Task.Delay((int)(((time_to_fly_back/0.2f)-koef)*10));
+                koef++;
+            }
+
+            player.is_spell_in_process = false;
+            player.CastEndCS(player.position_x, player.position_z, ID_for_cs, 106);
+            
+        }
+
+
+
         //block prep 104
         public static async void block_prep(string table_id, string me, float block_time)
         {

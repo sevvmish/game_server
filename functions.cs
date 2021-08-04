@@ -108,6 +108,8 @@ namespace game_server
                 CurrentPlayer.horizontal_touch = 0;
                 CurrentPlayer.vertical_touch = 0;
             }
+
+            /*
             if (CurrentPlayer.is_invisible)
             {
                 if (
@@ -115,10 +117,12 @@ namespace game_server
                     CurrentPlayer.is_cond_here_by_type_and_spell("dt")) ||
                     CurrentPlayer.is_cond_here_by_type_and_spell("dg"))
                 {
+                    
                     CurrentPlayer.is_invisible = false;
                     rogue.from_inviz_to_viz(RawDataArray[3], RawDataArray[2]);
                 }
             }
+            */
             //}
             //====================================================
 
@@ -679,6 +683,53 @@ namespace game_server
             return result;
         }
 
+        //get one in radius of OBJECT
+        public static Players get_one_nearest_enemy_inradius_ofObject(float coord_xx, float coord_zz, string my_name, string table_id, float max_radius, bool check_invis)
+        {
+            max_radius = max_radius + 0.25f;
+            Players p = GetPlayerData(table_id, my_name);
+            float coord_x = coord_xx;
+            float coord_z = coord_zz;
+
+            Players result = null;
+            float min_distance_checked = max_radius;
+            List<Players> AllPlayersList = GetAllPlayersInList(table_id);
+
+            if (!check_invis)
+            {
+                for (int i = 0; i < AllPlayersList.Count; i++)
+                {
+                    float check_radius = vector3_distance_unity(coord_x, 0, coord_z, AllPlayersList[i].position_x, 0, AllPlayersList[i].position_z);
+                    if (!AllPlayersList[i].isDead && AllPlayersList[i].player_id != my_name && !AllPlayersList[i].is_invisible && AllPlayersList[i].team_id != p.team_id && max_radius > check_radius)
+                    {
+                        if (check_radius < min_distance_checked)
+                        {
+                            min_distance_checked = check_radius;
+                            result = AllPlayersList[i];
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < AllPlayersList.Count; i++)
+                {
+                    float check_radius = vector3_distance_unity(coord_x, 0, coord_z, AllPlayersList[i].position_x, 0, AllPlayersList[i].position_z);
+                    if (AllPlayersList[i].player_id != my_name && AllPlayersList[i].team_id != p.team_id && max_radius > check_radius)
+                    {
+                        if (check_radius < min_distance_checked)
+                        {
+                            min_distance_checked = check_radius;
+                            result = AllPlayersList[i];
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+
+
         public static Players get_one_nearest_enemy_inradius(string my_name, string table_id, float max_radius, bool check_invis)
         {
             max_radius = max_radius + 0.25f;
@@ -734,6 +785,7 @@ namespace game_server
             {
                 if (!AllPlayersList[i].isDead && AllPlayersList[i].player_id != p.player_id && AllPlayersList[i].team_id != p.team_id && radius > vector3_distance_unity(coord_x, 0, coord_z, AllPlayersList[i].position_x, 0, AllPlayersList[i].position_z))
                 {
+                    
                     result.Add(AllPlayersList[i]);
                 }
             }
@@ -801,7 +853,7 @@ namespace game_server
                     }
                 }
             }
-
+            
             if (preresult == null)
             {
                 return null;
@@ -888,6 +940,54 @@ namespace game_server
             //Console.WriteLine(current_angle + " - current angle after");
             return true;
         }
+
+
+        //way to turn object to specific ENEMY
+        public static void turn_object_to_exact_player(string aim, string table_id, ref float[] object_transform)
+        {
+            
+            Players enemy = GetPlayerData(table_id, aim);
+
+
+            //Players p = GetPlayerData(table_id, me_name);
+            int sign = 0;
+            float current_angle = player_angle_unity(object_transform[0], 0, object_transform[2], 0, object_transform[4], 0, enemy.position_x, 0, enemy.position_z);
+            float current_angle1 = player_angle_unity(object_transform[0], 0, object_transform[2], 0, object_transform[4] + 1f, 0, enemy.position_x, 0, enemy.position_z);
+
+            if (current_angle > 1f)
+            {
+                if (current_angle1 < current_angle)
+                {
+                    sign = 1;
+                }
+                else if (current_angle1 > current_angle)
+                {
+                    sign = -1;
+                }
+                else if (current_angle1 == current_angle)
+                {
+                    sign = 0;
+                }
+
+                float delta = current_angle * sign;
+                //float time_delta = time_for_turn / 1f;
+                if ((object_transform[4] + delta) > 360)
+                {
+                    object_transform[4] += delta - 360;
+                }
+                else if ((object_transform[4] + delta) < 0)
+                {
+                    object_transform[4] += delta + 360;
+                }
+                else if ((object_transform[4] + delta) >= 0 && (object_transform[4] + delta) <= 360)
+                {
+                    object_transform[4] += delta;
+                }
+            }
+            //Console.WriteLine(current_angle + " - current angle after");
+            return;
+        }
+
 
 
 

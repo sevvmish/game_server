@@ -149,6 +149,19 @@ namespace game_server
                                 health_curr = health_curr + CurrentPlayer.health_regen * 0.05f;
                             }
                             CurrentPlayer.health_pool = health_curr + "=" + curr_health[1];
+
+                            if (CurrentPlayer.is_invisible)
+                            {
+                                if (
+                                    (!CurrentPlayer.is_cond_here_by_type_and_spell("dt-0") &&
+                                    CurrentPlayer.is_cond_here_by_type_and_spell("dt")) ||
+                                    CurrentPlayer.is_cond_here_by_type_and_spell("dg"))
+                                {
+
+                                    CurrentPlayer.is_invisible = false;
+                                    rogue.from_inviz_to_viz(Session_id, CurrentPlayer.player_id);
+                                }
+                            }
                         }
                     }
 

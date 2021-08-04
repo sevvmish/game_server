@@ -10,7 +10,7 @@ namespace game_server
     {
 
         //spell 206 void zone
-        public static async void void_zone(string table_id, string mee, float how_long)
+        public static async void void_zone(string table_id, string mee, float how_long, float groth_koeff)
         {
             float distance = 20f;
             Players player = functions.GetPlayerData(table_id, mee);
@@ -47,7 +47,7 @@ namespace game_server
                 }
 
                 await Task.Delay(250);
-                koef++;
+                koef = koef + groth_koeff;
 
             }
 

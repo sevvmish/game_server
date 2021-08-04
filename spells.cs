@@ -443,10 +443,10 @@ namespace game_server
                 {
                     return new float[] { 0, 7, 0 };
                 }
-
-
             }
             //================spell 101==================================
+
+
 
             //================spell 102 hurricane==================================
             if (spell_id == 102) {
@@ -519,6 +519,28 @@ namespace game_server
 
             }
             //================spell 105==================================
+
+
+            //================spell 106 throw axe==================================
+            if (spell_id == 106)
+            {
+                float energy_cost = 10;
+
+                if (p.energy >= energy_cost)
+                {
+                    p.minus_energy(energy_cost);
+                    Task.Run(() => barbarian.throw_axe(table_id, player, 8));
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 2f));
+                    return new float[] { 1, 5, 2f };
+                }
+                else
+                {
+                    return new float[] { 0, 7, 0 };
+                }
+            }
+            //================spell 106==================================
+
+
 
             //================spell 151 fast strike==================================
             if (spell_id == 151) {
@@ -759,7 +781,7 @@ namespace game_server
                 {
                     p.minus_energy(energy_cost);
 
-                    Task.Run(() => wizard.void_zone(table_id, player, 2));
+                    Task.Run(() => wizard.void_zone(table_id, player, 2, 1.2f));
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 2f));
                     return new float[] { 1, 5, 2f };
                 }

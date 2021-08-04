@@ -608,7 +608,7 @@ namespace game_server
                     for (int u = 0; u < result.Count; u++)
                     {
                         
-                        spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 54, base_damage / 2, 2, 2, TypeOfMagic.fire);
+                        spells.make_direct_magic_damage_exact_enemy(table_id, me, result[u].player_id, 54, base_damage, 0.25f, 2, TypeOfMagic.fire);
                         
                     }
                     hit_counter = 0;
@@ -661,15 +661,10 @@ namespace game_server
                             if (!hit_players.Contains(all_players[u]))
                             {
                                 hit_players.Add(all_players[u]);
-                                frozen(table_id, mee, all_players[u].player_id, 5);
+                                
                             }
                         }
-                        /*
-                        for (int u = 0; u < all_players.Count; u++)
-                        {
-                            make_direct_magic_damage_exact_enemy(table_id, mee, all_players[u].player_id, 53, damage_per_enemy, power, 2);
-                        }
-                        */
+                        
                     }
                 }
                 else

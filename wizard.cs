@@ -12,7 +12,7 @@ namespace game_server
         //spell 206 void zone
         public static async void void_zone(string table_id, string mee, float how_long, float groth_koeff)
         {
-            float distance = 20f;
+            float distance = 10f;
             Players player = functions.GetPlayerData(table_id, mee);
             functions.turn_to_enemy(mee, table_id, 0.1f, distance, 0, distance);
             Players aim = functions.get_one_nearest_enemy_inmelee(mee, table_id, distance, 0, false);
@@ -39,7 +39,7 @@ namespace game_server
 
                 if (aims.Count>0)
                 {
-                    Console.WriteLine(player.spell_power / (4f * how_long) * koef / player.spell_power);
+                    //Console.WriteLine(player.spell_power / (4f * how_long) * koef / player.spell_power);
                     for (int i = 0; i < aims.Count; i++)
                     {
                         spells.make_direct_magic_damage_exact_enemy(table_id, mee, aims[i].player_id, 206, 0, (player.spell_power/(4f*how_long) * koef / player.spell_power ), 1.5f, TypeOfMagic.other);
@@ -57,13 +57,14 @@ namespace game_server
 
 
         //spell 205 curse of casting
-        public static async void curse_of_casting(string table_id, string mee, float how_long, float energy_cost)
+        public static async void cast_curse_of_casting(string table_id, string mee, float how_long, float energy_cost)
         {
             float casting_time = 2;
-            float distance = 15;
-            float damage = 10;
+            float distance = 5;
+            
             string check_cond_id = functions.get_symb_for_IDs();
-            functions.turn_to_enemy(mee, table_id, 0.1f, distance, -15, distance);
+            
+
             int spell_id = 205;
             Players player = functions.GetPlayerData(table_id, mee);
             player.start_spell_in_process();
@@ -71,7 +72,7 @@ namespace game_server
 
             for (float i = cast_time; i > 0; i -= 0.2f)
             {
-                functions.turn_to_enemy(mee, table_id, 0.1f, distance, -15, distance);
+                functions.turn_to_enemy(mee, table_id, 0.1f, distance, 0, distance);
                 if (!player.is_casting_failed())
                 {
                     player.animation_id = 3;

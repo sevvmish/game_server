@@ -141,7 +141,7 @@ namespace game_server
                                 CurrentPlayer.energy = CurrentPlayer.energy + CurrentPlayer.energy_regen * 0.05f*2;
                             }
 
-                           
+                           //health regen
                             string[] curr_health = CurrentPlayer.health_pool.Split('=');
                             float health_curr = float.Parse(curr_health[0]);
                             if (health_curr < float.Parse(curr_health[1]))
@@ -150,6 +150,76 @@ namespace game_server
                             }
                             CurrentPlayer.health_pool = health_curr + "=" + curr_health[1];
 
+
+                            //checker for BST 0000 state=========================
+                            if ((CurrentPlayer.button1 || CurrentPlayer.button2 || CurrentPlayer.button3 || CurrentPlayer.button4 || CurrentPlayer.button5 || CurrentPlayer.button6) && !CurrentPlayer.is_spell_button_touched)
+                            {
+                                CurrentPlayer.is_spell_button_touched = true;
+                                if (CurrentPlayer.start_cheking_if_spell_touched)
+                                {
+                                    CurrentPlayer.is_spell_touched_for_casting_failing = true;
+                                }
+                            }
+                            else if ((!CurrentPlayer.button1 && !CurrentPlayer.button2 && !CurrentPlayer.button3 && !CurrentPlayer.button4 && !CurrentPlayer.button5 && !CurrentPlayer.button6) && CurrentPlayer.is_spell_button_touched)
+                            {
+                                CurrentPlayer.is_spell_button_touched = false;
+                            }
+                            //====================================================
+
+                            //check RAB  reset any button touch=================================
+                            if (CurrentPlayer.is_reset_any_button)
+                            {
+                                CurrentPlayer.ZeroInputs();
+                            }
+
+                            //spell in process - reset only spell buttons
+                            if (CurrentPlayer.is_spell_in_process)
+                            {
+                                CurrentPlayer.button1 = false;
+                                CurrentPlayer.button2 = false;
+                                CurrentPlayer.button3 = false;
+                                CurrentPlayer.button4 = false;
+                                CurrentPlayer.button5 = false;
+                                CurrentPlayer.button6 = false;
+                            }
+
+                            //reset only movement buttons
+                            if (CurrentPlayer.is_reset_movement_button)
+                            {
+                                CurrentPlayer.horizontal_touch = 0;
+                                CurrentPlayer.vertical_touch = 0;
+                            }
+
+                            //reset other buttons when its evade
+                            if (CurrentPlayer.button6)
+                            {
+                                CurrentPlayer.button1 = false;
+                                CurrentPlayer.button2 = false;
+                                CurrentPlayer.button3 = false;
+                                CurrentPlayer.button4 = false;
+                                CurrentPlayer.button5 = false;
+
+                            }
+
+                            //CHECK for stun, fear, immobilize
+                            if (CurrentPlayer.conditions.Count > 0)
+                            {
+                                //IMMOBILIZED co-1001
+                                if (CurrentPlayer.is_cond_here_by_type_and_spell("co-1001"))
+                                {
+                                    CurrentPlayer.vertical_touch = 0;
+                                    CurrentPlayer.horizontal_touch = 0;
+                                }
+
+                                //STUN co-1002 or FEAR co-1003
+                                if (CurrentPlayer.is_cond_here_by_type_and_spell("co-1002") || CurrentPlayer.is_cond_here_by_type_and_spell("co-1003"))
+                                {
+                                    CurrentPlayer.ZeroInputs();
+                                }
+                            }
+
+
+                            //working with invisibility
                             if (CurrentPlayer.is_invisible)
                             {
                                 if (

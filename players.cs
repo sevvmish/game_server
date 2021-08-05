@@ -124,7 +124,7 @@ namespace game_server
         public float PowerOfIceMulti = 1f;
         public float PowerOfAirMulti = 1f;
         public float PowerOfEarthMulti = 1f;
-        public float ChanceOfCastBurningOnFireSpell = 10f;
+        public float ChanceOfCastBurningOnFireSpell = 50f;
 
         //some globals
         public float ChanceOfSpellCastingBroken = 0;
@@ -515,6 +515,9 @@ namespace game_server
             is_strafe_on = false;
         }
 
+
+        
+
         //stop all conditions
         public void add_stop_to_spec_conditions(int type)
         {                        
@@ -600,6 +603,21 @@ namespace game_server
                 {
                     return true;
                 }
+            }
+
+            if (is_cond_here_by_type_and_spell($"st-{index}"))
+            {                
+                string x;
+                try
+                {
+                    conditions.TryRemove(get_id_by_type_and_spell($"st-{index}"), out x);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(DateTime.Now + ": no key to del in conditions when clearing one-condition-removal");
+                }
+                
+                return true;
             }
 
 

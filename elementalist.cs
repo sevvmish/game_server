@@ -61,12 +61,14 @@ namespace game_server
         {
             Players player = functions.GetPlayerData(table_id, aim);
 
-
-
+            spells.isOKforMagicConditionImposing(table_id, me, aim, 57);
+            await Task.Delay(250);
+            /*
             if (spells.if_resisted_magic(table_id, me, aim) || player.is_immune_to_magic)
             {
                 return;
             }
+            */
 
             string ID_cond = functions.get_symb_for_IDs();
 
@@ -74,14 +76,16 @@ namespace game_server
             {
                 
                 player.set_condition("co", 57, ID_cond, i);
-                if (player.is_stop_all_condition_by_checking_index(57))
-                {
-                    break;
-                }
+                
                                 
                 if (Math.Round(i, 2) == Math.Truncate(i) && Math.Round(i, 2) % 2 != 0)
                 {
                     spells.make_direct_magic_damage_exact_enemy(table_id, me, aim, 57, 0, 0.2f, 2, TypeOfMagic.fire);
+                }
+
+                if (player.is_stop_all_condition_by_checking_index(57))
+                {
+                    break;
                 }
                 await Task.Delay(250);
                 

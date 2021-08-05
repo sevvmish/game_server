@@ -8,6 +8,41 @@ namespace game_server
 {
     class barbarian
     {
+        //spell 107 make slower
+        public static async void slow(string table_id, string aim, float speed_decrease, float how_long)
+        {
+            float koef = 1f - speed_decrease;
+            if (koef<0)
+            {
+                return;
+            }
+
+            Players player = functions.GetPlayerData(table_id, aim);
+
+            if (player.is_cond_here_by_type_and_spell("co-107"))
+            {
+                return;
+            }
+
+            player.speed *= koef;
+            string ID = functions.get_symb_for_IDs();
+
+            for (float i = how_long; i > 0; i-=0.25f)
+            {
+                player.set_condition("co", 107, ID, i);
+                if (player.is_stop_all_condition_by_checking_index(107))
+                {
+                    break;
+                }
+
+                await Task.Delay(250);
+            }
+
+            player.speed /= koef;
+            spells.remove_condition_in_player(table_id, aim, ID);
+
+        }
+
 
         //spell 106 throw axe
         public static async void throw_axe(string table_id, string me, float distance)
@@ -63,7 +98,7 @@ namespace game_server
                             {
                                 victims.Add(pre_victims[iii]);
                                 spells.make_direct_melee_damage_exact_enemy(table_id, me, pre_victims[iii].player_id, 106, 0, 0.5f, 1.5f, 0);
-                                
+                                slow(table_id, pre_victims[iii].player_id, 0.3f, 3f);                                
                             }
                         }
                     }
@@ -103,7 +138,7 @@ namespace game_server
                             {
                                 victims.Add(pre_victims[iii]);
                                 spells.make_direct_melee_damage_exact_enemy(table_id, me, pre_victims[iii].player_id, 106, 0, 0.5f, 1.5f, 0);
-                                
+                                slow(table_id, pre_victims[iii].player_id, 0.3f, 3f);
                             }
                         }
                     }

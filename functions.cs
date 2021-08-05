@@ -67,7 +67,7 @@ namespace game_server
                 Console.WriteLine("==============ERROR================\n" + ex + "\n" + CurrentPacket + "\n" + DateTime.Now + "\n" + "==================ERROR_END===========\n");
             }
 
-
+            /*
             //checker for BST 0000 state=========================
             if ((CurrentPlayer.button1 || CurrentPlayer.button2 || CurrentPlayer.button3 || CurrentPlayer.button4 || CurrentPlayer.button5 || CurrentPlayer.button6) && !CurrentPlayer.is_spell_button_touched)
             {                
@@ -83,15 +83,13 @@ namespace game_server
             }
             //====================================================
 
-           
-            //HIDDEN CONDS working====================================================
             //check RAB  reset any button touch=================================
             if (CurrentPlayer.is_reset_any_button)
             {
                 CurrentPlayer.ZeroInputs();
             }
 
-
+            //spell in process - reset only spell buttons
             if (CurrentPlayer.is_spell_in_process)
             {
                 CurrentPlayer.button1 = false;
@@ -102,30 +100,14 @@ namespace game_server
                 CurrentPlayer.button6 = false;
             }
 
-
+            //reset only movement buttons
             if (CurrentPlayer.is_reset_movement_button)
             {
                 CurrentPlayer.horizontal_touch = 0;
                 CurrentPlayer.vertical_touch = 0;
             }
-
-            /*
-            if (CurrentPlayer.is_invisible)
-            {
-                if (
-                    (!CurrentPlayer.is_cond_here_by_type_and_spell("dt-0") &&
-                    CurrentPlayer.is_cond_here_by_type_and_spell("dt")) ||
-                    CurrentPlayer.is_cond_here_by_type_and_spell("dg"))
-                {
-                    
-                    CurrentPlayer.is_invisible = false;
-                    rogue.from_inviz_to_viz(RawDataArray[3], RawDataArray[2]);
-                }
-            }
-            */
-            //}
-            //====================================================
-
+                     
+            //reset other buttons when its evade
             if (CurrentPlayer.button6)
             {
                 CurrentPlayer.button1 = false;
@@ -135,32 +117,6 @@ namespace game_server
                 CurrentPlayer.button5 = false;
                 
             }
-
-
-            if (CurrentPlayer.vertical_touch > 10)
-            {
-                CurrentPlayer.vertical_touch = 10;
-            }
-            if (CurrentPlayer.vertical_touch < -10)
-            {
-                CurrentPlayer.vertical_touch = -10;
-            }
-
-            //CurrentPlayer.vertical_touch *= 1.4f;
-
-            
-
-            if (CurrentPlayer.horizontal_touch > 10)
-            {
-                CurrentPlayer.horizontal_touch = 10;
-            }
-            if (CurrentPlayer.horizontal_touch < -10)
-            {
-                CurrentPlayer.horizontal_touch = -10;
-            }
-            
-            
-            
 
             //CHECK for stun, fear, immobilize
             if (CurrentPlayer.conditions.Count > 0)
@@ -174,11 +130,41 @@ namespace game_server
 
                 //STUN co-1002 or FEAR co-1003
                 if (CurrentPlayer.is_cond_here_by_type_and_spell("co-1002") || CurrentPlayer.is_cond_here_by_type_and_spell("co-1003"))
-                {                    
-                    CurrentPlayer.ZeroInputs();                    
+                {
+                    CurrentPlayer.ZeroInputs();
                 }
-
             }
+            */
+
+
+
+
+
+
+
+            /*
+            if (CurrentPlayer.vertical_touch > 10)
+            {
+                CurrentPlayer.vertical_touch = 10;
+            }
+            if (CurrentPlayer.vertical_touch < -10)
+            {
+                CurrentPlayer.vertical_touch = -10;
+            }
+
+            if (CurrentPlayer.horizontal_touch > 10)
+            {
+                CurrentPlayer.horizontal_touch = 10;
+            }
+            if (CurrentPlayer.horizontal_touch < -10)
+            {
+                CurrentPlayer.horizontal_touch = -10;
+            }
+            */
+            
+            
+
+           
 
 
             //MAIN ROTATION PART
@@ -190,9 +176,7 @@ namespace game_server
             if (RawDataArray[1] == "0")
             {
                 float[] cur_pos_n_rot = new float[6] { CurrentPlayer.position_x, CurrentPlayer.position_y, CurrentPlayer.position_z, CurrentPlayer.rotation_x, CurrentPlayer.rotation_y, CurrentPlayer.rotation_z };
-
-                //Console.WriteLine(cur_pos_n_rot[0] + " - " + cur_pos_n_rot[1] + " - " + cur_pos_n_rot[2] + " - " + cur_pos_n_rot[3] + " - " + cur_pos_n_rot[4] + " - " + cur_pos_n_rot[5]);
-
+                
                 if (CurrentPlayer.horizontal_touch != 0 || CurrentPlayer.vertical_touch != 0)
                 {
 
@@ -215,22 +199,9 @@ namespace game_server
 
                     
 
-                    float delta = 1.5f;
+                    
                     if (CurrentPlayer.animation_id < 2)
                     {
-                        /*
-                        if (CurrentPlayer.vertical_touch > delta)
-                        {
-                            CurrentPlayer.animation_id = 1;
-                        } else if (CurrentPlayer.vertical_touch < 0)
-                        {
-                            CurrentPlayer.animation_id = -2;
-                        } else if (CurrentPlayer.vertical_touch <= delta && CurrentPlayer.vertical_touch > 0)
-                        {
-                            CurrentPlayer.animation_id = -1;
-                        } 
-                        */
-
                         CurrentPlayer.animation_id = 1;
                     }
 

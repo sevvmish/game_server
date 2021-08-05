@@ -759,10 +759,18 @@ namespace game_server
 
                 float energy_cost = 10;
 
+                functions.turn_to_enemy(player, table_id, 0.1f, 10, 0, 10);
+
+                if (functions.get_one_nearest_enemy_inradius(player, table_id, 10, false) == null)
+                {
+                    return new float[] { 0, 3, 0 };
+                }
+
+
                 if (p.energy >= energy_cost) {
-                    Task.Run(() => wizard.curse_of_casting(table_id, player, 5, energy_cost));
-                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 7f));
-                    return new float[] { 1, 5, 7f };
+                    Task.Run(() => wizard.cast_curse_of_casting(table_id, player, 5, energy_cost));
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 5f));
+                    return new float[] { 1, 5, 5f };
                 } else
                 {
                     return new float[] { 0, 7, 0 };
@@ -1039,7 +1047,7 @@ namespace game_server
 
 
             //magic type adding conditions=====================================================
-            if (_magic_type== TypeOfMagic.fire && spell_number!=57 && !enemy.is_cond_here_by_type_and_spell("co-57"))
+            if (_magic_type== TypeOfMagic.fire && spell_number!=57)
             {
                 if (functions.assess_chance(me.ChanceOfCastBurningOnFireSpell))
                 {
@@ -1498,6 +1506,37 @@ namespace game_server
 
             return false;
         }
+
+
+        public static bool isOKforMagicConditionImposing(string table_id, string me, string aim, int spell_index)
+        {
+            Players player_aim = functions.GetPlayerData(table_id, aim);
+
+            if (player_aim.is_cond_here_by_type_and_spell($"co-{spell_index}"))
+            {
+                if (if_resisted_magic(table_id, me, aim) || player_aim.is_immune_to_magic)
+                {
+                    return false;
+                }
+
+
+                //set_to_remove_exact_condition_once(table_id, aim, spell_index);
+
+                string x;
+                string ID = functions.get_symb_for_IDs();
+                player_aim.conditions.Remove(ID, out x);
+                player_aim.conditions.TryAdd(ID, $":st-{spell_index}-0,");
+
+
+            } 
+            else
+            {
+                return true;
+            }
+
+            return true;
+        }
+
 
 
 

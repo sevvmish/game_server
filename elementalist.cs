@@ -6,24 +6,162 @@ using System.Threading.Tasks;
 
 namespace game_server
 {
+   
     class elementalist
     {
+        //lightning flow 65
+        public static async void lightning_flow(string table_id, string me, float how_long)
+        {
+            float distance = 5f;
+            float new_distance = 999;
+            float base_damage_koef = 0.2f;
+            Players player = functions.GetPlayerData(table_id, me);
+            functions.turn_to_enemy(me, table_id, 0.1f, distance, 0, distance);
+            //await Task.Delay(100);
+                      
+            Players aim = functions.get_one_nearest_enemy_inmelee(me, table_id, distance, 0, false);
+            
+            
+            int wait_till_end = 0;
+            int max_wait_till_end = 2;
+
+            string check_cond_id_for_casting = functions.get_symb_for_IDs();
+            string check_cond_id_for_condition = functions.get_symb_for_IDs();
+            string check_cond_id_for_AD = functions.get_symb_for_IDs();
+            string x;
+
+            for (float i = how_long; i > 0; i-=0.2f)
+            {
+                if (player.is_casting_failed())
+                {
+                    functions.inform_of_cancel_casting(player, 65);
+                    break;
+                }
+
+                string AD_body = ":ad=65";
+
+                functions.turn_to_enemy(me, table_id, 0.1f, distance, 0, distance);
+                aim = functions.get_one_nearest_enemy_inmelee(me, table_id, distance, 0, false);
+
+                player.set_condition("co", 65, check_cond_id_for_condition, i);
+                player.set_condition("ca", 65, check_cond_id_for_casting, i);
+
+                if (aim != null)
+                {
+                    //AD_body += $"={aim.position_x}={aim.position_z}";
+                    AD_body += $"={aim.player_name}";
+                    new_distance = functions.vector3_distance_unity(player.position_x, player.position_y, player.position_z, aim.position_x, aim.position_y, aim.position_z);
+                } 
+                else
+                {
+                    new_distance = 999;
+                }
+
+                if (new_distance<=(distance+starter.def_hit_melee_dist))
+                {
+                    int count = 0;
+                    
+                    List<Players> aims = functions.get_all_nearest_enemy_inradius(aim.position_x, aim.position_z, me, table_id, 3);
+                    
+                    if (aims.Count > 0)
+                    {
+                        if (aims.Contains(aim)) aims.Remove(aim);
+
+                        if (aims.Count == 1)
+                        {
+                            count = 1;
+                            //AD_body += $"={aims[0].position_x}={aims[0].position_z}";
+                            AD_body += $"={aims[0].player_name}";
+                            spells.make_direct_magic_damage_exact_enemy(table_id, me, aims[0].player_id, 65, 0, base_damage_koef*0.7f, 2, TypeOfMagic.air);
+                        }
+                        else if (aims.Count > 1)                        
+                        {
+                            for (int u = 0; u < aims.Count; u++)
+                            {
+                                if (aims[u] != aim && count < 2)
+                                {
+                                    if (count == 0)
+                                    {
+                                        //AD_body += $"={aims[u].position_x}={aims[u].position_z}";
+                                        AD_body += $"={aims[u].player_name}";
+                                        spells.make_direct_magic_damage_exact_enemy(table_id, me, aims[u].player_id, 65, 0, base_damage_koef * 0.5f, 2, TypeOfMagic.air);
+                                    }
+                                    else if (count == 1)
+                                    {
+                                        //AD_body += $"={aims[u].position_x}={aims[u].position_z}";
+                                        AD_body += $"={aims[u].player_name}";
+                                        spells.make_direct_magic_damage_exact_enemy(table_id, me, aims[u].player_id, 65, 0, base_damage_koef * 0.2f, 2, TypeOfMagic.air);
+                                    }
+                                }
+                                count++;
+                                if (count==2)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (AD_body != ":ad=65")
+                    {
+                        AD_body += ",";
+                        player.conditions.TryRemove(check_cond_id_for_AD, out x);
+                        player.conditions.TryAdd(check_cond_id_for_AD, AD_body);
+                    }
+
+
+                    switch (count)
+                    {
+                        case 0:
+                            spells.make_direct_magic_damage_exact_enemy(table_id, me, aim.player_id, 65, 0, base_damage_koef, 2, TypeOfMagic.air);
+                            break;
+                        case 1:
+                            spells.make_direct_magic_damage_exact_enemy(table_id, me, aim.player_id, 65, 0, base_damage_koef*0.85f, 2, TypeOfMagic.air);
+                            break;
+                        case 2:
+                            spells.make_direct_magic_damage_exact_enemy(table_id, me, aim.player_id, 65, 0, base_damage_koef*0.75f, 2, TypeOfMagic.air);
+                            break;
+                    }
+                    
+                    wait_till_end = 0;
+                } 
+                else
+                {
+                    wait_till_end++;                    
+                }
+
+                if (wait_till_end>max_wait_till_end)
+                {
+                    functions.inform_of_cancel_casting(player, 65);
+                    break;
+                }
+
+                //make damage
+
+                await Task.Delay(200);
+            }
+
+            //player.CastEndCS(player.position_x, player.position_z, check_cond_id_for_AD, 65);
+            spells.remove_condition_in_player(player, check_cond_id_for_casting);
+            spells.remove_condition_in_player(player, check_cond_id_for_condition);
+
+            player.conditions.TryRemove(check_cond_id_for_AD, out x);
+            player.conditions.TryAdd(check_cond_id_for_AD, ":ad=65=end,");
+            await Task.Delay(100);
+            spells.remove_condition_in_player(player, check_cond_id_for_AD);
+
+        }
+
+
 
         //frozen 64
         public static async void frozen(string table_id, string me, string aim, float how_long)
         {                  
             Players player = functions.GetPlayerData(table_id, aim);
-            if (player.is_cond_here_by_type_and_spell("co-64"))
-            {
-                return;
-            }
-
-            if (spells.if_resisted_magic(table_id, me, aim) || player.is_immune_to_magic)
-            {
-                return;
-            }
-
             
+            spells.isOKforMagicConditionImposing(table_id, me, aim, 64);
+            await Task.Delay(250);
+                        
 
             float old_armor = player.armor;
             float old_magic_res = player.magic_resistance;
@@ -38,11 +176,11 @@ namespace game_server
 
             string ID_cond = functions.get_symb_for_IDs();
 
-            for (float i = how_long; i > 0; i -= 0.5f)
+            for (float i = how_long; i > 0; i -= 0.25f)
             {
                 player.set_condition("co", 64, ID_cond, i);
                 
-                await Task.Delay(500);
+                await Task.Delay(250);
             }
 
             player.is_immune_to_magic = false;
@@ -251,7 +389,7 @@ namespace game_server
                                 {
                                     if (pl.conditions.ContainsKey(searched_ID) && pl.player_id != me)
                                     {
-                                        if (functions.assess_chance(20))
+                                        if (functions.assess_chance(80))//20
                                         {
                                             if (!pl.is_cond_here_by_type_and_spell("co-59"))
                                             {
@@ -259,7 +397,7 @@ namespace game_server
                                             }
                                         }
 
-                                        if (functions.assess_chance(10))
+                                        if (functions.assess_chance(50))//10
                                         {
                                             if (!pl.is_cond_here_by_type_and_spell("co-58"))
                                             {
@@ -267,7 +405,7 @@ namespace game_server
                                             }
                                         }
 
-                                        if (functions.assess_chance(5))
+                                        if (functions.assess_chance(20))//5
                                         {
                                             if (!pl.is_cond_here_by_type_and_spell("co-64"))
                                             {
@@ -408,15 +546,8 @@ namespace game_server
         {
             Players aim_player = functions.GetPlayerData(table_id, aim);
 
-            if (aim_player.is_cond_here_by_type_and_spell("co-59"))
-            {
-                return;
-            }
-
-            if (spells.if_resisted_magic(table_id, me, aim) || aim_player.is_immune_to_magic)
-            {
-                return;
-            }
+            spells.isOKforMagicConditionImposing(table_id, me, aim, 59);
+            await Task.Delay(250);
 
             aim_player.speed *= 0.6f;
             aim_player.cast_speed *= 0.8f;

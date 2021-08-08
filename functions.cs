@@ -764,6 +764,9 @@ namespace game_server
             return result;
         }
 
+
+
+
         //check if there any enemies in range of hit melee
         public static List<Players> get_all_nearest_enemy_inmelee(string me, string table_id, float add_distance, float add_angle)
         {
@@ -1176,16 +1179,36 @@ namespace game_server
             string check_cond_id = get_symb_for_IDs();
             
             player.conditions.TryAdd(check_cond_id, $":ca-cncld-{spell_number},");
-            /*
-            if (get_id_by_type_and_spell(player_name, table_id, "ca-cncld") != null)
-            {
-                spells.remove_condition_in_player(table_id, player_name, get_id_by_type_and_spell(player_name, table_id, "ca-cncld"));
-            }
-            */
-
+         
             await Task.Delay(100);
             
             spells.remove_condition_in_player(table_id, player_name, check_cond_id);
+        }
+
+        // CANCEL casting informing
+        public static async void inform_of_cancel_casting(Players current_player, int spell_number)
+        {
+            Players player = current_player;
+            string check_cond_id = get_symb_for_IDs();
+
+            player.conditions.TryAdd(check_cond_id, $":ca-cncld-{spell_number},");
+
+            await Task.Delay(100);
+
+            spells.remove_condition_in_player(player, check_cond_id);
+        }
+
+        // CANCEL casting informing
+        public static async void inform_of_cancel_casting(Players current_player, string player_name, string table_id, int spell_number)
+        {
+            Players player = current_player;
+            string check_cond_id = get_symb_for_IDs();
+
+            player.conditions.TryAdd(check_cond_id, $":ca-cncld-{spell_number},");
+
+            await Task.Delay(100);
+
+            spells.remove_condition_in_player(player, check_cond_id);
         }
 
         //get ID by type and spell like "xx-45"

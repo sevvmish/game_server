@@ -428,6 +428,24 @@ namespace game_server
             //================spell 63==================================
 
 
+            //================spell 65 lightning flow==================================
+            if (spell_id == 65)
+            {
+                float energy_cost = 10;
+
+                if (p.energy >= energy_cost)
+                {
+
+                    Task.Run(() => elementalist.lightning_flow(table_id, player, 10));
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
+                    return new float[] { 1, 0, 5 };
+                }
+                else
+                {
+                    return new float[] { 0, 7, 0 };
+                }
+            }
+            //================spell 65==================================
 
 
             //================spell 101 swing melee hit==================================
@@ -1422,6 +1440,29 @@ namespace game_server
             await Task.Delay(200);
 
              
+            p.conditions.TryRemove(cond_id, out x);
+        }
+
+        public static async void remove_condition_in_player(Players current_player, string cond_id)
+        {
+
+            string x;
+            Players p = current_player;
+
+            p.conditions.TryGetValue(cond_id, out x);
+            if (x != null)
+            {
+                string[] bulk = x.Split('-');
+                if (bulk[0] == ":co")
+                {
+                    p.conditions.TryRemove(cond_id, out x);
+                    p.conditions.TryAdd(cond_id, $"{bulk[0]}-{bulk[1]}-0,");
+                }
+            }
+
+            await Task.Delay(200);
+
+
             p.conditions.TryRemove(cond_id, out x);
         }
 

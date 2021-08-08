@@ -18,7 +18,9 @@ namespace game_server
             player.is_reset_any_button = true;
 
             player.animation_id = 11;
-            spells.make_direct_melee_damage(table_id, pl, 152, 0, 5, 3, 0.2f); //0.2f
+            //spells.make_direct_melee_damage(table_id, pl, 152, 0, 5, 3, 0.2f); //0.2f
+            await Task.Delay(200);
+            spells.melee_damage(table_id, pl, enem, 152, 5, 3);
             string cond = functions.get_symb_for_IDs();
             functions.set_condition("co", 152, cond, table_id, pl, 0);
 

@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "v18NAIy9gJuMzLnYwIvLF75f2kQNbssuNTvCjxpKFP5aGfFE7Dn5kIn/mAAmrl0DVATRQkP/58M4B57Nj/Jh1Q==",
+  "dgSpecHash": "g4cQM1jCuKG0f26yMxq2kBPdbL9KkDfkY88ztsBPLhkBznuRjgYEAJwNXJfrz0s1SSMVElsCA/avNCt4sojNKw==",
   "success": true,
-  "projectFilePath": "C:\\android\\non-android projects\\game_server\\game_server.csproj",
+  "projectFilePath": "D:\\NONandroid\\game_server\\game_server.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\krivtsovk\\.nuget\\packages\\mysqlconnector\\1.3.11\\mysqlconnector.1.3.11.nupkg.sha512",
-    "C:\\Users\\krivtsovk\\.nuget\\packages\\netcoreserver\\5.1.0\\netcoreserver.5.1.0.nupkg.sha512"
+    "C:\\Users\\darkysha\\.nuget\\packages\\mysqlconnector\\1.3.11\\mysqlconnector.1.3.11.nupkg.sha512",
+    "C:\\Users\\darkysha\\.nuget\\packages\\netcoreserver\\5.1.0\\netcoreserver.5.1.0.nupkg.sha512"
   ],
   "logs": []
 }

@@ -26,7 +26,7 @@ namespace game_server
 
             
             
-            spells.reset_animation_for_one(table_id, pl);
+            player.reset_animation_for_one();
             //spells.pooling(table_id, player.position_x, player.position_y, pl, 10, 2);
             spells.pooling_ver2(table_id, pl, enem, 10, 2);
 
@@ -41,7 +41,7 @@ namespace game_server
             }
 
             
-            spells.remove_condition_in_player(table_id, pl, cond);
+            player.remove_condition_in_player( cond);
             player.stop_spell_in_process();
             player.is_reset_any_button = false;
         }
@@ -57,12 +57,12 @@ namespace game_server
             functions.mover(ref res, 0, -6, 2);
             player.position_x = res[0];
             player.position_z = res[2];
-            spells.remove_condition_in_player(table_id, pl, check_cond_strike_id);
+            player.remove_condition_in_player(check_cond_strike_id);
             await Task.Delay(100);
 
             check_cond_strike_id = functions.get_symb_for_IDs();
             player.conditions.TryAdd(check_cond_strike_id, $":cs=155={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
-            spells.remove_condition_in_player(table_id, pl, check_cond_strike_id);
+            player.remove_condition_in_player(check_cond_strike_id);
             bool isSlowed = false;
             if (!enemy.is_immune_to_movement_imparing)
             {
@@ -88,7 +88,7 @@ namespace game_server
                 }
                 await Task.Delay(100);
             }
-            spells.remove_condition_in_player(table_id, enemy.player_id, check_cond_strike_id);
+            enemy.remove_condition_in_player(check_cond_strike_id);
             if (isSlowed) enemy.speed /= 0.4f;
 
         }
@@ -125,9 +125,9 @@ namespace game_server
                 }
                 await Task.Delay(200);
             }
-            spells.reset_animation_for_one(table_id, mee);
-            spells.remove_condition_in_player(table_id, mee, check_cond_id);
-            spells.remove_condition_in_player(table_id, mee, check_immob_id);
+            player.reset_animation_for_one();
+            player.remove_condition_in_player(check_cond_id);
+            player.remove_condition_in_player(check_immob_id);
             player.is_spell_in_process = false;
         }
 
@@ -141,8 +141,8 @@ namespace game_server
             string check_cond_strike_id = functions.get_symb_for_IDs();
             //player.conditions.TryAdd(check_cond_strike_id, $":cs=157={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
             player.conditions.TryAdd(check_cond_strike_id, $":co-157-0,");
-            spells.remove_condition_in_player(table_id, player_name, player.get_id_by_type_and_spell("co-153"));
-            spells.remove_condition_in_player(table_id, player_name, check_cond_strike_id);
+            player.remove_condition_in_player(player.get_id_by_type_and_spell("co-153"));
+            player.remove_condition_in_player( check_cond_strike_id);
             
         }
 
@@ -155,7 +155,7 @@ namespace game_server
             player.conditions.TryAdd(check_cond_strike_id, $":cs=153={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
             player.conditions.TryAdd(check_cond, $":co-153-0,");
             await Task.Delay(20);
-            spells.remove_condition_in_player(table_id, me, check_cond_strike_id);
+            player.remove_condition_in_player( check_cond_strike_id);
             player.is_invisible = true;
 
         }
@@ -236,7 +236,7 @@ namespace game_server
                                         spells.melee_damage(table_id, me, candidates[c].player_id, 156, 10, 2);
                                         
                                         player.conditions.TryAdd(check_cond_strike_id, $":cs=156={candidates[c].position_x.ToString("f1").Replace(',', '.')}={candidates[c].position_z.ToString("f1").Replace(',', '.')},");
-                                        spells.remove_condition_in_player(table_id, me, check_cond_strike_id);
+                                        player.remove_condition_in_player(check_cond_strike_id);
 
                                         isFound = true;
                                         break;
@@ -252,7 +252,7 @@ namespace game_server
                             if (!isFound)
                             {
                                 player.conditions.TryAdd(check_cond_strike_id, $":cs=156={bullet_pos_for_assess[0].ToString("f1").Replace(',', '.')}={bullet_pos_for_assess[1].ToString("f1").Replace(',', '.')},");
-                                spells.remove_condition_in_player(table_id, me, check_cond_strike_id);
+                                player.remove_condition_in_player(check_cond_strike_id);
                             } else
                             {
                                 break;
@@ -273,13 +273,13 @@ namespace game_server
 
             await Task.Delay(400);
 
-            spells.remove_condition_in_player(table_id, me, check_cond_id);
+            player.remove_condition_in_player(check_cond_id);
             
-            spells.remove_condition_in_player(table_id, me, check_immob_id);
+            player.remove_condition_in_player( check_immob_id);
             player.stop_spell_in_process();
 
             
-            spells.reset_animation_for_one(table_id, me);
+            player.reset_animation_for_one();
         }
 
     }

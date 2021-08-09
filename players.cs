@@ -873,7 +873,7 @@ namespace game_server
             conditions.TryRemove(conds_id, out x);
             conditions.TryAdd(conds_id, $":co-1005-0,");
             await Task.Delay(250);
-            spells.remove_condition_in_player(Session_ID, player_id, conds_id);
+            remove_condition_in_player(conds_id);
         }
 
         //cheking for 1002 and 1003 and 1005 stopping casting
@@ -882,6 +882,30 @@ namespace game_server
             string[] array_of_spells = new string[] { "1002", "1003", "1005", "1006", "1007" };
             return is_any_cond_inarray_of_spellnumber("co", array_of_spells);
         }
+
+
+        public async void remove_condition_in_player(string cond_id)
+        {
+
+            string x;
+            
+            conditions.TryGetValue(cond_id, out x);
+            if (x != null)
+            {
+                string[] bulk = x.Split('-');
+                if (bulk[0] == ":co")
+                {
+                    conditions.TryRemove(cond_id, out x);
+                    conditions.TryAdd(cond_id, $"{bulk[0]}-{bulk[1]}-0,");
+                }
+            }
+
+            await Task.Delay(200);
+
+
+            conditions.TryRemove(cond_id, out x);
+        }
+
 
 
         public bool is_cond_here_by_type_and_spell(string searched_cond)
@@ -909,6 +933,11 @@ namespace game_server
             return false;
         }
 
+        public async void reset_animation_for_one()
+        {
+            await Task.Delay(110);            
+            animation_id = 0;
+        }
 
         public async void CastEndCS(float last_x, float last_z, string ID, int spell_index)
         {
@@ -922,7 +951,7 @@ namespace game_server
             conditions.TryRemove(ID, out x);
             conditions.TryAdd(ID, $":cs={spell_index}=999=999,");
 
-            spells.remove_condition_in_player(Session_ID, player_id, ID);
+            remove_condition_in_player(ID);
         }
        
 
@@ -1030,7 +1059,7 @@ namespace game_server
         private void MakeChecks()
         {            
             CurrentPlayer.conditions.TryAdd(id_condition, $":ad=153={CurrentPlayer.position_x.ToString("f1").Replace(',', '.')}={CurrentPlayer.position_z.ToString("f1").Replace(',', '.')}={CurrentPlayer.rotation_y.ToString("f1").Replace(',', '.')},");
-            spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
+            CurrentPlayer.remove_condition_in_player(id_condition);
             id_condition = functions.get_symb_for_IDs();
         }
 
@@ -1191,7 +1220,7 @@ namespace game_server
             CurrentIterationStack = 0;
             CurrentArmorStack = 0;
             TimeOfEndForSpecial = DateTime.Now;
-            spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
+            CurrentPlayer.remove_condition_in_player(id_condition);
             id_condition = functions.get_symb_for_IDs();
         }
 
@@ -1295,7 +1324,7 @@ namespace game_server
             TimeOfEndForSpecial = DateTime.Now;
             TimeTillNextSpecial = GetRandom();
 
-            spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
+            CurrentPlayer.remove_condition_in_player(id_condition);
             id_condition = functions.get_symb_for_IDs();
         }
 
@@ -1450,7 +1479,7 @@ namespace game_server
             CurrentIterationStack = 0;
             CurrentAttackPowerStack = 0;
             TimeOfEndForSpecial = DateTime.Now;
-            spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
+            CurrentPlayer.remove_condition_in_player(id_condition);
             id_condition = functions.get_symb_for_IDs();
         }
 
@@ -1557,7 +1586,7 @@ namespace game_server
             CurrentStackAmount = 0;
             TimeOfLastStackAdded = DateTime.Now;
 
-            spells.remove_condition_in_player(CurrentPlayer.Session_ID, CurrentPlayer.player_id, id_condition);
+            CurrentPlayer.remove_condition_in_player(id_condition);
             id_condition = functions.get_symb_for_IDs();
         }
 

@@ -23,11 +23,8 @@ C:\android\non-android projects\game_server\bin\Debug\net5.0\game_server.runtime
 C:\android\non-android projects\game_server\bin\Debug\net5.0\game_server.dll
 C:\android\non-android projects\game_server\bin\Debug\net5.0\ref\game_server.dll
 C:\android\non-android projects\game_server\bin\Debug\net5.0\game_server.pdb
-C:\android\non-android projects\game_server\bin\Debug\net5.0\Savage.Data.MySqlClient.dll
 C:\android\non-android projects\game_server\bin\Debug\net5.0\MySqlConnector.dll
 C:\android\non-android projects\game_server\bin\Debug\net5.0\NetCoreServer.dll
-C:\android\non-android projects\game_server\bin\Debug\net5.0\OptimizedDataReader.dll
-C:\android\non-android projects\game_server\bin\Debug\net5.0\Savage.Data.dll
 C:\android\non-android projects\game_server\obj\Debug\net5.0\game_server.GeneratedMSBuildEditorConfig.editorconfig
 C:\android\non-android projects\game_server\obj\Debug\net5.0\game_server.AssemblyInfoInputs.cache
 C:\android\non-android projects\game_server\obj\Debug\net5.0\game_server.AssemblyInfo.cs

@@ -1182,7 +1182,7 @@ namespace game_server
          
             await Task.Delay(100);
             
-            spells.remove_condition_in_player(table_id, player_name, check_cond_id);
+            player.remove_condition_in_player(check_cond_id);
         }
 
         // CANCEL casting informing

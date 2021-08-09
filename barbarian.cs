@@ -39,7 +39,7 @@ namespace game_server
             }
 
             player.speed /= koef;
-            spells.remove_condition_in_player(table_id, aim, ID);
+            player.remove_condition_in_player(ID);
 
         }
 
@@ -52,7 +52,7 @@ namespace game_server
             player.is_reset_any_button = true;
             string x;
             player.animation_id = 11;
-            spells.reset_animation_for_one(table_id, me);
+            player.reset_animation_for_one();
             float time_to_fly_there = 2f;
             float time_to_fly_back = 2f;
 
@@ -191,9 +191,9 @@ namespace game_server
             }
 
             player.shield_block -= 50;
-            spells.reset_animation_for_one(table_id, me);
-            spells.remove_condition_in_player(table_id, me, check_cond_id);
-            spells.remove_condition_in_player(table_id, me, check_immob_id);
+            player.reset_animation_for_one();
+            player.remove_condition_in_player(check_cond_id);
+            player.remove_condition_in_player(check_immob_id);
             player.stop_spell_in_process();
             player.is_reset_movement_not_rotation = false;
         }
@@ -223,8 +223,8 @@ namespace game_server
             {
                 if (player1.is_casting_stopped_by_spells() )
                 {
-                    spells.reset_animation_for_one(table_id, me);
-                    spells.remove_condition_in_player(table_id, me, check_cond_id);
+                    player1.reset_animation_for_one();
+                    player1.remove_condition_in_player(check_cond_id);
                     player1.stop_spell_in_process();
                     player1.is_reset_any_button = false;
                     return;
@@ -232,7 +232,7 @@ namespace game_server
                 float distance = functions.vector3_distance_unity(player1.position_x, 0, player1.position_z, start_x, 0, start_z);
                 if (distance >= max_distance)
                 {
-                    spells.reset_animation_for_one(table_id, me);
+                    player1.reset_animation_for_one();
                     break;
                 }
                 
@@ -277,15 +277,15 @@ namespace game_server
             //await Task.Delay(500);
 
             player1.stop_spell_in_process();
-            spells.reset_animation_for_one(table_id, me);
-            spells.remove_condition_in_player(table_id, me, check_cond_id);
-            spells.remove_condition_in_player(table_id, me, check_cond_strike_id);
+            player1.reset_animation_for_one();
+            player1.remove_condition_in_player(check_cond_id);
+            player1.remove_condition_in_player(check_cond_strike_id);
             
             await Task.Delay(1000);
             player1.is_reset_any_button = false;
             for (int u = 0; u < enemies.Count; u++)
-            {                
-                spells.remove_condition_in_player(table_id, enemies[u].player_id, IDs_for_slow[u]);
+            {
+                enemies[u].remove_condition_in_player(IDs_for_slow[u]);
                 enemies[u].speed /= 0.6f;                
             }
         }
@@ -357,9 +357,9 @@ namespace game_server
 
             player.is_immune_to_movement_imparing = false;
             player.stop_spell_in_process();
-            spells.remove_condition_in_player(table_id, me, check_cond_id);
+            player.remove_condition_in_player(check_cond_id);
             player.speed /= 0.5f;
-            spells.reset_animation_for_one(table_id, me);
+            player.reset_animation_for_one();
         }
 
 
@@ -395,7 +395,7 @@ namespace game_server
                 }
                 else
                 {
-                    spells.remove_condition_in_player(table_id, me, check_cond_id);
+                    player.remove_condition_in_player( check_cond_id);
                     functions.inform_of_cancel_casting(me, table_id, 105);
                     player.stop_spell_in_process();
                     return;
@@ -403,7 +403,7 @@ namespace game_server
                 await Task.Delay(200);
             }
 
-            spells.remove_condition_in_player(table_id, me, check_cond_id);
+            player.remove_condition_in_player(check_cond_id);
             player.stop_spell_in_process();
 
             float new_x = player.position_x;

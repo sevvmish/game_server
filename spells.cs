@@ -307,7 +307,7 @@ namespace game_server
                                             
                     string check_cond_strike_id = functions.get_symb_for_IDs();
                     p.conditions.TryAdd(check_cond_strike_id, $":cs=55={p.position_x.ToString("f1").Replace(',', '.')}={p.position_z.ToString("f1").Replace(',', '.')},");                    
-                    remove_condition_in_player(table_id, player, check_cond_strike_id);
+                    p.remove_condition_in_player(check_cond_strike_id);
             
                     List<Players> result = functions.get_all_nearest_enemy_inradius(p.position_x, p.position_z, player, table_id, 4);
 
@@ -873,8 +873,8 @@ namespace game_server
             string id = functions.get_symb_for_IDs();
             me.conditions.TryAdd(id, $":hg-{summ_heal.ToString("f0")}-{critt}-{spell_number},");
             enemy.conditions.TryAdd(id, $":ht-{summ_heal.ToString("f0")}-{critt}-{spell_number},");
-            remove_condition_in_player(table_id, mee, id);
-            remove_condition_in_player(table_id, aim, id);
+            me.remove_condition_in_player( id);
+            enemy.remove_condition_in_player( id);
         }
 
 
@@ -906,8 +906,8 @@ namespace game_server
             me.conditions.TryAdd(id, $":dg-{end_damage.ToString("f1").Replace(',', '.')}-s-{spell_number},");
             enemy.conditions.TryAdd(id, $":dt-{end_damage.ToString("f1").Replace(',', '.')}-s-{spell_number},");
 
-            remove_condition_in_player(table_id, mee, id);
-            remove_condition_in_player(table_id, enemyy, id);
+            me.remove_condition_in_player( id);
+            enemy.remove_condition_in_player( id);
         }
 
 
@@ -923,9 +923,10 @@ namespace game_server
         public static async void fall_down_get_app(string table_id, string pl, float tick_time_left)
         {
             string id_knocked = functions.get_symb_for_IDs();
-            reset_animation_for_one(table_id, pl);
+            
             
             Players player = functions.GetPlayerData(table_id, pl);
+            player.reset_animation_for_one();
             player.animation_id = 17;
             player.dodge *= 0.001f;
             player.magic_resistance *= 0.001f;
@@ -957,8 +958,8 @@ namespace game_server
 
             await Task.Delay(200);
 
-            reset_animation_for_one(table_id, pl);
-            remove_condition_in_player(table_id, pl, id_knocked);
+            player.reset_animation_for_one();
+            player.remove_condition_in_player( id_knocked);
             player.is_reset_movement_button = false;
         }
 
@@ -1056,10 +1057,10 @@ namespace game_server
 
                 string id_rr = functions.get_symb_for_IDs();
                 enemy.conditions.TryAdd(id_rr, ":me-i,");
-                remove_condition_in_player(table_id, enemyy, id_rr);
+                enemy.remove_condition_in_player(id_rr);
 
                 me.conditions.TryAdd(id_rr, ":him-i,");
-                remove_condition_in_player(table_id, mee, id_rr);
+                me.remove_condition_in_player( id_rr);
             }
             //=====================================
 
@@ -1082,16 +1083,16 @@ namespace game_server
             string id = functions.get_symb_for_IDs();
             me.conditions.TryAdd(id, $":dg-{end_damage.ToString("f0").Replace(',','.')}-{critt}-{spell_number},");
             enemy.conditions.TryAdd(id, $":dt-{end_damage.ToString("f0").Replace(',', '.')}-{critt}-{spell_number},");
-            remove_condition_in_player(table_id, mee, id);
-            remove_condition_in_player(table_id, enemyy, id);
+            me.remove_condition_in_player( id);
+            enemy.remove_condition_in_player( id);
 
             if (is_resisted)
             {
                 string id_r = functions.get_symb_for_IDs();
                 enemy.conditions.TryAdd(id_r, ":me-r,");
-                remove_condition_in_player(table_id, enemyy, id_r);
+                enemy.remove_condition_in_player( id_r);
                 me.conditions.TryAdd(id_r, ":him-r,");
-                remove_condition_in_player(table_id, mee, id_r);
+                me.remove_condition_in_player(id_r);
             } else if (!isblocked)
             {
                 set_animation_for_one(table_id, enemyy, 4,2,0.1f);
@@ -1101,12 +1102,12 @@ namespace game_server
                 if (enemy.animation_id<2)
                 {
                     enemy.animation_id = 7;
-                    reset_animation_for_one(table_id, enemyy);
+                    enemy.reset_animation_for_one();
                 }
                 enemy.conditions.TryAdd(id_3, ":me-b,");
-                remove_condition_in_player(table_id, enemyy, id_3);
+                enemy.remove_condition_in_player(id_3);
                 me.conditions.TryAdd(id_3, ":him-b,");
-                remove_condition_in_player(table_id, mee, id_3);
+                me.remove_condition_in_player(id_3);
             }
         }
 
@@ -1151,7 +1152,7 @@ namespace game_server
             player.dodge = old_dodge;
             player.magic_resistance = old_mag_res;
             player.speed = old_speed;
-            remove_condition_in_player(table_id, player_name, id);
+            player.remove_condition_in_player(id);
             
             player.is_strafe_on = false;
             player.is_spell_in_process = false;
@@ -1352,6 +1353,7 @@ namespace game_server
         }
 
 
+        /*
         public static async void reset_animation_for_one(string table_id, string me)
         {        
             await Task.Delay(110);
@@ -1359,6 +1361,7 @@ namespace game_server
             p.animation_id = 0;
             
         }
+        */
 
         //set animation
         public static async Task<bool> set_animation_for_one(string table_id, string me_name, int general_animation, int stop_animation, float time_for_playing)
@@ -1385,7 +1388,7 @@ namespace game_server
 
                 }
 
-                reset_animation_for_one(table_id, me_name);
+                p.reset_animation_for_one();
                 return true;
             }
          
@@ -1419,7 +1422,8 @@ namespace game_server
             }
 
         }
-               
+        
+        /*
         public static async void remove_condition_in_player(string table_id, string object_name, string cond_id)
         {
             
@@ -1442,6 +1446,7 @@ namespace game_server
              
             p.conditions.TryRemove(cond_id, out x);
         }
+        */
 
         public static async void remove_condition_in_player(Players current_player, string cond_id)
         {
@@ -1496,9 +1501,9 @@ namespace game_server
             {
                 string id_r = functions.get_symb_for_IDs();
                 player1.conditions.TryAdd(id_r, ":me-r,");
-                remove_condition_in_player(table_id, enemy, id_r);
+                player1.remove_condition_in_player(id_r);
                 me.conditions.TryAdd(id_r, ":him-r,");
-                remove_condition_in_player(table_id, mee, id_r);
+                me.remove_condition_in_player(id_r);
                 return true;
             }
 
@@ -1518,12 +1523,12 @@ namespace game_server
                 string id_r = functions.get_symb_for_IDs();
 
                 enemy.animation_id = 6; //6 - ID for DODGE
-                reset_animation_for_one(table_id, enemyy);
+                enemy.reset_animation_for_one();
                 enemy.conditions.TryAdd(id_r, ":me-d,");
-                remove_condition_in_player(table_id, enemyy, id_r);
+                enemy.remove_condition_in_player( id_r);
         
                 me.conditions.TryAdd(id_r, ":him-d,");
-                remove_condition_in_player(table_id, mee, id_r);
+                me.remove_condition_in_player(id_r);
 
                 return true;
             }
@@ -1535,12 +1540,12 @@ namespace game_server
                 string id_r = functions.get_symb_for_IDs();
 
                 enemy.animation_id = 7; 
-                reset_animation_for_one(table_id, enemyy);
+                enemy.reset_animation_for_one();
                 enemy.conditions.TryAdd(id_r, ":me-b,");
-                remove_condition_in_player(table_id, enemyy, id_r);
+                enemy.remove_condition_in_player( id_r);
 
                 me.conditions.TryAdd(id_r, ":him-b,");
-                remove_condition_in_player(table_id, mee, id_r);
+                me.remove_condition_in_player(id_r);
 
                 return true;
             }
@@ -1596,17 +1601,7 @@ namespace game_server
                 return;
             }
 
-            /*
-            foreach (var item in enemy.conditions)
-            {
-                if (item.Value.ToString().Contains("ca-"))
-                {                    
-                    enemy.make_broken_casting();                    
-                }
-
-               
-            }*/
-
+         
             if (functions.assess_chance(enemy.ChanceOfSpellCastingBroken + starter.def_chance_break_spell_by_meleehit))
             {
                 enemy.make_broken_casting();
@@ -1667,10 +1662,10 @@ namespace game_server
 
                 string id_rr = functions.get_symb_for_IDs();
                 enemy.conditions.TryAdd(id_rr, ":me-i,");
-                remove_condition_in_player(table_id, enemy1, id_rr);
+                enemy.remove_condition_in_player(id_rr);
 
                 p.conditions.TryAdd(id_rr, ":him-i,");
-                remove_condition_in_player(table_id, me, id_rr);
+                p.remove_condition_in_player(id_rr);
             }
             //=====================================
             
@@ -1685,8 +1680,8 @@ namespace game_server
            
             enemy.conditions.TryAdd(id, $":dt-{end_damage.ToString("f0")}-{critt}-{spell_number},");
 
-            remove_condition_in_player(table_id, me, id);
-            remove_condition_in_player(table_id, enemy1, id);
+            p.remove_condition_in_player( id);
+            enemy.remove_condition_in_player( id);
 
             if (!is_dodged && !is_blocked)
             {
@@ -1696,13 +1691,13 @@ namespace game_server
             {
                 string id_2 = functions.get_symb_for_IDs();
                 enemy.animation_id = 6; //6 - ID for DODGE
-                reset_animation_for_one(table_id, enemy1);
+                enemy.reset_animation_for_one();
                
                 enemy.conditions.TryAdd(id_2, ":me-d,");
               
                 p.conditions.TryAdd(id_2, ":him-d,");
-                remove_condition_in_player(table_id, me, id_2);
-                remove_condition_in_player(table_id, enemy1, id_2);
+                p.remove_condition_in_player(id_2);
+                enemy.remove_condition_in_player( id_2);
             }
             if (is_blocked)
             {
@@ -1710,10 +1705,10 @@ namespace game_server
                 set_animation_for_one(table_id, enemy1, 7, 2, 0.2f);
               
                 enemy.conditions.TryAdd(id_3, ":me-b,");
-                remove_condition_in_player(table_id, enemy1, id_3);
+                enemy.remove_condition_in_player( id_3);
                
                 p.conditions.TryAdd(id_3, ":him-b,");
-                remove_condition_in_player(table_id, me, id_3);
+                p.remove_condition_in_player( id_3);
             }
 
                         

@@ -17,7 +17,7 @@ namespace game_server
             float base_damage_koef = 0.2f;
             Players player = functions.GetPlayerData(table_id, me);
             functions.turn_to_enemy(me, table_id, 0.1f, distance, 0, distance);
-            //await Task.Delay(100);
+            player.start_spell_in_process();
                       
             Players aim = functions.get_one_nearest_enemy_inmelee(me, table_id, distance, 0, false);
             
@@ -139,9 +139,11 @@ namespace game_server
                 }
 
                 //make damage
-
+                player.minus_energy(2f);
                 await Task.Delay(200);
             }
+
+            player.stop_spell_in_process();
 
             player.reset_animation_for_one();
             spells.remove_condition_in_player(player, check_cond_id_for_casting);

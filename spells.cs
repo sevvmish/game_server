@@ -357,7 +357,7 @@ namespace game_server
 
                 if (p.energy >= energy_cost)
                 {
-
+                    p.minus_energy(energy_cost);
                     Task.Run(() => elementalist.frost_armor(table_id, player, 5));
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
                     return new float[] { 1, 0, 5 };
@@ -376,7 +376,7 @@ namespace game_server
 
                 if (p.energy >= energy_cost)
                 {
-
+                    p.minus_energy(energy_cost);
                     Task.Run(() => elementalist.fire_armor(table_id, player, 5));
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
                     return new float[] { 1, 0, 5 };
@@ -396,7 +396,7 @@ namespace game_server
 
                 if (p.energy >= energy_cost)
                 {
-
+                    p.minus_energy(energy_cost);
                     Task.Run(() => elementalist.air_armor(table_id, player, 5));
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
                     return new float[] { 1, 0, 5 };
@@ -415,7 +415,7 @@ namespace game_server
 
                 if (p.energy >= energy_cost)
                 {
-
+                    p.minus_energy(energy_cost);
                     Task.Run(() => elementalist.earth_armor(table_id, player, 5));
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
                     return new float[] { 1, 0, 5 };
@@ -436,9 +436,9 @@ namespace game_server
                 if (p.energy >= energy_cost)
                 {
 
-                    Task.Run(() => elementalist.lightning_flow(table_id, player, 10));
-                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 5));
-                    return new float[] { 1, 0, 5 };
+                    Task.Run(() => elementalist.lightning_flow(table_id, player, 5));
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 1));
+                    return new float[] { 1, 0, 1 };
                 }
                 else
                 {

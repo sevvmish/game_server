@@ -79,6 +79,9 @@ namespace game_server
             float koef = 0;
             for (float i = time_to_fly_there; i > 0; i-=0.2f)
             {
+                //float[] axe_axe = new float[6] { axe_current_coords[0], 0, axe_current_coords[1], 0, rot_y, 0 };
+                //rot_y = functions.turn_object_to_enemy_indirect_rot_y(me, table_id, ref axe_axe, distance, 0, distance);
+
                 functions.lerp(ref axe_current_coords, axe_start_coords[0], axe_start_coords[1], axe_aim_coords[0], axe_aim_coords[1], rot_y, koef * (1f / (time_to_fly_there / 0.2f)));
                 
                 
@@ -89,7 +92,7 @@ namespace game_server
                                
                 if (koef > 0)
                 {
-                    pre_victims = functions.get_all_nearest_enemy_inradius(axe_current_coords[0], axe_current_coords[1], me, table_id, 0.5f);                    
+                    pre_victims = functions.get_all_nearest_enemy_inradius(axe_current_coords[0], axe_current_coords[1], me, table_id, 1.5f);                    
                     if (pre_victims.Count > 0)
                     {
                         for (int iii = 0; iii < pre_victims.Count; iii++)
@@ -98,7 +101,7 @@ namespace game_server
                             {
                                 victims.Add(pre_victims[iii]);
                                 spells.make_direct_melee_damage_exact_enemy(table_id, me, pre_victims[iii].player_id, 106, 0, 0.5f, 1.5f, 0);
-                                slow(table_id, pre_victims[iii].player_id, 0.3f, 3f);                                
+                                slow(table_id, pre_victims[iii].player_id, 0.4f, 3f);                                
                             }
                         }
                     }

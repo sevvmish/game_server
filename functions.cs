@@ -963,6 +963,64 @@ namespace game_server
         }
 
 
+        //way to turn object to enemy
+        public static float turn_object_to_enemy_indirect_rot_y(string me_name, string table_id, ref float[] object_transform, float add_dist_to_check, float add_angle_to_check, float radius_to_check)
+        {
+            Players aim = get_one_nearest_enemy_inmelee(me_name, table_id, add_dist_to_check, add_angle_to_check, false);
+            Players enemy;
+
+            if (aim != null)
+            {
+                enemy = aim;
+            }
+            else
+            {
+                return 0;
+            }
+
+            if (enemy.isDead)
+            {
+                return 0 ;
+            }
+
+            //Players p = GetPlayerData(table_id, me_name);
+            int sign = 0;
+            float current_angle = player_angle_unity(object_transform[0], 0, object_transform[2], 0, object_transform[4], 0, enemy.position_x, 0, enemy.position_z);
+            float current_angle1 = player_angle_unity(object_transform[0], 0, object_transform[2], 0, object_transform[4] + 1f, 0, enemy.position_x, 0, enemy.position_z);
+
+            if (current_angle > 1f)
+            {
+                if (current_angle1 < current_angle)
+                {
+                    sign = 1;
+                }
+                else if (current_angle1 > current_angle)
+                {
+                    sign = -1;
+                }
+                else if (current_angle1 == current_angle)
+                {
+                    sign = 0;
+                }
+
+                float delta = current_angle * sign;
+                //float time_delta = time_for_turn / 1f;
+                if ((object_transform[4] + delta) > 360)
+                {
+                    object_transform[4] += delta - 360;
+                }
+                else if ((object_transform[4] + delta) < 0)
+                {
+                    object_transform[4] += delta + 360;
+                }
+                else if ((object_transform[4] + delta) >= 0 && (object_transform[4] + delta) <= 360)
+                {
+                    object_transform[4] += delta;
+                }
+            }
+            //Console.WriteLine(current_angle + " - current angle after");
+            return object_transform[4];
+        }
 
 
         //way to turn object to enemy

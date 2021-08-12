@@ -150,7 +150,7 @@ namespace game_server
                             }
                             CurrentPlayer.health_pool = health_curr + "=" + curr_health[1];
 
-
+                           
                             //checker for BST 0000 state=========================
                             if ((CurrentPlayer.button1 || CurrentPlayer.button2 || CurrentPlayer.button3 || CurrentPlayer.button4 || CurrentPlayer.button5 || CurrentPlayer.button6) && !CurrentPlayer.is_spell_button_touched)
                             {

@@ -76,9 +76,10 @@ namespace game_server
                 if (!player.is_casting_failed())
                 {
                     player.animation_id = 3;
-                    string x;
-                    player.conditions.TryRemove(check_cond_id, out x);
-                    player.conditions.TryAdd(check_cond_id, $":ca-{spell_id}{i.ToString("f1").Replace(',', '.')},");
+                    //string x;
+                    player.set_condition("ca", 205, check_cond_id, i);
+                    //player.conditions.TryRemove(check_cond_id, out x);
+                    //player.conditions.TryAdd(check_cond_id, $":ca-{spell_id}{i.ToString("f1").Replace(',', '.')},");
                 }
                 else
                 {
@@ -96,29 +97,62 @@ namespace game_server
             player.stop_spell_in_process();
             player.reset_animation_for_one();
 
-            player.minus_energy(energy_cost);
+            
 
             Players enemy = functions.get_one_nearest_enemy_inmelee(mee, table_id, distance, -10, false);
-            if (enemy != null || spells.if_resisted_magic(table_id, mee, enemy.player_id))
+            
+            if (enemy!=null)
             {
-                return;
+                player.minus_energy(energy_cost);
+                curse_of_casting(table_id, mee, enemy.player_id, how_long);
             }
-            string check_cond_id2 = functions.get_symb_for_IDs();
-
-            /*
-            for (float i = how_long; i > 0; i-=0.2f)
-            {
-                string x;
-                player.conditions.TryRemove(check_cond_id2, out x);
-                player.conditions.TryAdd(check_cond_id2, $":co-205-{i.ToString("f1").Replace(',', '.')},");
-
-            }
-            */
+            
 
         }
 
 
-        //spell 204
+        public static async void curse_of_casting(string table_id, string me, string aim, float how_long)
+        {
+
+            if (!spells.isOKforMagicConditionImposing(table_id, me, aim, 205)) return;
+            await Task.Delay(250);
+
+            float sensitivity = 5f;
+            Players aim_player = functions.GetPlayerData(table_id, aim);
+            float energy_level = aim_player.energy;
+            int stacks = 0;
+            string cond_id = functions.get_symb_for_IDs();
+
+            for (float i = how_long; i > 0; i-=0.1f)
+            {
+                if (Math.Round(energy_level, 0) != Math.Round(aim_player.energy, 0)) {
+                    if ((energy_level - aim_player.energy) > sensitivity)
+                    {
+                        stacks++;
+                        aim_player.set_condition("co", 205, cond_id, i, stacks);
+                        spells.make_direct_magic_damage_exact_enemy(table_id, me, aim, 205, 0, stacks/5f, 2, TypeOfMagic.other);
+                    } 
+                    
+
+                    energy_level = aim_player.energy;
+                } else
+                {
+                    aim_player.set_condition("co", 205, cond_id, i);
+                }
+
+                if (aim_player.is_stop_all_condition_by_checking_index(205))
+                {
+                    break;
+                }
+                await Task.Delay(100);
+            }
+
+            aim_player.remove_condition_in_player(cond_id);
+
+        }
+
+
+            //spell 204
         public static async void auto_heal(string table_id, string mee, float how_long, float heal_amount, float energy_cost)
         {
             float casting_time = 1;

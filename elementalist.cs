@@ -163,7 +163,7 @@ namespace game_server
         {                  
             Players player = functions.GetPlayerData(table_id, aim);
             
-            spells.isOKforMagicConditionImposing(table_id, me, aim, 64);
+            if (!spells.isOKforMagicConditionImposing(table_id, me, aim, 64))  return ;
             await Task.Delay(250);
                         
 
@@ -203,7 +203,7 @@ namespace game_server
         {
             Players player = functions.GetPlayerData(table_id, aim);
 
-            spells.isOKforMagicConditionImposing(table_id, me, aim, 57);
+            if (!spells.isOKforMagicConditionImposing(table_id, me, aim, 57)) return;
             await Task.Delay(250);
             /*
             if (spells.if_resisted_magic(table_id, me, aim) || player.is_immune_to_magic)
@@ -550,7 +550,7 @@ namespace game_server
         {
             Players aim_player = functions.GetPlayerData(table_id, aim);
 
-            spells.isOKforMagicConditionImposing(table_id, me, aim, 59);
+            if (!spells.isOKforMagicConditionImposing(table_id, me, aim, 59)) return;
             await Task.Delay(250);
 
             aim_player.speed *= 0.6f;

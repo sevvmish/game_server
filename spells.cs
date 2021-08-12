@@ -786,9 +786,9 @@ namespace game_server
 
 
                 if (p.energy >= energy_cost) {
-                    Task.Run(() => wizard.cast_curse_of_casting(table_id, player, 5, energy_cost));
-                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 5f));
-                    return new float[] { 1, 5, 5f };
+                    Task.Run(() => wizard.cast_curse_of_casting(table_id, player, 15, energy_cost));
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 2f));
+                    return new float[] { 1, 5, 2f };
                 } else
                 {
                     return new float[] { 0, 7, 0 };
@@ -1200,7 +1200,8 @@ namespace game_server
         public static async void button_cooldowns(string table_id, string player_id, int button_place, float cool_down)
         {
             Players p = functions.GetPlayerData(table_id, player_id);
-            
+
+           
             p.global_button_cooldown = 1;           
             await Task.Delay((int)(starter.GlobalButtonCooldown * 1000));
                 

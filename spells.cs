@@ -1192,11 +1192,6 @@ namespace game_server
 
 
 
-
-        
-
-
-
         public static async void button_cooldowns(string table_id, string player_id, int button_place, float cool_down)
         {
             Players p = functions.GetPlayerData(table_id, player_id);

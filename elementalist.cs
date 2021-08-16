@@ -163,9 +163,15 @@ namespace game_server
         {                  
             Players player = functions.GetPlayerData(table_id, aim);
             
-            if (!spells.isOKforMagicConditionImposing(table_id, me, aim, 64))  return ;
-            await Task.Delay(250);
-                        
+            //if (!spells.isOKforMagicConditionImposing(table_id, me, aim, 64))  return ;
+            //await Task.Delay(250);
+
+
+            if (spells.if_resisted_magic(table_id, me, aim) || player.is_immune_to_magic || player.is_cond_here_by_type_and_spell($"co-64"))
+            {
+                return;
+            }
+
 
             float old_armor = player.armor;
             float old_magic_res = player.magic_resistance;
@@ -177,14 +183,14 @@ namespace game_server
             player.is_reset_any_button = true;
             player.add_stop_to_spec_conditions(0);
             player.make_broken_casting();
-
+            
             string ID_cond = functions.get_symb_for_IDs();
 
-            for (float i = how_long; i > 0; i -= 0.25f)
+            for (float i = how_long; i > 0; i -= 0.2f)
             {
-                player.set_condition("co", 64, ID_cond, i);
-                
-                await Task.Delay(250);
+                player.set_condition("co", 64, ID_cond, i);                
+                await Task.Delay(200);
+                player.animation_id = 24;
             }
 
             player.is_immune_to_magic = false;
@@ -193,6 +199,7 @@ namespace game_server
             player.magic_resistance = old_magic_res;
             player.is_reset_any_button = false;
             player.remove_stop_to_spec_conditions(0);
+            player.reset_animation_for_one();
 
             player.remove_condition_in_player(ID_cond);
         }
@@ -393,7 +400,7 @@ namespace game_server
                                 {
                                     if (pl.conditions.ContainsKey(searched_ID) && pl.player_id != me)
                                     {
-                                        if (functions.assess_chance(80))//20
+                                        if (functions.assess_chance(20))//20
                                         {
                                             if (!pl.is_cond_here_by_type_and_spell("co-59"))
                                             {
@@ -401,7 +408,7 @@ namespace game_server
                                             }
                                         }
 
-                                        if (functions.assess_chance(50))//10
+                                        if (functions.assess_chance(10))//10
                                         {
                                             if (!pl.is_cond_here_by_type_and_spell("co-58"))
                                             {
@@ -409,7 +416,7 @@ namespace game_server
                                             }
                                         }
 
-                                        if (functions.assess_chance(20))//5
+                                        if (functions.assess_chance(50))//5
                                         {
                                             if (!pl.is_cond_here_by_type_and_spell("co-64"))
                                             {

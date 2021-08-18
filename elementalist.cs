@@ -221,7 +221,7 @@ namespace game_server
 
             string ID_cond = functions.get_symb_for_IDs();
 
-            for (float i = 10; i > 0; i-=0.25f)
+            for (float i = 10; i > 0; i-=0.2f)
             {
                 
                 player.set_condition("co", 57, ID_cond, i);
@@ -236,7 +236,7 @@ namespace game_server
                 {
                     break;
                 }
-                await Task.Delay(250);
+                await Task.Delay(200);
                 
             }
 

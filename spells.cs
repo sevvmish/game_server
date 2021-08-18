@@ -623,14 +623,15 @@ namespace game_server
 
                 if (p.is_cond_here_by_type_and_spell("co-153"))
                 {
-                    return new float[] { 0, 13, 0 };
+                    rogue.from_inviz_to_viz(table_id, player);                    
+                    return new float[] { 1, 0, 1f };
                 }
 
                 if (p.energy >= energy_cost) {
                     p.minus_energy(energy_cost);
                     Task.Run(() => rogue.invizibility(table_id, player));
-                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 5f));
-                    return new float[] { 1, 0, 5f };
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 1f));
+                    return new float[] { 1, 0, 1f };
                 } else
                 {
                     return new float[] { 0, 7, 0 };
@@ -807,7 +808,7 @@ namespace game_server
                 {
                     p.minus_energy(energy_cost);
 
-                    Task.Run(() => wizard.void_zone(table_id, player, 2, 1.2f));
+                    Task.Run(() => wizard.void_zone(table_id, player, 2, 1.2f, 2));
                     Task.Run(() => button_cooldowns(table_id, player, spell_id, 2f));
                     return new float[] { 1, 5, 2f };
                 }
@@ -824,8 +825,8 @@ namespace game_server
             {
                 
                 Task.Run(() => strafe(table_id, player));
-                Task.Run(() => button_cooldowns(table_id, player, spell_id, 10f));
-                return new float[] { 1, 5, 10f };
+                Task.Run(() => button_cooldowns(table_id, player, spell_id, 5f));
+                return new float[] { 1, 5, 5f };
             }
             //================STRAFE==================================
 
@@ -1075,6 +1076,15 @@ namespace game_server
                 
             }
 
+            bool isLightningReduceArmor = false;
+            float enemy_base_armor = enemy.armor;
+
+            if (_magic_type == TypeOfMagic.air)
+            {
+                isLightningReduceArmor = true;
+                enemy.armor = 0;
+            }
+
             //=================================================================================
 
             string[] enemy_health = enemy.health_pool.Split('=');
@@ -1093,10 +1103,12 @@ namespace game_server
                 enemy.remove_condition_in_player( id_r);
                 me.conditions.TryAdd(id_r, ":him-r,");
                 me.remove_condition_in_player(id_r);
-            } else if (!isblocked)
+            } 
+            else if (!isblocked)
             {
                 set_animation_for_one(table_id, enemyy, 4,2,0.1f);
-            } else if (isblocked)
+            } 
+            else if (isblocked)
             {
                 string id_3 = functions.get_symb_for_IDs();
                 if (enemy.animation_id<2)
@@ -1108,6 +1120,11 @@ namespace game_server
                 enemy.remove_condition_in_player(id_3);
                 me.conditions.TryAdd(id_3, ":him-b,");
                 me.remove_condition_in_player(id_3);
+            }
+
+            if (isLightningReduceArmor)
+            {
+                enemy.armor = enemy_base_armor;
             }
         }
 

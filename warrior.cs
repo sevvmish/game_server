@@ -18,17 +18,23 @@ namespace game_server
             Player.armor = 999;
             string id_condition = functions.get_symb_for_IDs();
             Player.add_stop_to_spec_conditions(0);
+            
+            Player.is_reset_any_button = true;
 
             for (float i = how_long; i > 0; i-=0.1f)
             {                
                 Player.set_condition("co", 10, id_condition, i);
-
+                Player.animation_id = 24;
+                
                 await Task.Delay(100);
             }
 
+            Player.reset_animation_for_one();
             Player.remove_stop_to_spec_conditions(0);
             Player.armor = old_armor;
-            Player.remove_condition_in_player(id_condition);            
+            Player.remove_condition_in_player(id_condition);
+            
+            Player.is_reset_any_button = false;
         }
 
 

@@ -124,7 +124,7 @@ namespace game_server
         public float PowerOfIceMulti = 1f;
         public float PowerOfAirMulti = 1f;
         public float PowerOfEarthMulti = 1f;
-        public float ChanceOfCastBurningOnFireSpell = 10f;
+        public float ChanceOfCastBurningOnFireSpell = 5f;
 
         //some globals
         public float ChanceOfSpellCastingBroken = 0;

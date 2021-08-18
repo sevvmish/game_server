@@ -10,7 +10,7 @@ namespace game_server
     {
 
         //spell 206 void zone
-        public static async void void_zone(string table_id, string mee, float how_long, float groth_koeff)
+        public static async void void_zone(string table_id, string mee, float how_long, float groth_koeff, float radius)
         {
             float distance = 10f;
             Players player = functions.GetPlayerData(table_id, mee);
@@ -35,7 +35,7 @@ namespace game_server
 
             for (float u = how_long; u > 0; u-=0.25f)
             {
-                List<Players> aims = functions.get_all_nearest_enemy_inradius(coord_x, coord_z, mee, table_id, 5);
+                List<Players> aims = functions.get_all_nearest_enemy_inradius(coord_x, coord_z, mee, table_id, radius);
 
                 if (aims.Count>0)
                 {
@@ -117,7 +117,7 @@ namespace game_server
             if (!spells.isOKforMagicConditionImposing(table_id, me, aim, 205)) return;
             await Task.Delay(250);
 
-            float sensitivity = 5f;
+            float sensitivity = 1f;
             Players aim_player = functions.GetPlayerData(table_id, aim);
             float energy_level = aim_player.energy;
             int stacks = 0;
@@ -442,7 +442,7 @@ namespace game_server
                 {
                     for (int uu = 0; uu < all_enemies.Count; uu++)
                     {
-                        spells.make_direct_magic_damage_exact_enemy(table_id, mee, all_enemies[uu].player_id, 201, dam, power, 2, TypeOfMagic.other);
+                        spells.make_direct_magic_damage_exact_enemy(table_id, mee, all_enemies[uu].player_id, 201, dam, power, 2, TypeOfMagic.fire);
                     }
                 }
                 all_enemies.Clear();

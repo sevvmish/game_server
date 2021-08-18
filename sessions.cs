@@ -166,40 +166,7 @@ namespace game_server
                             }
                             //====================================================
 
-                            //check RAB  reset any button touch=================================
-                            if (CurrentPlayer.is_reset_any_button)
-                            {
-                                CurrentPlayer.ZeroInputs();
-                            }
-
-                            //spell in process - reset only spell buttons
-                            if (CurrentPlayer.is_spell_in_process)
-                            {
-                                CurrentPlayer.button1 = false;
-                                CurrentPlayer.button2 = false;
-                                CurrentPlayer.button3 = false;
-                                CurrentPlayer.button4 = false;
-                                CurrentPlayer.button5 = false;
-                                CurrentPlayer.button6 = false;
-                            }
-
-                            //reset only movement buttons
-                            if (CurrentPlayer.is_reset_movement_button)
-                            {
-                                CurrentPlayer.horizontal_touch = 0;
-                                CurrentPlayer.vertical_touch = 0;
-                            }
-
-                            //reset other buttons when its evade
-                            if (CurrentPlayer.button6)
-                            {
-                                CurrentPlayer.button1 = false;
-                                CurrentPlayer.button2 = false;
-                                CurrentPlayer.button3 = false;
-                                CurrentPlayer.button4 = false;
-                                CurrentPlayer.button5 = false;
-
-                            }
+                            
 
                             //CHECK for stun, fear, immobilize
                             if (CurrentPlayer.conditions.Count > 0)
@@ -228,7 +195,7 @@ namespace game_server
                                     CurrentPlayer.is_cond_here_by_type_and_spell("dg"))
                                 {
 
-                                    CurrentPlayer.is_invisible = false;
+                                    
                                     rogue.from_inviz_to_viz(Session_id, CurrentPlayer.player_id);
                                 }
                             }
@@ -255,8 +222,12 @@ namespace game_server
                     
                     CurrentTime += 50;
                     if (CurrentTime> starter.stopWatch.ElapsedMilliseconds)
-                    {                        
-                        await Task.Delay((int)(CurrentTime - starter.stopWatch.ElapsedMilliseconds));
+                    {
+                        if (((int)(CurrentTime - starter.stopWatch.ElapsedMilliseconds))>0)
+                        {
+                            await Task.Delay((int)(CurrentTime - starter.stopWatch.ElapsedMilliseconds));
+                        }
+                        
                     }
                     
                 } 

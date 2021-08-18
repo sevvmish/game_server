@@ -67,21 +67,6 @@ namespace game_server
                 Console.WriteLine("==============ERROR================\n" + ex + "\n" + CurrentPacket + "\n" + DateTime.Now + "\n" + "==================ERROR_END===========\n");
             }
 
-            /*
-            //checker for BST 0000 state=========================
-            if ((CurrentPlayer.button1 || CurrentPlayer.button2 || CurrentPlayer.button3 || CurrentPlayer.button4 || CurrentPlayer.button5 || CurrentPlayer.button6) && !CurrentPlayer.is_spell_button_touched)
-            {                
-                CurrentPlayer.is_spell_button_touched = true;
-                if (CurrentPlayer.start_cheking_if_spell_touched)
-                {
-                    CurrentPlayer.is_spell_touched_for_casting_failing = true;
-                }
-            }
-            else if ((!CurrentPlayer.button1 && !CurrentPlayer.button2 && !CurrentPlayer.button3 && !CurrentPlayer.button4 && !CurrentPlayer.button5 && !CurrentPlayer.button6) && CurrentPlayer.is_spell_button_touched)
-            {                
-                CurrentPlayer.is_spell_button_touched = false;               
-            }
-            //====================================================
 
             //check RAB  reset any button touch=================================
             if (CurrentPlayer.is_reset_any_button)
@@ -106,7 +91,7 @@ namespace game_server
                 CurrentPlayer.horizontal_touch = 0;
                 CurrentPlayer.vertical_touch = 0;
             }
-                     
+
             //reset other buttons when its evade
             if (CurrentPlayer.button6)
             {
@@ -115,66 +100,18 @@ namespace game_server
                 CurrentPlayer.button3 = false;
                 CurrentPlayer.button4 = false;
                 CurrentPlayer.button5 = false;
-                
+
             }
 
-            //CHECK for stun, fear, immobilize
-            if (CurrentPlayer.conditions.Count > 0)
-            {
-                //IMMOBILIZED co-1001
-                if (CurrentPlayer.is_cond_here_by_type_and_spell("co-1001"))
-                {
-                    CurrentPlayer.vertical_touch = 0;
-                    CurrentPlayer.horizontal_touch = 0;
-                }
-
-                //STUN co-1002 or FEAR co-1003
-                if (CurrentPlayer.is_cond_here_by_type_and_spell("co-1002") || CurrentPlayer.is_cond_here_by_type_and_spell("co-1003"))
-                {
-                    CurrentPlayer.ZeroInputs();
-                }
-            }
-            */
-
-
-
-
-
-
-
-            /*
-            if (CurrentPlayer.vertical_touch > 10)
-            {
-                CurrentPlayer.vertical_touch = 10;
-            }
-            if (CurrentPlayer.vertical_touch < -10)
-            {
-                CurrentPlayer.vertical_touch = -10;
-            }
-
-            if (CurrentPlayer.horizontal_touch > 10)
-            {
-                CurrentPlayer.horizontal_touch = 10;
-            }
-            if (CurrentPlayer.horizontal_touch < -10)
-            {
-                CurrentPlayer.horizontal_touch = -10;
-            }
-            */
-            
-            
-
-           
-
-
-            //MAIN ROTATION PART
-            if (CurrentPlayer.horizontal_touch != 0 || CurrentPlayer.vertical_touch != 0) 
-                CurrentPlayer.rotation_y = GetRotationY(CurrentPlayer.horizontal_touch, CurrentPlayer.vertical_touch);
 
 
             //===================================0000000000000000000000======================================
             if (RawDataArray[1] == "0")
             {
+                //MAIN ROTATION PART
+                if (CurrentPlayer.horizontal_touch != 0 || CurrentPlayer.vertical_touch != 0)
+                    CurrentPlayer.rotation_y = GetRotationY(CurrentPlayer.horizontal_touch, CurrentPlayer.vertical_touch);
+
                 float[] cur_pos_n_rot = new float[6] { CurrentPlayer.position_x, CurrentPlayer.position_y, CurrentPlayer.position_z, CurrentPlayer.rotation_x, CurrentPlayer.rotation_y, CurrentPlayer.rotation_z };
                 
                 if (CurrentPlayer.horizontal_touch != 0 || CurrentPlayer.vertical_touch != 0)
@@ -229,7 +166,7 @@ namespace game_server
             }
 
             //===================================11111111111111111111======================================
-            else if (RawDataArray[1] == "1" && CurrentPlayer.global_button_cooldown == 0)
+            else if (RawDataArray[1] == "1")
             {
                 float[] return_result = new float[] { 0, 0, 0 };
 

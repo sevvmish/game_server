@@ -138,12 +138,13 @@ namespace game_server
         public static void from_inviz_to_viz(string table_id, string player_name)
         {
             Players player = functions.GetPlayerData(table_id, player_name);
+            player.is_invisible = false;
             string check_cond_strike_id = functions.get_symb_for_IDs();
             //player.conditions.TryAdd(check_cond_strike_id, $":cs=157={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
             player.conditions.TryAdd(check_cond_strike_id, $":co-157-0,");
             player.remove_condition_in_player(player.get_id_by_type_and_spell("co-153"));
             player.remove_condition_in_player( check_cond_strike_id);
-            
+                        
         }
 
         //invizibility 153
@@ -196,10 +197,11 @@ namespace game_server
                     
                     player.conditions.TryRemove(check_cond_id, out x);
                     player.conditions.TryAdd(check_cond_id, $":ca-156-{i.ToString("f1").Replace(',', '.')},");
+                    functions.turn_to_enemy(me, table_id, 0.1f, shot_distance, -10, shot_distance);
 
                     if (i > 0.5f)
                     {
-                        functions.turn_to_enemy(me, table_id, 0.1f, shot_distance, -10, shot_distance);
+                        
                         player.animation_id = 20; //raise gun
                     } 
                     else

@@ -129,6 +129,94 @@ namespace game_server
                         
                         if (1==1 && !CurrentPlayer.isDead && !isRoundChecked) //CurrentPlayer.endPointUDP != null   ПОТОМ ИСПРАВЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         {
+
+                            try
+                            {
+                                //packet process
+                                if (CurrentPlayer.CurrentPacketToProcess.Count > 0)
+                                {
+                                    
+                                    if (CurrentPlayer.CurrentPacketToProcess.Count == 1)
+                                    {
+                                        int max = CurrentPlayer.CurrentPacketToProcess.Keys.Max();
+                                        functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[max].Packet);
+                                        CurrentPlayer.CurrentPacketToProcess.Remove(max);
+                                    } 
+                                    else
+                                    {
+                                        int max = CurrentPlayer.CurrentPacketToProcess.Keys.Max();
+                                        functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[max].Packet);
+                                        CurrentPlayer.CurrentPacketToProcess.Remove(max);
+
+                                        foreach (int keys in CurrentPlayer.CurrentPacketToProcess.Keys)
+                                        {
+                                            CurrentPlayer.CurrentPacketToProcess.Remove(keys);                                            
+                                        }
+
+                                        /*
+                                        int max = CurrentPlayer.CurrentPacketToProcess.Keys.Max();
+
+                                        foreach (int keys in CurrentPlayer.CurrentPacketToProcess.Keys)
+                                        {
+                                            if (keys != max)
+                                            {
+                                                CurrentPlayer.CurrentPacketToProcess.Remove(keys);
+                                            }
+                                            else
+                                            {
+                                                functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[keys].Packet);
+                                                CurrentPlayer.CurrentPacketToProcess.Remove(keys);
+                                            }
+                                        }*/
+                                    }
+                                    
+
+                                    
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex);
+                            }
+                            
+
+
+                                /*
+                                for (int i = 0; i < CurrentPlayer.CurrentPacketToProcess.Count; i++)
+                                {
+                                    int min = CurrentPlayer.CurrentPacketToProcess.Keys.Min();
+                                    functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[min].Packet);
+                                    CurrentPlayer.CurrentPacketToProcess.Remove(min);
+                                }*/
+
+                            
+
+                            /*
+                            if (CurrentPlayer.CurrentPacket.Count>=1)
+                            {
+                                functions.PlayerInputProcess(CurrentPlayer.CurrentPacket.Pop());
+                            }
+                            
+                            foreach (long item in CurrentPlayer.CurrentPacketToProcess.Keys)
+                            {
+                                if ((item - CurrentPlayer.LastTimePacketSend)>=50)
+                                {
+                                    functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[item]);
+                                    CurrentPlayer.CurrentPacketToProcess.Remove(item);
+                                    CurrentPlayer.LastTimePacketSend = starter.stopWatch.ElapsedMilliseconds;
+                                } 
+                                else
+                                {
+                                    //SendPacketToProcessAfterSecs((int)()  )
+                                }
+                            }
+
+                            */
+
+
+
+                            
+
                             //specials
                             CurrentPlayer.CurrentSpecial?.Invoke();
 
@@ -337,6 +425,8 @@ namespace game_server
 
         }
 
+
+        
 
         public void Dispose()
         {

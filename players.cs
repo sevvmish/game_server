@@ -61,8 +61,13 @@ namespace game_server
         public EndPoint endPointUDP;
         public int OrderNumber;
         public float MaxHealth;
-        //public Queue<string> CurrentPacket = new Queue<string>();
-        public string CurrentPacket;
+        //public Stack<string> CurrentPacket = new Stack<string>();
+        public Dictionary<int, Packets> CurrentPacketToProcess = new Dictionary<int, Packets>();
+        //public Dictionary<long, string> CurrentPacketToProcess = new Dictionary<long, string>();
+        public long LastTimePacketSend;
+        public int LastPacketNumberSend;
+        //public string LastPacketIn;
+        //public string CurrentPacket;
         public string AdditionalPacketData;
         //public Queue<string> CurrentPacketToSend = new Queue<string>();
         public ConcurrentQueue<string> CurrentPacketToSend = new ConcurrentQueue<string>();
@@ -1003,7 +1008,6 @@ namespace game_server
             is_spell_touched_for_casting_failing = false;
         }
 
-
     }
 
     public class RogueChecksWhenInvisible
@@ -1599,4 +1603,20 @@ namespace game_server
 
 
     }
+
+    public struct Packets
+    {
+        public long CurrentTimeStamp;
+        //public int CurrentOrder;
+        public string Packet;
+
+        public Packets(long _time_stamp, /*int _order,*/ string _packet)
+        {
+            CurrentTimeStamp = _time_stamp;
+            //CurrentOrder = _order;
+            Packet = _packet;
+        }
+    }
+            
+
 }

@@ -106,22 +106,63 @@ namespace game_server
 
         public static void ProcessUDPActivePacket(string data)
         {
-            
+            //Console.WriteLine(starter.stopWatch.ElapsedMilliseconds + "~" + data);
+
             string RawPacket = data;
             string[] RawDataArray = RawPacket.Split('~');
+                        
 
-            
             if (RawDataArray.Length>0)
             {
-                
+                                
                 try
                 {
+                    
                     if (starter.SessionsPool.ContainsKey(RawDataArray[3]))
-                    {                        
-                        //encryption.Decode(ref data, starter.SessionsPool[starter.PacketIDPool[RawDataArray[0]].SessionID].LocalPlayersPool[starter.PacketIDPool[RawDataArray[0]].PlayerID].secret_key);
-                        
-                        functions.MainProcess(data);
+                    {
+                        Players CurrentPlayer = functions.GetPlayerData(RawDataArray[3], RawDataArray[2]);
+                        if (!CurrentPlayer.CurrentPacketToProcess.ContainsKey(int.Parse(RawDataArray[0]))) CurrentPlayer.CurrentPacketToProcess.Add(int.Parse(RawDataArray[0]), new Packets(0, data));
+
+                        /*
+                        if ((starter.stopWatch.ElapsedMilliseconds - CurrentPlayer.LastTimePacketSend) >= 50 && CurrentPlayer.CurrentPacketToProcess.Count > 0)
+                        {
+                            int min = CurrentPlayer.CurrentPacketToProcess.Keys.Min();
+                            functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[min].Packet);
+                            CurrentPlayer.LastTimePacketSend = starter.stopWatch.ElapsedMilliseconds;
+                            CurrentPlayer.CurrentPacketToProcess.Remove(min);
+                        }                        
+                        else if ((starter.stopWatch.ElapsedMilliseconds - CurrentPlayer.LastTimePacketSend) < 50 && CurrentPlayer.CurrentPacketToProcess.Count > 0)
+                        {
+                            int delta_time = (int)(CurrentPlayer.LastTimePacketSend + 50 - starter.stopWatch.ElapsedMilliseconds);
+                            Console.WriteLine(delta_time);
+                            
+                            int min = CurrentPlayer.CurrentPacketToProcess.Keys.Min();
+                            SendPacketToProcessAfterSecs(delta_time, CurrentPlayer.CurrentPacketToProcess[min].Packet);
+
+                            CurrentPlayer.LastTimePacketSend += delta_time;
+                            CurrentPlayer.CurrentPacketToProcess.Remove(min);
+                        }
+                        */
+
+                        /*
+                        CurrentPlayer.CurrentPacket.Push(data);
+
+                        if ((starter.stopWatch.ElapsedMilliseconds - CurrentPlayer.LastTimePacketSend) >=50 && CurrentPlayer.CurrentPacket.Count > 0)
+                        {
+                            functions.PlayerInputProcess(CurrentPlayer.CurrentPacket.Pop());                           
+                            CurrentPlayer.LastTimePacketSend = starter.stopWatch.ElapsedMilliseconds;
+                        }
+                        else if((starter.stopWatch.ElapsedMilliseconds - CurrentPlayer.LastTimePacketSend) < 50 && CurrentPlayer.CurrentPacket.Count > 0)
+                        {                            
+                            int delta_time = (int)(CurrentPlayer.LastTimePacketSend + 50 - starter.stopWatch.ElapsedMilliseconds);
+                            CurrentPlayer.LastTimePacketSend += delta_time;
+                            
+                            if (delta_time < 0) delta_time = 0;
+                            SendPacketToProcessAfterSecs(delta_time, CurrentPlayer.CurrentPacket.Pop());
+                        }
+                        */
                     }
+                    
                 }
                 catch (Exception ex)
                 {
@@ -408,6 +449,13 @@ namespace game_server
             }
 
             return false;
+        }
+
+        private static async void SendPacketToProcessAfterSecs(int delay_time, string _packet)
+        {
+            await Task.Delay(delay_time);
+
+            functions.PlayerInputProcess(_packet);
         }
 
 

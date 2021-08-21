@@ -12,7 +12,7 @@ namespace game_server
     {
 
 
-        public static void MainProcess(string CurrentPacket)
+        public static void PlayerInputProcess(string CurrentPacket)
         {            
             string[] RawDataArray = CurrentPacket.Split('~');
             
@@ -20,7 +20,8 @@ namespace game_server
 
             string result = "";
 
-           
+            //CurrentPlayer.LastPacketIn = $"{RawDataArray[0]}~0~{RawDataArray[2]}~{RawDataArray[3]}~{RawDataArray[4]}~{RawDataArray[4]}";
+                       
             CurrentPlayer.ZeroInputs();
 
             try
@@ -231,7 +232,7 @@ namespace game_server
                 }
                 
             }
-            //Console.WriteLine(result);
+            //Console.WriteLine(starter.stopWatch.ElapsedMilliseconds + " - " + result);
             result = result + starter.SessionsPool[RawDataArray[3]].environment_packet + CurrentPlayer.AdditionalPacketData;
             byte[] b = Encoding.UTF8.GetBytes(result);
             encryption.Encode(ref b, CurrentPlayer.secret_key);
@@ -339,7 +340,7 @@ namespace game_server
             }
             */
 
-            float delta_for_position = 0.08f * speed;
+            float delta_for_position = 0.06f * speed;
 
             float new_position_x = position_x + MathF.Sin(rotation_y * degree_to_radian) * delta_for_position * vert_touch;
             float new_position_z = position_z + 1 * MathF.Cos(rotation_y * degree_to_radian) * delta_for_position * vert_touch;

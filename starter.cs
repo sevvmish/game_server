@@ -18,7 +18,7 @@ namespace game_server
         public static byte[] secret_key_for_game_servers;
         public static string InnerServerConnectionPassword;
         public static string MysqlConnectionData_login;
-        public static string address_for_data_config = @"C:\android\data_gameserver";  //@"C:\android\data_gameserver"; @"/home/admin/data_gameserver"
+        public static string address_for_data_config = @"/home/admin/data_gameserver";  //@"C:\android\data_gameserver"; @"/home/admin/data_gameserver"
 
         public const float GlobalButtonCooldown = 0.7f;
         public const float GlobalTickFloat = 0.05f;

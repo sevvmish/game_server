@@ -20,13 +20,37 @@ namespace game_server
 
             string result = "";
 
+            Console.WriteLine("proc~" + starter.stopWatch.ElapsedMilliseconds + "~" + CurrentPacket);
             //CurrentPlayer.LastPacketIn = $"{RawDataArray[0]}~0~{RawDataArray[2]}~{RawDataArray[3]}~{RawDataArray[4]}~{RawDataArray[4]}";
-                       
+
             CurrentPlayer.ZeroInputs();
 
             try
             {
                 CurrentPlayer.OrderNumber = int.Parse(RawDataArray[0]);
+                
+                float hor = float.Parse(RawDataArray[4]);
+                float ver = float.Parse(RawDataArray[5]);
+
+                //checking horizontal and vertical
+                if (hor > 3f)
+                {
+                    hor = 3f;
+                }
+                if (hor < -3f)
+                {
+                    hor = -3f;
+                }
+                if (ver > 3f)
+                {
+                    ver = 3f;
+                }
+                if (ver < -3f)
+                {
+                    ver = -3f;
+                }
+                //==================================
+
                 CurrentPlayer.horizontal_touch = float.Parse(RawDataArray[4]);
                 CurrentPlayer.vertical_touch = float.Parse(RawDataArray[5]);
 
@@ -232,7 +256,7 @@ namespace game_server
                 }
                 
             }
-            //Console.WriteLine(starter.stopWatch.ElapsedMilliseconds + " - " + result);
+            Console.WriteLine("out~" + starter.stopWatch.ElapsedMilliseconds + "~" + result);
             result = result + starter.SessionsPool[RawDataArray[3]].environment_packet + CurrentPlayer.AdditionalPacketData;
             byte[] b = Encoding.UTF8.GetBytes(result);
             encryption.Encode(ref b, CurrentPlayer.secret_key);

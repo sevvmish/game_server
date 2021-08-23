@@ -17,7 +17,7 @@ namespace game_server
             string[] RawDataArray = CurrentPacket.Split('~');
             
             Players CurrentPlayer = GetPlayerData(RawDataArray[3], RawDataArray[2]);
-
+            CurrentPlayer.LastPacketProcessed = CurrentPacket;
             string result = "";
 
             Console.WriteLine("proc~" + starter.stopWatch.ElapsedMilliseconds + "~" + CurrentPacket);

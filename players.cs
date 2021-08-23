@@ -66,6 +66,7 @@ namespace game_server
         //public Dictionary<long, string> CurrentPacketToProcess = new Dictionary<long, string>();
         public long LastTimePacketSend;
         public int LastPacketNumberSend;
+        public string LastPacketProcessed;
         //public string LastPacketIn;
         //public string CurrentPacket;
         public string AdditionalPacketData;

@@ -142,7 +142,7 @@ namespace game_server
                                         functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[max].Packet);
                                         CurrentPlayer.CurrentPacketToProcess.Remove(max);
                                     } 
-                                    else
+                                    else if (CurrentPlayer.CurrentPacketToProcess.Count > 1)
                                     {
                                         int max = CurrentPlayer.CurrentPacketToProcess.Keys.Max();
                                         functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[max].Packet);
@@ -151,27 +151,16 @@ namespace game_server
                                         foreach (int keys in CurrentPlayer.CurrentPacketToProcess.Keys)
                                         {
                                             CurrentPlayer.CurrentPacketToProcess.Remove(keys);                                            
-                                        }
-
-                                        /*
-                                        int max = CurrentPlayer.CurrentPacketToProcess.Keys.Max();
-
-                                        foreach (int keys in CurrentPlayer.CurrentPacketToProcess.Keys)
-                                        {
-                                            if (keys != max)
-                                            {
-                                                CurrentPlayer.CurrentPacketToProcess.Remove(keys);
-                                            }
-                                            else
-                                            {
-                                                functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[keys].Packet);
-                                                CurrentPlayer.CurrentPacketToProcess.Remove(keys);
-                                            }
-                                        }*/
+                                        }                                  
                                     }
-                                    
+                                    else if (CurrentPlayer.CurrentPacketToProcess.Count == 0)
+                                    {
+                                        
+                                        functions.PlayerInputProcess(CurrentPlayer.LastPacketProcessed);                                        
+                                    }
 
-                                    
+
+
                                 }
                             }
                             catch (Exception ex)

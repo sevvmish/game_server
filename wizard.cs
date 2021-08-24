@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,33 @@ namespace game_server
 {
     class wizard
     {
+
+        //spell beacon 207
+        public static async void beacon(string table_id, string mee)
+        {
+            Players player = functions.GetPlayerData(table_id, mee);
+            string ID_for_beacon = functions.get_symb_for_IDs();
+
+            if (!player.is_cond_here_by_type_and_spell("cs=207"))
+            {
+                player.conditions.TryAdd(ID_for_beacon, $":cs=207={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
+            } 
+            else
+            {
+                string [] data = player.get_bulkconditiondata_by_anything_in_bulk("cs=207").Split('=');
+                //player.position_x = float.Parse(data[2].Replace('.', ','));
+                player.position_x = float.Parse(data[2], CultureInfo.InvariantCulture);
+
+                data[3] = data[3].Substring(0, data[3].Length - 1);
+                //player.position_z = float.Parse(data[3].Replace('.', ','));
+                player.position_z = float.Parse(data[3], CultureInfo.InvariantCulture);
+
+                player.CastEndCS(player.position_x, player.position_z, player.get_condID_by_anything_in_bulk("cs=207"), 207);                
+            }
+
+            //player.conditions.TryAdd(check_cond_id2, $":cs=51={magic_data[0].ToString("f1").Replace(',', '.')}={magic_data[2].ToString("f1").Replace(',', '.')},");
+        }
+
 
         //spell 206 void zone
         public static async void void_zone(string table_id, string mee, float how_long, float groth_koeff, float radius)

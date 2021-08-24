@@ -752,7 +752,7 @@ namespace game_server
                 {
                     if (conditions[vall].Contains(searched_cond))
                     {
-                        return conditions[vall];
+                        return conditions[vall];                        
                     }
                 }
             }

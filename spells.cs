@@ -819,6 +819,27 @@ namespace game_server
             }
             //================spell 206==================================
 
+            //================spell 207 beacon==================================
+            if (spell_id == 207)
+            {
+
+                float energy_cost = 10;
+
+                if (p.energy >= energy_cost)
+                {
+                    p.minus_energy(energy_cost);
+
+                    Task.Run(() => wizard.beacon(table_id, player));
+                    Task.Run(() => button_cooldowns(table_id, player, spell_id, 1f));
+                    return new float[] { 1, 5, 1f };
+                }
+                else
+                {
+                    return new float[] { 0, 7, 0 };
+                }
+            }
+            //================spell 207==================================
+
 
             //================STRAFE==================================
             if (spell_id == 997)

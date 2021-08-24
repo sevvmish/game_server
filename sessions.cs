@@ -13,6 +13,9 @@ namespace game_server
 {
     public class Sessions: IDisposable
     {
+        //for tests
+        private int HowManyNullPacketsProccessed;
+       
         public int PlayersCount;
         public int ZoneType;
         public int GameType;
@@ -140,22 +143,28 @@ namespace game_server
                                     {
                                         int max = CurrentPlayer.CurrentPacketToProcess.Keys.Max();
                                         functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[max].Packet);
-                                        CurrentPlayer.CurrentPacketToProcess.Remove(max);
+                                        //CurrentPlayer.CurrentPacketToProcess.Remove(max);
+                                        CurrentPlayer.CurrentPacketToProcess.Clear();
+                                        HowManyNullPacketsProccessed = 0;
                                     } 
                                     else if (CurrentPlayer.CurrentPacketToProcess.Count > 1)
                                     {
                                         int max = CurrentPlayer.CurrentPacketToProcess.Keys.Max();
                                         functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[max].Packet);
+                                        CurrentPlayer.CurrentPacketToProcess.Clear();
+                                        HowManyNullPacketsProccessed = 0;
+                                        /*
                                         CurrentPlayer.CurrentPacketToProcess.Remove(max);
-
                                         foreach (int keys in CurrentPlayer.CurrentPacketToProcess.Keys)
                                         {
                                             CurrentPlayer.CurrentPacketToProcess.Remove(keys);                                            
-                                        }                                  
+                                        }
+                                        */
                                     }
-                                    else if (CurrentPlayer.CurrentPacketToProcess.Count == 0)
+                                    else if (CurrentPlayer.CurrentPacketToProcess.Count == 0 && HowManyNullPacketsProccessed<5)
                                     {
                                         
+                                        HowManyNullPacketsProccessed++;
                                         functions.PlayerInputProcess(CurrentPlayer.LastPacketProcessed);                                        
                                     }
 
@@ -168,42 +177,6 @@ namespace game_server
                                 Console.WriteLine(ex);
                             }
                             
-
-
-                                /*
-                                for (int i = 0; i < CurrentPlayer.CurrentPacketToProcess.Count; i++)
-                                {
-                                    int min = CurrentPlayer.CurrentPacketToProcess.Keys.Min();
-                                    functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[min].Packet);
-                                    CurrentPlayer.CurrentPacketToProcess.Remove(min);
-                                }*/
-
-                            
-
-                            /*
-                            if (CurrentPlayer.CurrentPacket.Count>=1)
-                            {
-                                functions.PlayerInputProcess(CurrentPlayer.CurrentPacket.Pop());
-                            }
-                            
-                            foreach (long item in CurrentPlayer.CurrentPacketToProcess.Keys)
-                            {
-                                if ((item - CurrentPlayer.LastTimePacketSend)>=50)
-                                {
-                                    functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[item]);
-                                    CurrentPlayer.CurrentPacketToProcess.Remove(item);
-                                    CurrentPlayer.LastTimePacketSend = starter.stopWatch.ElapsedMilliseconds;
-                                } 
-                                else
-                                {
-                                    //SendPacketToProcessAfterSecs((int)()  )
-                                }
-                            }
-
-                            */
-
-
-
                             
 
                             //specials

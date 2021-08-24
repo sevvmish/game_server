@@ -106,7 +106,7 @@ namespace game_server
 
         public static void ProcessUDPActivePacket(string data)
         {
-            Console.WriteLine("in~" + starter.stopWatch.ElapsedMilliseconds + "~" + data);
+            //Console.WriteLine("in~" + starter.stopWatch.ElapsedMilliseconds + "~" + data);
 
             string RawPacket = data;
             string[] RawDataArray = RawPacket.Split('~');

@@ -20,7 +20,7 @@ namespace game_server
             CurrentPlayer.LastPacketProcessed = CurrentPacket;
             string result = "";
 
-            Console.WriteLine("proc~" + starter.stopWatch.ElapsedMilliseconds + "~" + CurrentPacket);
+            //Console.WriteLine("proc~" + starter.stopWatch.ElapsedMilliseconds + "~" + CurrentPacket);
             //CurrentPlayer.LastPacketIn = $"{RawDataArray[0]}~0~{RawDataArray[2]}~{RawDataArray[3]}~{RawDataArray[4]}~{RawDataArray[4]}";
 
             CurrentPlayer.ZeroInputs();
@@ -256,7 +256,7 @@ namespace game_server
                 }
                 
             }
-            Console.WriteLine("out~" + starter.stopWatch.ElapsedMilliseconds + "~" + result);
+            //Console.WriteLine("out~" + starter.stopWatch.ElapsedMilliseconds + "~" + result);
             result = result + starter.SessionsPool[RawDataArray[3]].environment_packet + CurrentPlayer.AdditionalPacketData;
             byte[] b = Encoding.UTF8.GetBytes(result);
             encryption.Encode(ref b, CurrentPlayer.secret_key);

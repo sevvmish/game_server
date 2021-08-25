@@ -357,6 +357,7 @@ namespace game_server
 
 
             string conditions_refactor = null;
+            /*
             try
             {
                 foreach (string key in conditions.Keys.ToList())
@@ -371,7 +372,16 @@ namespace game_server
             {
                 Console.WriteLine(ex);
             }
+            */
 
+            try
+            {
+                conditions_refactor = string.Join("", conditions.Select(kvp => kvp.Key + kvp.Value));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
             
 
             if (player_id != current_player_id && is_invisible)
@@ -433,8 +443,11 @@ namespace game_server
 
             StringBuilder sb = new StringBuilder(110);
 
-            
+            //var _temp_dat = from r in CurrentPlayer.conditions.Values select r;
+            //string _data = string.Join("", _temp_dat);
+
             string conditions_refactor = null;
+            /*
             try
             {
                 foreach (string key in conditions.Keys.ToList())
@@ -450,8 +463,16 @@ namespace game_server
             {
                 Console.WriteLine(ex);
             }
+            */
 
-            
+            try
+            {
+                conditions_refactor = string.Join("", conditions.Select(kvp => kvp.Key + kvp.Value));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
 
             sb.Append(position_x.ToString("f1") +"~" + position_z.ToString("f1") + "~" +
                rotation_y.ToString("f1") + "~" +

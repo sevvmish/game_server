@@ -141,7 +141,7 @@ namespace game_server
             player.is_invisible = false;
             string check_cond_strike_id = functions.get_symb_for_IDs();
             //player.conditions.TryAdd(check_cond_strike_id, $":cs=157={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
-            player.conditions.TryAdd(check_cond_strike_id, $":co-157-0,");
+            player.conditions.TryAdd(check_cond_strike_id, $":co-157-1,");
             player.remove_condition_in_player(player.get_id_by_type_and_spell("co-153"));
             player.remove_condition_in_player( check_cond_strike_id);
                         
@@ -154,7 +154,7 @@ namespace game_server
             string check_cond_strike_id = functions.get_symb_for_IDs();
             string check_cond = functions.get_symb_for_IDs();
             player.conditions.TryAdd(check_cond_strike_id, $":cs=153={player.position_x.ToString("f1").Replace(',', '.')}={player.position_z.ToString("f1").Replace(',', '.')},");
-            player.conditions.TryAdd(check_cond, $":co-153-0,");
+            player.conditions.TryAdd(check_cond, $":co-153-99,");
             await Task.Delay(20);
             player.remove_condition_in_player( check_cond_strike_id);
             player.is_invisible = true;

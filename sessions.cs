@@ -107,6 +107,48 @@ namespace game_server
                         
                         CheckingRoundConditions();
 
+                        //packet process================================
+                        try
+                        {
+                            if (CurrentPlayer.CurrentPacketToProcess.Count > 0)
+                            {
+
+                                if (CurrentPlayer.CurrentPacketToProcess.Count == 1)
+                                {
+                                    int max = CurrentPlayer.CurrentPacketToProcess.Keys.Max();
+                                    functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[max].Packet);
+                                    //CurrentPlayer.CurrentPacketToProcess.Remove(max);
+                                    CurrentPlayer.CurrentPacketToProcess.Clear();
+                                    HowManyNullPacketsProccessed = 0;
+                                }
+                                else if (CurrentPlayer.CurrentPacketToProcess.Count > 1)
+                                {
+                                    int max = CurrentPlayer.CurrentPacketToProcess.Keys.Max();
+                                    functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[max].Packet);
+                                    CurrentPlayer.CurrentPacketToProcess.Clear();
+                                    HowManyNullPacketsProccessed = 0;
+                                    /*
+                                    CurrentPlayer.CurrentPacketToProcess.Remove(max);
+                                    foreach (int keys in CurrentPlayer.CurrentPacketToProcess.Keys)
+                                    {
+                                        CurrentPlayer.CurrentPacketToProcess.Remove(keys);                                            
+                                    }
+                                    */
+                                }
+                                else if (CurrentPlayer.CurrentPacketToProcess.Count == 0 && HowManyNullPacketsProccessed < 5)
+                                {
+
+                                    HowManyNullPacketsProccessed++;
+                                    functions.PlayerInputProcess(CurrentPlayer.LastPacketProcessed);
+                                }
+
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                        }
+                        //packet process================================
 
                         if (float.Parse(CurrentPlayer.health_pool.Split('=')[0])<=0 && !CurrentPlayer.isDead && !isRoundChecked)
                         {
@@ -135,48 +177,7 @@ namespace game_server
                         {
 
 
-                            //packet process================================
-                            try
-                            {
-                                if (CurrentPlayer.CurrentPacketToProcess.Count > 0)
-                                {
-
-                                    if (CurrentPlayer.CurrentPacketToProcess.Count == 1)
-                                    {
-                                        int max = CurrentPlayer.CurrentPacketToProcess.Keys.Max();
-                                        functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[max].Packet);
-                                        //CurrentPlayer.CurrentPacketToProcess.Remove(max);
-                                        CurrentPlayer.CurrentPacketToProcess.Clear();
-                                        HowManyNullPacketsProccessed = 0;
-                                    }
-                                    else if (CurrentPlayer.CurrentPacketToProcess.Count > 1)
-                                    {
-                                        int max = CurrentPlayer.CurrentPacketToProcess.Keys.Max();
-                                        functions.PlayerInputProcess(CurrentPlayer.CurrentPacketToProcess[max].Packet);
-                                        CurrentPlayer.CurrentPacketToProcess.Clear();
-                                        HowManyNullPacketsProccessed = 0;
-                                        /*
-                                        CurrentPlayer.CurrentPacketToProcess.Remove(max);
-                                        foreach (int keys in CurrentPlayer.CurrentPacketToProcess.Keys)
-                                        {
-                                            CurrentPlayer.CurrentPacketToProcess.Remove(keys);                                            
-                                        }
-                                        */
-                                    }
-                                    else if (CurrentPlayer.CurrentPacketToProcess.Count == 0 && HowManyNullPacketsProccessed < 5)
-                                    {
-
-                                        HowManyNullPacketsProccessed++;
-                                        functions.PlayerInputProcess(CurrentPlayer.LastPacketProcessed);
-                                    }
-
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex);
-                            }
-                            //packet process================================
+                            
 
 
 

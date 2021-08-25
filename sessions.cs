@@ -107,6 +107,7 @@ namespace game_server
                         
                         CheckingRoundConditions();
 
+
                         if (float.Parse(CurrentPlayer.health_pool.Split('=')[0])<=0 && !CurrentPlayer.isDead && !isRoundChecked)
                         {
                             CurrentPlayer.isDead = true;
@@ -133,12 +134,13 @@ namespace game_server
                         if (1==1 && !CurrentPlayer.isDead && !isRoundChecked) //CurrentPlayer.endPointUDP != null   ПОТОМ ИСПРАВЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         {
 
+
+                            //packet process================================
                             try
                             {
-                                //packet process
                                 if (CurrentPlayer.CurrentPacketToProcess.Count > 0)
                                 {
-                                    
+
                                     if (CurrentPlayer.CurrentPacketToProcess.Count == 1)
                                     {
                                         int max = CurrentPlayer.CurrentPacketToProcess.Keys.Max();
@@ -146,7 +148,7 @@ namespace game_server
                                         //CurrentPlayer.CurrentPacketToProcess.Remove(max);
                                         CurrentPlayer.CurrentPacketToProcess.Clear();
                                         HowManyNullPacketsProccessed = 0;
-                                    } 
+                                    }
                                     else if (CurrentPlayer.CurrentPacketToProcess.Count > 1)
                                     {
                                         int max = CurrentPlayer.CurrentPacketToProcess.Keys.Max();
@@ -161,14 +163,12 @@ namespace game_server
                                         }
                                         */
                                     }
-                                    else if (CurrentPlayer.CurrentPacketToProcess.Count == 0 && HowManyNullPacketsProccessed<5)
+                                    else if (CurrentPlayer.CurrentPacketToProcess.Count == 0 && HowManyNullPacketsProccessed < 5)
                                     {
-                                        
+
                                         HowManyNullPacketsProccessed++;
-                                        functions.PlayerInputProcess(CurrentPlayer.LastPacketProcessed);                                        
+                                        functions.PlayerInputProcess(CurrentPlayer.LastPacketProcessed);
                                     }
-
-
 
                                 }
                             }
@@ -176,8 +176,10 @@ namespace game_server
                             {
                                 Console.WriteLine(ex);
                             }
-                            
-                            
+                            //packet process================================
+
+
+
 
                             //specials
                             CurrentPlayer.CurrentSpecial?.Invoke();
